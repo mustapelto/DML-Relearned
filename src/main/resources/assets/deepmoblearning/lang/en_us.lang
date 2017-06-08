@@ -1,0 +1,89 @@
+#
+# Misc Items
+#
+item.deepmoblearning.polymer_clay.name=Polymer Clay
+item.deepmoblearning.data_model_blank.name=Blank Data Model
+
+#
+# Living Matter Variants
+#
+item.deepmoblearning.living_matter_overworldian.name=Overworldian Matter
+item.deepmoblearning.living_matter_hellish.name=Hellish Matter
+item.deepmoblearning.living_matter_extraterrestrial.name=Extraterrestrial Matter
+item.deepmoblearning.living_matter_twilight.name=Twilight Matter
+
+deepmoblearning.mob_type.overworldian=Overworldian
+deepmoblearning.mob_type.overworldian.formatted=§a%s§r
+deepmoblearning.mob_type.hellish=Hellish
+deepmoblearning.mob_type.hellish.formatted=§c%s§r
+deepmoblearning.mob_type.extraterrestrial=Extraterrestrial
+deepmoblearning.mob_type.extraterrestrial.formatted=§d%s§r
+deepmoblearning.mob_type.twilight=Twilight
+deepmoblearning.mob_type.twilight.formatted=§d%s§r
+
+#
+# Data Models
+#
+
+# Vanilla
+item.deepmoblearning.data_model_blaze.name=§bBlaze Data Model§r
+item.deepmoblearning.data_model_creeper.name=§bCreeper Data Model§r
+item.deepmoblearning.data_model_dragon.name=§bEnder Dragon Data Model§r
+item.deepmoblearning.data_model_enderman.name=§bEnderman Data Model§r
+item.deepmoblearning.data_model_ghast.name=§bGhast Data Model§r
+item.deepmoblearning.data_model_guardian.name=§bGuardian Data Model§r
+item.deepmoblearning.data_model_shulker.name=§bShulker Data Model§r
+item.deepmoblearning.data_model_skeleton.name=§bSkeleton Data Model§r
+item.deepmoblearning.data_model_slime.name=§bSlime Data Model§r
+item.deepmoblearning.data_model_spider.name=§bSpider Data Model§r
+item.deepmoblearning.data_model_witch.name=§bWitch Data Model§r
+item.deepmoblearning.data_model_wither.name=§bWither Data Model§r
+item.deepmoblearning.data_model_wither_skeleton.name=§bWither Skeleton Data Model§r
+item.deepmoblearning.data_model_zombie.name=§bZombie Data Model§r
+
+# Thermal Expansion
+item.deepmoblearning.data_model_thermal_elemental.name=§bThermal Elemental Data Model§r
+
+# Twilight Forest
+item.deepmoblearning.data_model_twilight_forest.name=§bTwilight Forest Data Model§r
+item.deepmoblearning.data_model_twilight_swamp.name=§bTwilight Swamp Model§r
+item.deepmoblearning.data_model_twilight_darkwood.name=§bTwilight Darkwood Data Model§r
+item.deepmoblearning.data_model_twilight_glacier.name=§bTwilight Glacier Data Model§r
+
+# Tinkers' Construct
+item.deepmoblearning.data_model_tinker_slime.name=§bBlue Slime Data Model§r
+
+# Matter Overdrive
+item.deepmoblearning.data_model_mo_android.name=§bRogue Android Data Model§r
+
+#
+# Data Model Tiers
+#
+deepmoblearning.data_model.tier.0=Faulty
+deepmoblearning.data_model.tier.0.formatted=§8%s§r
+deepmoblearning.data_model.tier.1=Basic
+deepmoblearning.data_model.tier.1.formatted=§a%s§r
+deepmoblearning.data_model.tier.2=Advanced
+deepmoblearning.data_model.tier.2.formatted=§9%s§r
+deepmoblearning.data_model.tier.3=Superior
+deepmoblearning.data_model.tier.3.formatted=§d%s§r
+deepmoblearning.data_model.tier.4=Self-Aware
+deepmoblearning.data_model.tier.4.formatted=§6%s§r
+
+#
+# Tooltips
+#
+deepmoblearning.living_matter.consume_for_xp=Can be consumed for experience §r(%s)§7
+deepmoblearning.living_matter.consume_stack=Hold §r%s§7 to consume entire stack.
+deepmoblearning.living_matter.xp=§7Experience per item: §a%s§r
+deepmoblearning.data_model.more_info=§7- hold §r§o%s§r§7 for more info§r
+deepmoblearning.data_model.type=§rType: %s§r
+deepmoblearning.data_model.tier=§rTier: %s§r
+deepmoblearning.data_model.data_collected=§rData collected: §7%s/%s§r
+deepmoblearning.data_model.kill_multiplier=§rData per kill: §7%s§r
+deepmoblearning.data_model.rf_cost=§rSimulation cost: §7%s RF/t§r
+
+#
+# Creative Tab
+#
+itemGroup.deepmoblearning=DML Relearned

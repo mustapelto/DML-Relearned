@@ -1,0 +1,16 @@
+[
+{
+  "modid": "deepmoblearning",
+  "name": "DML Relearned",
+  "description": "Server-friendly virtual mob farming. A rewrite of xt9's DeepMobLearning.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["mustapelto"],
+  "credits": "xt9, for the original mod",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

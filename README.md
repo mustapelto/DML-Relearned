@@ -1,5 +1,5 @@
-# DML-Relearned
-Server friendly mob loot acquisition. A rewrite of (DeepMobLearning by xt9)[https://github.com/xt9/DeepMobLearning].
+# DML Relearned
+Server friendly mob loot acquisition. A rewrite of [DeepMobLearning by xt9](https://github.com/xt9/DeepMobLearning).
 
 Inspired by the Soul Shards mod, where you could "collect" mob kills to later use them for mob spawners.
 

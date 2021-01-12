@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import twilightforest.entity.boss.EntityTFLich;
 
-public class TwilightForestMetaData extends MobMetaData.MobMetaDataExtra {
+public class TwilightForestMetaData extends MobMetaData {
     private static TwilightForestMetaData instance;
 
     private TwilightForestMetaData() {
@@ -16,8 +16,6 @@ public class TwilightForestMetaData extends MobMetaData.MobMetaDataExtra {
                 12,
                 EnumLivingMatterType.TWILIGHT,
                 new String[]{"Nagas, Liches and flying books.", "What the hell have you walked into?"},
-                0,
-                0,
                 "Gain data by defeating non-vanilla mobs in the Naga Courtyard and Lich Tower."
                 );
     }
@@ -31,10 +29,5 @@ public class TwilightForestMetaData extends MobMetaData.MobMetaDataExtra {
     @Override
     public Entity getEntity(World world) {
         return new EntityTFLich(world);
-    }
-
-    @Override
-    public Entity getEntityExtra(World world) {
-        return null;
     }
 }

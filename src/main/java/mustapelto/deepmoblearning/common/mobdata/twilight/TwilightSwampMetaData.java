@@ -10,7 +10,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import twilightforest.entity.boss.EntityTFMinoshroom;
 
-public class TwilightSwampMetaData extends MobMetaData.MobMetaDataExtra {
+public class TwilightSwampMetaData extends MobMetaData {
     private static TwilightSwampMetaData instance;
 
     private TwilightSwampMetaData() {
@@ -21,8 +21,6 @@ public class TwilightSwampMetaData extends MobMetaData.MobMetaDataExtra {
                 14,
                 EnumLivingMatterType.TWILIGHT,
                 new String[]{"This realm sure could use some building regulations.", "How are you even allowed to build a huge maze", "in your basement!?"},
-                0,
-                0,
                 "Gain data by defeating non-vanilla mobs in the Swamp Labyrinth and Hydra Lair."
                 );
     }
@@ -39,10 +37,5 @@ public class TwilightSwampMetaData extends MobMetaData.MobMetaDataExtra {
         Item axe = Item.getByNameOrId("twilightforest:minotaur_axe");
         entity.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(axe != null ? axe : Items.DIAMOND_AXE));
         return entity;
-    }
-
-    @Override
-    public Entity getEntityExtra(World world) {
-        return null;
     }
 }

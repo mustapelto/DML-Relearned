@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.registry;
 
 import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.enums.EnumMobType;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
@@ -18,9 +19,11 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
+        DMLRelearned.logger.info("Registering Items...");
         // Misc Items
         registeredItems.add(new ItemPolymerClay());
         registeredItems.add(new ItemDataModelBlank());
+        registeredItems.add(new ItemDeepLearner());
 
         registerLivingMatter();
         registerDataModels();

@@ -33,7 +33,7 @@ public class ItemLivingMatter extends ItemBase {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", KeyboardHelper.getUseDisplayName()));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", KeyboardHelper.getSneakDisplayName()));
-        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", DMLConfig.getLivingMatterXP(type)));
+        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", DMLConfig.LIVING_MATTER.getLivingMatterXP(type)));
     }
 
     @Override

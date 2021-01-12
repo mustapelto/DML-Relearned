@@ -3,6 +3,7 @@
 #
 item.deepmoblearning.polymer_clay.name=Polymer Clay
 item.deepmoblearning.data_model_blank.name=Blank Data Model
+item.deepmoblearning.deep_learner.name=Deep Learner
 
 #
 # Living Matter Variants
@@ -73,15 +74,45 @@ deepmoblearning.data_model.tier.4.formatted=§6%s§r
 #
 # Tooltips
 #
+
+# General
+deepmoblearning.general.more_info=§7- hold §r§o%s§r§7 for more info§r
+
+# Living Matter
 deepmoblearning.living_matter.consume_for_xp=Can be consumed for experience §r(%s)§7
 deepmoblearning.living_matter.consume_stack=Hold §r%s§7 to consume entire stack.
 deepmoblearning.living_matter.xp=§7Experience per item: §a%s§r
-deepmoblearning.data_model.more_info=§7- hold §r§o%s§r§7 for more info§r
+
+# Data Model
 deepmoblearning.data_model.type=§rType: %s§r
 deepmoblearning.data_model.tier=§rTier: %s§r
 deepmoblearning.data_model.data_collected=§rData collected: §7%s/%s§r
 deepmoblearning.data_model.kill_multiplier=§rData per kill: §7%s§r
 deepmoblearning.data_model.rf_cost=§rSimulation cost: §7%s RF/t§r
+
+# Deep Learner
+deepmoblearning.deep_learner.hud=Will display a §bHUD§7 when in main hand or offhand and populated with data models
+deepmoblearning.deep_learner.contains=Contains the following models
+
+#
+# UI Texts
+#
+
+# Deep Learner
+deepmoblearning.deep_learner.heading_name=Name
+deepmoblearning.deep_learner.heading_information=Information
+deepmoblearning.deep_learner.model_tier=Model Tier: %s
+deepmoblearning.deep_learner.defeated=%s defeated: %s
+deepmoblearning.deep_learner.required=Defeat %s more to reach %s
+deepmoblearning.deep_learner.maximum=Maximum tier achieved
+deepmoblearning.deep_learner.health_points=Health points
+
+deepmoblearning.deep_learner.no_model.line_1=No Data Model Found
+deepmoblearning.deep_learner.no_model.line_2=Please insert a Data Model!
+deepmoblearning.deep_learner.no_model.line_3=Your Data Models will collect data
+deepmoblearning.deep_learner.no_model.line_4=when they are placed in the Deep Learner.
+deepmoblearning.deep_learner.no_model.line_5=In order to collect data, you must
+deepmoblearning.deep_learner.no_model.line_6=deliver the killing blow.
 
 #
 # Creative Tab

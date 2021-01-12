@@ -9,6 +9,7 @@ public class ItemRegistry {
     // Misc Items
     public static final ItemPolymerClay polymer_clay = null;
     public static final ItemDataModelBlank data_model_blank = null;
+    public static final ItemDeepLearner deep_learner = null;
 
     // Living Matter
     public static final ItemLivingMatter living_matter_overworldian = null;

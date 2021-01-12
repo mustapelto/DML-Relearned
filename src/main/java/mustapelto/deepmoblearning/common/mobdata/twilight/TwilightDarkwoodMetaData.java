@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import twilightforest.entity.boss.EntityTFUrGhast;
 
-public class TwilightDarkwoodMetaData extends MobMetaData.MobMetaDataExtra {
+public class TwilightDarkwoodMetaData extends MobMetaData {
     private static TwilightDarkwoodMetaData instance;
 
     private TwilightDarkwoodMetaData() {
@@ -17,8 +17,6 @@ public class TwilightDarkwoodMetaData extends MobMetaData.MobMetaDataExtra {
                 -3,
                 EnumLivingMatterType.TWILIGHT,
                 new String[]{"Spooky scary strongholds send shivers down", "your spine, the Ur-Ghast will shock your", "soul and seal your doom tonight!"},
-                0,
-                0,
                 "Gain data by defeating non-vanilla mobs in the Goblin Knight Stronghold and Dark Tower."
                 );
     }
@@ -32,10 +30,5 @@ public class TwilightDarkwoodMetaData extends MobMetaData.MobMetaDataExtra {
     @Override
     public Entity getEntity(World world) {
         return new EntityTFUrGhast(world);
-    }
-
-    @Override
-    public Entity getEntityExtra(World world) {
-        return null;
     }
 }

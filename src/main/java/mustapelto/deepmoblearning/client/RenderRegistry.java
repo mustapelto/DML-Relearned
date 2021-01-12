@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.client;
 
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.registry.RegistryHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class RenderRegistry {
     @SubscribeEvent
     public static void register(ModelRegistryEvent event) {
+        DMLRelearned.logger.info("Registering Models...");
         RegistryHandler.registeredItems.forEach(RenderRegistry::registerItem);
     }
 

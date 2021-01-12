@@ -5,12 +5,13 @@ import net.minecraft.client.resources.I18n;
 import java.util.HashMap;
 
 public enum EnumDataModelTier {
-    FAULTY(0, 1, 0),
-    BASIC(1, 4, 6),
-    ADVANCED(2, 10, 12),
-    SUPERIOR(3, 18, 30),
-    SELF_AWARE(4, 0, 50);
+    FAULTY("faulty", 0, 1, 0),
+    BASIC("basic", 1, 4, 6),
+    ADVANCED("advanced", 2, 10, 12),
+    SUPERIOR("superior", 3, 18, 30),
+    SELF_AWARE("self_aware", 4, 0, 50);
 
+    private final String name;
     private final int level;
     private final int killMultiplierDefault;
     private final int killsRequiredDefault;
@@ -23,10 +24,15 @@ public enum EnumDataModelTier {
         }
     }
 
-    EnumDataModelTier(int level, int killMultiplierDefault, int killsRequiredDefault) {
+    EnumDataModelTier(String name, int level, int killMultiplierDefault, int killsRequiredDefault) {
+        this.name = name;
         this.level = level;
         this.killMultiplierDefault = killMultiplierDefault;
         this.killsRequiredDefault = killsRequiredDefault;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getLevel() {

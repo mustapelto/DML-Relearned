@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntitySlime;
@@ -10,13 +12,18 @@ public class SlimeMetaData extends MobMetaData {
     private static SlimeMetaData instance;
 
     private SlimeMetaData() {
-        super("Slime",
+        super(EnumMobType.SLIME.getName(),
                 8,
                 60,
                 10,
                 -16,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"The bouncing bouncer", "bounces his bouncy bouncing", "Bouncing and bou- squish! - \"A new slime haiku\""}
+                150,
+                new String[] {
+                        "minecraft:slime",
+                        "minecraft:magma_cube",
+                        "minecraft:trial_slime"
+                }
                 );
     }
 

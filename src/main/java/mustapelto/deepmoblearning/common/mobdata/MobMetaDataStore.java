@@ -2,20 +2,17 @@ package mustapelto.deepmoblearning.common.mobdata;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.enums.EnumMobType;
-import mustapelto.deepmoblearning.common.mobdata.mo.MOAndroidMetaData;
-import mustapelto.deepmoblearning.common.mobdata.thermal.ThermalElementalMetaData;
-import mustapelto.deepmoblearning.common.mobdata.tinkers.TinkerSlimeMetaData;
-import mustapelto.deepmoblearning.common.mobdata.twilight.TwilightDarkwoodMetaData;
-import mustapelto.deepmoblearning.common.mobdata.twilight.TwilightForestMetaData;
-import mustapelto.deepmoblearning.common.mobdata.twilight.TwilightGlacierMetaData;
-import mustapelto.deepmoblearning.common.mobdata.twilight.TwilightSwampMetaData;
 import mustapelto.deepmoblearning.common.mobdata.vanilla.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import mustapelto.deepmoblearning.common.mobdata.mo.*;
+import mustapelto.deepmoblearning.common.mobdata.thermal.*;
+import mustapelto.deepmoblearning.common.mobdata.tinkers.*;
+import mustapelto.deepmoblearning.common.mobdata.twilight.*;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MobMetaDataStore {
@@ -34,31 +31,31 @@ public class MobMetaDataStore {
         store.put(EnumMobType.SPIDER, SpiderMetaData.getInstance());
         store.put(EnumMobType.WITCH, WitchMetaData.getInstance());
         store.put(EnumMobType.WITHER, WitherMetaData.getInstance());
-        store.put(EnumMobType.WITHERSKELETON, WitherSkeletonMetaData.getInstance());
+        store.put(EnumMobType.WITHER_SKELETON, WitherSkeletonMetaData.getInstance());
         store.put(EnumMobType.ZOMBIE, ZombieMetaData.getInstance());
 
         //
         // THERMAL EXPANSION
         //
         if (DMLConstants.ModDependencies.isLoaded(DMLConstants.ModDependencies.THERMAL)) {
-            store.put(EnumMobType.THERMAL, ThermalElementalMetaData.getInstance());
+            store.put(EnumMobType.THERMAL_ELEMENTAL, ThermalElementalMetaData.getInstance());
         }
 
         //
         // TINKERS' CONSTRUCT
         //
         if (DMLConstants.ModDependencies.isLoaded(DMLConstants.ModDependencies.TINKERS)) {
-            store.put(EnumMobType.TINKERSLIME, TinkerSlimeMetaData.getInstance());
+            store.put(EnumMobType.TINKER_SLIME, TinkerSlimeMetaData.getInstance());
         }
 
         //
         // TWILIGHT FOREST
         //
         if (DMLConstants.ModDependencies.isLoaded(DMLConstants.ModDependencies.TWILIGHT)) {
-            store.put(EnumMobType.TWILIGHTFOREST, TwilightForestMetaData.getInstance());
-            store.put(EnumMobType.TWILIGHTSWAMP, TwilightSwampMetaData.getInstance());
-            store.put(EnumMobType.TWILIGHTDARKWOOD, TwilightDarkwoodMetaData.getInstance());
-            store.put(EnumMobType.TWILIGHTGLACIER, TwilightGlacierMetaData.getInstance());
+            store.put(EnumMobType.TWILIGHT_FOREST, TwilightForestMetaData.getInstance());
+            store.put(EnumMobType.TWILIGHT_SWAMP, TwilightSwampMetaData.getInstance());
+            store.put(EnumMobType.TWILIGHT_DARKWOOD, TwilightDarkwoodMetaData.getInstance());
+            store.put(EnumMobType.TWILIGHT_GLACIER, TwilightGlacierMetaData.getInstance());
         }
 
         //
@@ -69,79 +66,21 @@ public class MobMetaDataStore {
         }
     }
 
-    public static int getSimulationTickCost(EnumMobType mobType) {
-        return DMLConfig.SIMULATION_CHAMBER.getSimulationTickCost(mobType);
-    }
-
-    private static MobMetaData getMetaData(EnumMobType mobType) {
+    public static MobMetaData getMetaData(EnumMobType mobType) {
         return store.getOrDefault(mobType, null);
     }
 
-    public static String getDisplayName(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getName() : "";
-    }
+    public static boolean dataMobListContainsEntity(EnumMobType mobType, EntityLivingBase entity) {
+        EntityEntry entityEntry = EntityRegistry.getEntry(entity.getClass());
+        if (entityEntry == null)
+            return false;
 
-    public static String getDisplayNamePlural(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getPluralName() : "";
-    }
+        ResourceLocation registryName = entityEntry.getRegistryName();
+        if (registryName == null)
+            return false;
 
-    public static String[] getMobTrivia(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getMobTrivia() : new String[] {};
-    }
-
-    public static int getNumberOfHearts(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getNumberOfHearts() : 0;
-    }
-
-    public static String getExtraTooltip(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getExtraTooltip() : "";
-    }
-
-    public static int getInterfaceScale(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getInterfaceScale() : 0;
-    }
-
-    public static int getInterfaceOffsetX(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getInterfaceOffsetX() : 0;
-    }
-
-    public static int getInterfaceOffsetY(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getInterfaceOffsetY() : 0;
-    }
-
-    @Nullable
-    public static EnumLivingMatterType getLivingMatterType(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getLivingMatterType() : null;
-    }
-
-    @Nullable
-    public static Entity getEntity(EnumMobType mobType, World world) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData != null ? metaData.getEntity(world) : null;
-    }
-
-    @Nullable
-    public static Entity getEntityExtra(EnumMobType mobType, World world) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData instanceof MobMetaData.MobMetaDataExtra ? ((MobMetaData.MobMetaDataExtra) metaData).getEntityExtra(world) : null;
-    }
-
-    public static int getExtraInterfaceOffsetX(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData instanceof MobMetaData.MobMetaDataExtra ? ((MobMetaData.MobMetaDataExtra) metaData).getExtraInterfaceOffsetX() : 0;
-    }
-
-    public static int getExtraInterfaceOffsetY(EnumMobType mobType) {
-        MobMetaData metaData = getMetaData(mobType);
-        return metaData instanceof MobMetaData.MobMetaDataExtra ? ((MobMetaData.MobMetaDataExtra) metaData).getExtraInterfaceOffsetY() : 0;
+        String name = registryName.toString();
+        String[] mobList = DMLConfig.MOB_SETTINGS.getDataMobs(mobType);
+        return Arrays.asList(mobList).contains(name);
     }
 }

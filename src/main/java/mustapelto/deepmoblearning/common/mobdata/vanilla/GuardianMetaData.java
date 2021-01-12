@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityGuardian;
@@ -10,13 +12,17 @@ public class GuardianMetaData extends MobMetaData {
     private static GuardianMetaData instance;
 
     private GuardianMetaData() {
-        super("Guardian",
+        super(EnumMobType.GUARDIAN.getName(),
                 15,
                 36,
                 5,
                 -5,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"Lurking in the oceans.", "Uses some sort of sonar beam as", "a means of attack."}
+                340,
+                new String[]{
+                        "minecraft:elder_guardian",
+                        "minecraft:guardian"
+                }
                 );
     }
 

@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityWitch;
@@ -13,14 +15,14 @@ public class WitchMetaData extends MobMetaData {
     private static WitchMetaData instance;
 
     private WitchMetaData() {
-        super("Witch",
-                "Witches",
+        super(EnumMobType.WITCH.getName(),
                 13,
                 34,
                 4,
                 11,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"Affinity with potions and concoctions.", "Likes cats.", "Beware!"}
+                120,
+                new String[]{"minecraft:witch"}
                 );
     }
 

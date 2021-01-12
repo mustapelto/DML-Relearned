@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityWitherSkeleton;
@@ -13,13 +15,14 @@ public class WitherSkeletonMetaData extends MobMetaData {
     private static WitherSkeletonMetaData instance;
 
     private WitherSkeletonMetaData() {
-        super("Wither Skeleton",
+        super(EnumMobType.WITHER_SKELETON.getName(),
                 10,
                 33,
                 5,
                 10,
                 EnumLivingMatterType.HELLISH,
-                new String[]{"Inflicts the Wither effect.", "Bring milk!"}
+                880,
+                new String[]{"minecraft:wither_skeleton"}
                 );
     }
 

@@ -1,7 +1,11 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.enums.EnumMobType;
+import mustapelto.deepmoblearning.common.DMLConfig;
+import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import net.minecraft.client.resources.I18n;
@@ -26,7 +30,12 @@ public class ItemDataModel extends ItemBase {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        String extraToolTip = DataModelHelper.getExtraTooltip(stack);
+        EnumMobType stackMobType = DataModelHelper.getMobType(stack);
+        MobMetaData mobMetaData = MobMetaDataStore.getMetaData(stackMobType);
+        if (stackMobType == null || mobMetaData == null)
+            return;
+
+        String extraToolTip = mobMetaData.getExtraTooltip();
         if (!extraToolTip.equals("")) {
             tooltip.add(extraToolTip);
         }
@@ -47,8 +56,10 @@ public class ItemDataModel extends ItemBase {
                 tooltip.add(I18n.format("deepmoblearning.data_model.kill_multiplier", currentKillMultiplier));
             }
 
-            int rfCost = DataModelHelper.getCurrentTierSimulationCost(stack);
-            String livingMatterName = DataModelHelper.getLivingMatterDisplayNameFormatted(stack);
+            int rfCost = DMLConfig.SIMULATION_CHAMBER.getSimulationTickCost(mobType);
+
+            EnumLivingMatterType livingMatterType = mobMetaData.getLivingMatterType();
+            String livingMatterName = livingMatterType.getDisplayNameFormatted();
             tooltip.add(I18n.format("deepmoblearning.data_model.rf_cost", rfCost));
             tooltip.add(I18n.format("deepmoblearning.data_model.type", livingMatterName));
         }

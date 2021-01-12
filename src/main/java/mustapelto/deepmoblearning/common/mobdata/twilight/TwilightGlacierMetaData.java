@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.twilight;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -13,14 +15,23 @@ public class TwilightGlacierMetaData extends MobMetaData {
     private static TwilightGlacierMetaData instance;
 
     private TwilightGlacierMetaData() {
-        super("Glacier inhabitant",
+        super(EnumMobType.TWILIGHT_GLACIER.getName(),
                 0,
                 33,
                 5,
                 13,
                 EnumLivingMatterType.TWILIGHT,
-                new String[]{"Here you'll find caves with ancient beasts", "and Elsa's wicked distant cousin Aurora.", "(Elsa might \"let it go\", but Aurora sure won't!)"},
-                "Gain data by defeating non-vanilla mobs in the Yeti Lair and Ice Tower."
+                256,
+                new String[]{
+                        "twilightforest:yeti_alpha",
+                        "twilightforest:yeti",
+                        "twilightforest:winter_wolf",
+                        "twilightforest:penguin",
+                        "twilightforest:snow_guardian",
+                        "twilightforest:stable_ice_core",
+                        "twilightforest:unstable_ice_core",
+                        "twilightforest:snow_queen"
+                }
                 );
     }
 

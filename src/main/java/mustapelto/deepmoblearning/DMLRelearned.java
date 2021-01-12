@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.ServerProxy;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.registry.ItemRegistry;
 import net.minecraft.creativetab.CreativeTabs;
@@ -13,7 +14,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = DMLConstants.ModInfo.ID, name = DMLConstants.ModInfo.NAME, version = DMLConstants.ModInfo.VERSION,
@@ -23,7 +23,7 @@ public class DMLRelearned
     @Mod.Instance(DMLConstants.ModInfo.ID)
     public static DMLRelearned instance;
 
-    public static Logger logger = LogManager.getLogger(DMLConstants.ModInfo.ID);
+    public static Logger logger;
 
     @SidedProxy(
             clientSide = "mustapelto.deepmoblearning.client.ClientProxy",
@@ -34,6 +34,8 @@ public class DMLRelearned
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        logger = event.getModLog();
+
         DMLPacketHandler.registerPackets();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new DMLGuiHandler());
@@ -54,7 +56,7 @@ public class DMLRelearned
     public static CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(ItemRegistry.living_matter_overworldian);
+            return new ItemStack(ItemRegistry.deep_learner);
         }
     };
 }

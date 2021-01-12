@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityGhast;
@@ -10,13 +12,14 @@ public class GhastMetaData extends MobMetaData {
     private static GhastMetaData instance;
 
     private GhastMetaData() {
-        super("Ghast",
+        super(EnumMobType.GHAST.getName(),
                 5,
                 10,
                 0,
                 -20,
                 EnumLivingMatterType.HELLISH,
-                new String[]{"If you hear something that sounds like", "a crying llama, you're probably hearing a ghast."}
+                372,
+                new String[]{"minecraft:ghast"}
                 );
     }
 

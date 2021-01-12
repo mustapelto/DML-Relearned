@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityWither;
@@ -10,13 +12,14 @@ public class WitherMetaData extends MobMetaData {
     private static WitherMetaData instance;
 
     private WitherMetaData() {
-        super("Wither",
+        super(EnumMobType.WITHER.getName(),
                 150,
                 22,
                 3,
                 18,
                 EnumLivingMatterType.EXTRATERRESTRIAL,
-                new String[]{"Do not approach this enemy. Run!", "I mean it has 3 heads, what could", "possibly go wrong?"}
+                2048,
+                new String[]{"minecraft:wither"}
                 );
     }
 

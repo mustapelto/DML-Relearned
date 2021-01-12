@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -10,13 +12,14 @@ public class CreeperMetaData extends MobMetaData {
     private static CreeperMetaData instance;
 
     private CreeperMetaData() {
-        super("Creeper",
+        super(EnumMobType.CREEPER.getName(),
                 10,
                 42,
                 5,
                 5,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"Will blow up your base if", "left unattended."}
+                80,
+                new String[]{"minecraft:creeper"}
                 );
     }
 

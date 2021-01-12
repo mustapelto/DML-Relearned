@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -10,14 +12,18 @@ public class EndermanMetaData extends MobMetaData {
     private static EndermanMetaData instance;
 
     private EndermanMetaData() {
-        super("Enderman",
-                "Endermen",
+        super(EnumMobType.ENDERMAN.getName(),
                 20,
                 30,
                 5,
                 11,
                 EnumLivingMatterType.EXTRATERRESTRIAL,
-                new String[]{"Friendly unless provoked, dislikes rain.", "Teleports short distances."}
+                512,
+                new String[]{
+                        "minecraft:enderman",
+                        "minecraft:endermite",
+                        "deepmoblearning:trial_enderman"
+                }
                 );
     }
 

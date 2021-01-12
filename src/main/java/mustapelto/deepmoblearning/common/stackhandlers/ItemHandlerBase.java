@@ -1,4 +1,4 @@
-package mustapelto.deepmoblearning.common.handlers;
+package mustapelto.deepmoblearning.common.stackhandlers;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

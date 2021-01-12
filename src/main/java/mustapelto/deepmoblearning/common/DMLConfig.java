@@ -3,7 +3,9 @@ package mustapelto.deepmoblearning.common;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.enums.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
 import mustapelto.deepmoblearning.common.util.MathHelper;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -30,7 +32,9 @@ public class DMLConfig {
 
         LivingMatter() {
             for (EnumLivingMatterType livingMatterType : EnumLivingMatterType.values()) {
-                CONSUME_XP_GAIN.put(livingMatterType.getName(), livingMatterType.getDefaultXP());
+                if (livingMatterType.isVanilla() || DMLConstants.ModDependencies.isLoaded(livingMatterType.getModID())) {
+                    CONSUME_XP_GAIN.put(livingMatterType.getName(), livingMatterType.getDefaultXP());
+                }
             }
         }
 
@@ -50,7 +54,9 @@ public class DMLConfig {
         SimulationChamber() {
             for (EnumMobType mobType : EnumMobType.values()) {
                 if (mobType.isVanilla() || (Loader.isModLoaded(mobType.getModID()))) {
-                    SIMULATION_TICK_COST.put(mobType.getName(), mobType.getDefaultRFCost());
+                    MobMetaData mobMetaData = MobMetaDataStore.getMetaData(mobType);
+                    if (mobMetaData != null)
+                        SIMULATION_TICK_COST.put(mobType.getName(), mobMetaData.getDefaultRFCost());
                 }
             }
         }
@@ -79,20 +85,43 @@ public class DMLConfig {
             for (EnumDataModelTier tier : EnumDataModelTier.values()) {
                 int level = tier.getLevel();
                 if (level < DMLConstants.DataModel.MAX_TIER) {
-                    KILL_MULTIPLIER.put(tier.getName(), tier.getKillMultiplierDefault());
+                    KILL_MULTIPLIER.put(tier.getLevelString(), tier.getKillMultiplierDefault());
                 }
                 if (level > 0) {
-                    DATA_REQUIRED.put(tier.getName(), tier.getKillsRequiredDefault());
+                    DATA_REQUIRED.put(tier.getLevelString(), tier.getKillsRequiredDefault());
                 }
             }
         }
 
         public int getKillMultiplier(EnumDataModelTier tier) {
-            return MathHelper.Clamp(KILL_MULTIPLIER.getOrDefault(tier.getName(), 1), 1, Integer.MAX_VALUE);
+            return MathHelper.Clamp(KILL_MULTIPLIER.getOrDefault(tier.getLevelString(), 1), 1, Integer.MAX_VALUE);
         }
 
         public int getDataRequired(EnumDataModelTier tier) {
-            return MathHelper.Clamp(DATA_REQUIRED.getOrDefault(tier.getName(), 0), 1, Integer.MAX_VALUE);
+            return MathHelper.Clamp(DATA_REQUIRED.getOrDefault(tier.getLevelString(), 0), 1, Integer.MAX_VALUE);
+        }
+    }
+
+    @Name("Mob Settings")
+    public static final MobSettings MOB_SETTINGS = new MobSettings();
+
+    public static class MobSettings {
+        @Name("Data Model Associated Mobs")
+        @Comment("Register entities that count towards leveling up the Data Model\nFormat: modid:entity_name")
+        public final Map<String, String[]> DATA_MODEL_ASSOCIATED_MOBS = new HashMap<>();
+
+        MobSettings() {
+            for (EnumMobType mobType : EnumMobType.values()) {
+                if (mobType.isVanilla() || DMLConstants.ModDependencies.isLoaded(mobType.getModID())) {
+                    MobMetaData mobMetaData = MobMetaDataStore.getMetaData(mobType);
+                    if (mobMetaData != null)
+                        DATA_MODEL_ASSOCIATED_MOBS.put(mobType.getName(), mobMetaData.getDefaultDataMobs());
+                }
+            }
+        }
+
+        public String[] getDataMobs(EnumMobType mobType) {
+            return DATA_MODEL_ASSOCIATED_MOBS.getOrDefault(mobType.getName(), new String[]{});
         }
     }
 

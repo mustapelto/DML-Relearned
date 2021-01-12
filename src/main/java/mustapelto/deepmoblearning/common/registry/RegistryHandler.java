@@ -2,9 +2,11 @@ package mustapelto.deepmoblearning.common.registry;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.common.enums.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
 import net.minecraft.item.Item;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.event.RegistryEvent;

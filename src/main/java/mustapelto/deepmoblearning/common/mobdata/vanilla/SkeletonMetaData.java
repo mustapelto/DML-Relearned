@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -13,13 +15,18 @@ public class SkeletonMetaData extends MobMetaData {
     private static SkeletonMetaData instance;
 
     private SkeletonMetaData() {
-        super("Skeleton",
+        super(EnumMobType.SKELETON.getName(),
                 10,
                 38,
                 6,
                 10,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"A formidable archer, which seems to be running", "some sort of cheat engine.", "A shield could prove useful."}
+                80,
+                new String[]{
+                        "minecraft:stray",
+                        "minecraft:skeleton",
+                        "twilightforest:skeleton_druid"
+                }
                 );
     }
 

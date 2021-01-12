@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.handlers.ItemHandlerBase;
+import mustapelto.deepmoblearning.common.stackhandlers.ItemHandlerBase;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

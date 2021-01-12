@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityShulker;
@@ -10,13 +12,14 @@ public class ShulkerMetaData extends MobMetaData {
     private static ShulkerMetaData instance;
 
     private ShulkerMetaData() {
-        super("Shulker",
+        super(EnumMobType.SHULKER.getName(),
                 15,
                 36,
                 5,
                 -5,
                 EnumLivingMatterType.EXTRATERRESTRIAL,
-                new String[]{"Found in End cities.", "Sneaky little buggers."}
+                256,
+                new String[]{"minecraft:shulker"}
                 );
     }
 

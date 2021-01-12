@@ -39,6 +39,10 @@ public enum EnumDataModelTier {
         return level;
     }
 
+    public String getLevelString() {
+        return String.format("Tier %d", level);
+    }
+
     public int getKillMultiplierDefault() {
         return killMultiplierDefault;
     }

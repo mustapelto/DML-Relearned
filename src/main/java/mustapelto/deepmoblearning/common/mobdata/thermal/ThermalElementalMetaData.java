@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.mobdata.thermal;
 
 import cofh.thermalfoundation.entity.monster.EntityBlizz;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
@@ -10,13 +11,18 @@ public class ThermalElementalMetaData extends MobMetaData {
     private static ThermalElementalMetaData instance;
 
     private ThermalElementalMetaData() {
-        super("Thermal Elemental",
+        super(EnumMobType.THERMAL_ELEMENTAL.getName(),
                 10,
                 48,
                 10,
                 20,
                 EnumLivingMatterType.OVERWORLDIAN,
-                new String[]{"Blizzes, Blitzes and Basalzes.", "Siblings of the Blaze.", "Their master really liked words starting with B."}
+                256,
+                new String[]{
+                        "thermalfoundation:blizz",
+                        "thermalfoundation:blitz",
+                        "thermalfoundation:basalz"
+                }
                 );
     }
 

@@ -1,16 +1,19 @@
 package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.enums.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextComponentString;
 
 public class DataModelHelper {
     //
@@ -66,9 +69,9 @@ public class DataModelHelper {
         return stackItem instanceof ItemDataModel ? ((ItemDataModel) stackItem).getMobType() : null;
     }
 
-    public static String getExtraTooltip(ItemStack stack) {
+    public static MobMetaData getMobMetaData(ItemStack stack) {
         EnumMobType stackMobType = getMobType(stack);
-        return stackMobType != null ? MobMetaDataStore.getExtraTooltip(stackMobType) : "";
+        return stackMobType != null ? MobMetaDataStore.getMetaData(stackMobType) : null;
     }
 
     private static EnumDataModelTier getTier(ItemStack stack) {
@@ -126,21 +129,6 @@ public class DataModelHelper {
         return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - currentData, killMultiplier);
     }
 
-    public static int getCurrentTierSimulationCost(ItemStack stack) {
-        EnumMobType stackMobType = getMobType(stack);
-        return stackMobType != null ? MobMetaDataStore.getSimulationTickCost(stackMobType) : 0;
-    }
-
-    public static EnumLivingMatterType getLivingMatterType(ItemStack stack) {
-        EnumMobType stackMobType = getMobType(stack);
-        return stackMobType != null ? MobMetaDataStore.getLivingMatterType(stackMobType) : null;
-    }
-
-    public static String getLivingMatterDisplayNameFormatted(ItemStack stack) {
-        EnumLivingMatterType livingMatterType = getLivingMatterType(stack);
-        return livingMatterType != null ? livingMatterType.getDisplayNameFormatted() : "";
-    }
-
     public static NonNullList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
         NonNullList<ItemStack> result = NonNullList.create();
 
@@ -150,5 +138,44 @@ public class DataModelHelper {
         });
 
         return result;
+    }
+
+    //
+    // Data Manipulation
+    //
+    public static void increaseKillCount(ItemStack stack, EntityPlayerMP player) {
+        int tier = getTierLevel(stack);
+        int currentKillCount = getCurrentTierKillCount(stack);
+
+        // TODO: Glitch Sword and Trial Stuff
+
+        // Update kill count and set NBT
+        currentKillCount += /*(isGlitchSwordEquipped && !cap.isTrialActive() ? 2 : */1;
+        setCurrentTierKillCount(stack, currentKillCount);
+        setTotalKillCount(stack, getTotalKillCount(stack) + 1);
+
+        if (tryIncreaseTier(stack)) {
+            player.sendMessage(new TextComponentString(
+                    I18n.format("deepmoblearning.data_model.reached_tier",
+                            stack.getDisplayName(),
+                            getTierDisplayNameFormatted(stack))
+            ));
+        }
+    }
+
+    private static boolean tryIncreaseTier(ItemStack stack) {
+        int tier = getTierLevel(stack);
+        if (tier >= DMLConstants.DataModel.MAX_TIER)
+            return false;
+
+        if (getCurrentTierCurrentData(stack) >= getCurrentTierRequiredData(stack)) {
+            setCurrentTierKillCount(stack, 0);
+            setCurrentTierSimulationCount(stack, 0);
+            setTierLevel(stack, tier + 1);
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.twilight;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -14,14 +16,22 @@ public class TwilightSwampMetaData extends MobMetaData {
     private static TwilightSwampMetaData instance;
 
     private TwilightSwampMetaData() {
-        super("Swamp creature",
+        super(EnumMobType.TWILIGHT_SWAMP.getName(),
                 0,
                 33,
                 6,
                 14,
                 EnumLivingMatterType.TWILIGHT,
-                new String[]{"This realm sure could use some building regulations.", "How are you even allowed to build a huge maze", "in your basement!?"},
-                "Gain data by defeating non-vanilla mobs in the Swamp Labyrinth and Hydra Lair."
+                256,
+                new String[]{
+                        "twilightforest:minotaur",
+                        "twilightforest:minoshroom",
+                        "twilightforest:maze_slime",
+                        "twilightforest:fire_beetle",
+                        "twilightforest:pinch_beetle",
+                        "twilightforest:slime_beetle",
+                        "twilightforest:hydra"
+                }
                 );
     }
 

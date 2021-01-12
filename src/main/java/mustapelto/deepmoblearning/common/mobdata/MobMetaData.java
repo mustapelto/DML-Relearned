@@ -1,80 +1,58 @@
 package mustapelto.deepmoblearning.common.mobdata;
 
+import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+
+import java.util.Arrays;
 
 public abstract class MobMetaData {
-    private final String name;
-    private final String pluralName;
+    private final String baseTranslateKey;
     private final int numberOfHearts;
     private final int interfaceScale;
     private final int interfaceOffsetX;
     private final int interfaceOffsetY;
     private final EnumLivingMatterType livingMatterType;
-    private final String[] mobTrivia;
-    private final String extraTooltip;
+    private final int defaultRFCost;
+    private final String[] defaultDataMobs;
 
-    public MobMetaData(String name, String pluralName, int numberOfHearts, int interfaceScale, int interfaceOffsetX, int interfaceOffsetY,
-                       EnumLivingMatterType livingMatterType, String[] mobTrivia, String extraTooltip) {
-        this.name = name;
-        this.pluralName = pluralName;
+    public MobMetaData(String name,
+                       int numberOfHearts,
+                       int interfaceScale,
+                       int interfaceOffsetX,
+                       int interfaceOffsetY,
+                       EnumLivingMatterType livingMatterType,
+                       int defaultRFCost,
+                       String[] defaultDataMobs) {
+        baseTranslateKey = String.format("deepmoblearning.mob_meta.%s", name);
+
         this.numberOfHearts = numberOfHearts;
         this.interfaceScale = interfaceScale;
         this.interfaceOffsetX = interfaceOffsetX;
         this.interfaceOffsetY = interfaceOffsetY;
         this.livingMatterType = livingMatterType;
-        this.mobTrivia = mobTrivia;
-        this.extraTooltip = extraTooltip;
+        this.defaultRFCost = defaultRFCost;
+        this.defaultDataMobs = defaultDataMobs;
     }
 
-    public MobMetaData(String name, int numberOfHearts, int interfaceScale, int interfaceOffsetX, int interfaceOffsetY,
-                       EnumLivingMatterType livingMatterType, String[] mobTrivia, String extraTooltip) {
-        this(name,
-                name + "s",
-                numberOfHearts,
-                interfaceScale,
-                interfaceOffsetX,
-                interfaceOffsetY,
-                livingMatterType,
-                mobTrivia,
-                extraTooltip);
+    private String translationOrEmpty(String baseKey, String subKey) {
+        return I18n.hasKey(baseKey + subKey) ? I18n.format(baseKey + subKey) : "";
     }
 
-    public MobMetaData(String name, String pluralName, int numberOfHearts, int interfaceScale, int interfaceOffsetX, int interfaceOffsetY,
-                       EnumLivingMatterType livingMatterType, String[] mobTrivia) {
-        this(name,
-                pluralName,
-                numberOfHearts,
-                interfaceScale,
-                interfaceOffsetX,
-                interfaceOffsetY,
-                livingMatterType,
-                mobTrivia,
-                "");
+    public String getDisplayName() {
+        return translationOrEmpty(baseTranslateKey, ".display_name");
     }
 
-    public MobMetaData(String name, int numberOfHearts, int interfaceScale, int interfaceOffsetX, int interfaceOffsetY,
-                       EnumLivingMatterType livingMatterType, String[] mobTrivia) {
-        this(name,
-                name + "s",
-                numberOfHearts,
-                interfaceScale,
-                interfaceOffsetX,
-                interfaceOffsetY,
-                livingMatterType,
-                mobTrivia,
-                "");
-    }
-
-
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPluralName() {
-        return pluralName;
+    public String getDisplayNamePlural() {
+        String displayNamePlural = translationOrEmpty(baseTranslateKey, ".display_name_plural");
+        return !displayNamePlural.equals("") ? displayNamePlural : getDisplayName() + "s";
     }
 
     public int getNumberOfHearts() {
@@ -97,12 +75,20 @@ public abstract class MobMetaData {
         return livingMatterType;
     }
 
-    public String[] getMobTrivia() {
-        return mobTrivia;
+    public String[] getTrivia() {
+        return translationOrEmpty(baseTranslateKey, ".trivia").split("\n");
     }
 
     public String getExtraTooltip() {
-        return extraTooltip;
+        return translationOrEmpty(baseTranslateKey, ".extra_tooltip");
+    }
+
+    public int getDefaultRFCost() {
+        return defaultRFCost;
+    }
+
+    public String[] getDefaultDataMobs() {
+        return defaultDataMobs;
     }
 
     public abstract Entity getEntity(World world);
@@ -111,37 +97,30 @@ public abstract class MobMetaData {
         private final int extraInterfaceOffsetX;
         private final int extraInterfaceOffsetY;
 
-        public MobMetaDataExtra(String name, String pluralName, int numberOfHearts, int interfaceScale, int interfaceOffsetX,
-                                int interfaceOffsetY, EnumLivingMatterType livingMatterType, String[] mobTrivia,
-                                int extraInterfaceOffsetX, int extraInterfaceOffsetY, String extraTooltip) {
+        public MobMetaDataExtra(String name,
+                                int numberOfHearts,
+                                int interfaceScale,
+                                int interfaceOffsetX,
+                                int interfaceOffsetY,
+                                EnumLivingMatterType livingMatterType,
+                                int defaultRFCost,
+                                String[] defaultDataMobs,
+                                int extraInterfaceOffsetX,
+                                int extraInterfaceOffsetY) {
             super(name,
-                    pluralName,
                     numberOfHearts,
                     interfaceScale,
                     interfaceOffsetX,
                     interfaceOffsetY,
                     livingMatterType,
-                    mobTrivia,
-                    extraTooltip);
+                    defaultRFCost,
+                    defaultDataMobs
+            );
             this.extraInterfaceOffsetX = extraInterfaceOffsetX;
             this.extraInterfaceOffsetY = extraInterfaceOffsetY;
         }
 
-        public MobMetaDataExtra(String name, int numberOfHearts, int interfaceScale, int interfaceOffsetX, int interfaceOffsetY,
-                                EnumLivingMatterType livingMatterType, String[] mobTrivia, int extraInterfaceOffsetX, int extraInterfaceOffsetY,
-                                String extraTooltip) {
-            this(name,
-                    name + "s",
-                    numberOfHearts,
-                    interfaceScale,
-                    interfaceOffsetX,
-                    interfaceOffsetY,
-                    livingMatterType,
-                    mobTrivia,
-                    extraInterfaceOffsetX,
-                    extraInterfaceOffsetY,
-                    extraTooltip);
-        }
+        public abstract Entity getEntityExtra(World world);
 
         public int getExtraInterfaceOffsetX() {
             return extraInterfaceOffsetX;
@@ -150,7 +129,5 @@ public abstract class MobMetaData {
         public int getExtraInterfaceOffsetY() {
             return extraInterfaceOffsetY;
         }
-
-        public abstract Entity getEntityExtra(World world);
     }
 }

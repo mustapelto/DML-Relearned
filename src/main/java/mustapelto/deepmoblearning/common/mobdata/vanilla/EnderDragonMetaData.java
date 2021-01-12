@@ -1,6 +1,8 @@
 package mustapelto.deepmoblearning.common.mobdata.vanilla;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
@@ -10,13 +12,14 @@ public class EnderDragonMetaData extends MobMetaData {
     private static EnderDragonMetaData instance;
 
     private EnderDragonMetaData() {
-        super("Ender Dragon",
+        super(EnumMobType.ENDER_DRAGON.getName(),
                 100,
                 7,
                 0,
                 -20,
                 EnumLivingMatterType.EXTRATERRESTRIAL,
-                new String[]{"Resides in the End, does not harbor treasure.", "Destroy its crystals, break the cycle!"}
+                2560,
+                new String[]{"minecraft:ender_dragon"}
                 );
     }
 

@@ -1,3 +1,5 @@
+#PARSE_ESCAPES
+
 #
 # Misc Items
 #
@@ -71,6 +73,8 @@ deepmoblearning.data_model.tier.3.formatted=§d%s§r
 deepmoblearning.data_model.tier.4=Self-Aware
 deepmoblearning.data_model.tier.4.formatted=§6%s§r
 
+deepmoblearning.data_model.reached_tier=%s reached the %s tier
+
 #
 # Tooltips
 #
@@ -113,6 +117,68 @@ deepmoblearning.deep_learner.no_model.line_3=Your Data Models will collect data
 deepmoblearning.deep_learner.no_model.line_4=when they are placed in the Deep Learner.
 deepmoblearning.deep_learner.no_model.line_5=In order to collect data, you must
 deepmoblearning.deep_learner.no_model.line_6=deliver the killing blow.
+
+#
+# Mob Metadata
+#
+
+# Vanilla
+deepmoblearning.mob_meta.blaze.display_name=Blaze
+deepmoblearning.mob_meta.blaze.trivia=Bring buckets of water, and watch in despair\nas it evaporates, and everything is on fire.\nYou are on fire.
+deepmoblearning.mob_meta.creeper.display_name=Creeper
+deepmoblearning.mob_meta.creeper.trivia=Will blow up your base if\nleft unattended.
+deepmoblearning.mob_meta.dragon.display_name=Ender Dragon
+deepmoblearning.mob_meta.dragon.trivia=Resides in the End, does not harbor treasure.\nDestroy its crystals, break the cycle!
+deepmoblearning.mob_meta.enderman.display_name=Enderman
+deepmoblearning.mob_meta.enderman.display_name_plural=Endermen
+deepmoblearning.mob_meta.enderman.trivia=Friendly unless provoked, dislikes rain.\nTeleports short distances.
+deepmoblearning.mob_meta.ghast.display_name=Ghast
+deepmoblearning.mob_meta.ghast.trivia=If you hear something that sounds like\na crying llama, you're probably hearing a ghast.
+deepmoblearning.mob_meta.guardian.display_name=Guardian
+deepmoblearning.mob_meta.guardian.trivia="Lurking in the oceans.\nUses some sort of sonar beam as\na means of attack.
+deepmoblearning.mob_meta.shulker.display_name=Shulker
+deepmoblearning.mob_meta.shulker.trivia=Found in End cities.\nSneaky little buggers.
+deepmoblearning.mob_meta.skeleton.display_name=Skeleton
+deepmoblearning.mob_meta.skeleton.trivia=A formidable archer, which seems to be running\nsome sort of cheat engine.\nA shield could prove useful.
+deepmoblearning.mob_meta.slime.display_name=Slime
+deepmoblearning.mob_meta.slime.trivia=The bouncing bouncer\nbounces his bouncy bouncing\nBouncing and bou- squish! -"A new slime haiku"
+deepmoblearning.mob_meta.spider.display_name=Spider
+deepmoblearning.mob_meta.spider.trivia=Nocturnal douchebags, beware!\nDrops strands of string for some reason.
+deepmoblearning.mob_meta.witch.display_name=Witch
+deepmoblearning.mob_meta.witch.display_name_plural=Witches
+deepmoblearning.mob_meta.witch.trivia=Affinity with potions and concoctions.\nLikes cats.\nBeware!
+deepmoblearning.mob_meta.wither.display_name=Wither
+deepmoblearning.mob_meta.wither.trivia=Do not approach this enemy. Run!\nI mean it has 3 heads, what could\npossibly go wrong?"
+deepmoblearning.mob_meta.wither_skeleton.display_name=Wither Skeleton
+deepmoblearning.mob_meta.wither_skeleton.trivia=Inflicts the Wither effect.\nBring milk!
+deepmoblearning.mob_meta.zombie.display_name=Zombie
+deepmoblearning.mob_meta.zombie.trivia=They go moan in the night.\nDoes not understand the need for\npersonal space.
+
+# Thermal Expansion
+deepmoblearning.mob_meta.thermal_elemental.display_name=Thermal Elemental
+deepmoblearning.mob_meta.thermal_elemental.trivia=Blizzes, Blitzes and Basalzes.\nSiblings of the Blaze.\nTheir master really liked words starting with B.
+
+# Twilight Forest
+deepmoblearning.mob_meta.twilight_forest.display_name=Forest creature
+deepmoblearning.mob_meta.twilight_forest.trivia=Nagas, Liches and flying books.\nWhat the hell have you walked into?
+deepmoblearning.mob_meta.twilight_forest.extra_tooltip=Gain data by defeating non-vanilla mobs in the Naga Courtyard and Lich Tower.
+deepmoblearning.mob_meta.twilight_swamp.display_name=Swamp creature
+deepmoblearning.mob_meta.twilight_swamp.trivia=This realm sure could use some building regulations.\nHow are you even allowed to build a huge maze\nin your basement!?
+deepmoblearning.mob_meta.twilight_swamp.extra_tooltip=Gain data by defeating non-vanilla mobs in the Swamp Labyrinth and Hydra Lair.
+deepmoblearning.mob_meta.twilight_glacier.display_name=Glacier inhabitant
+deepmoblearning.mob_meta.twilight_glacier.trivia=Here you'll find caves with ancient beasts\nand Elsa's wicked distant cousin Aurora.\n(Elsa might "let it go", but Aurora sure won't!)
+deepmoblearning.mob_meta.twilight_glacier.extra_tooltip=Gain data by defeating non-vanilla mobs in the Yeti Lair and Ice Tower.
+deepmoblearning.mob_meta.twilight_darkwood.display_name=Darkwood creature
+deepmoblearning.mob_meta.twilight_darkwood.trivia=Spooky scary strongholds send shivers down\nyour spine, the Ur-Ghast will shock your\nsoul and seal your doom tonight!
+deepmoblearning.mob_meta.twilight_darkwood.extra_tooltip=Gain data by defeating non-vanilla mobs in the Goblin Knight Stronghold and Dark Tower.
+
+# Tinkers' Construct
+deepmoblearning.mob_meta.tinker_slime.display_name=Blue Slime
+deepmoblearning.mob_meta.tinker_slime.trivia=The elusive blue slime. Seemingly a\npart of some sort of power hierarchy,\nsince there's a bunch of "King slimes" around.
+
+# Matter Overdrive
+deepmoblearning.mob_meta.mo_android.display_name=Rogue Android
+deepmoblearning.mob_meta.mo_android.trivia=It's not simply an android.\nIt's a life form, entirely unique.\nMeep morp.
 
 #
 # Creative Tab

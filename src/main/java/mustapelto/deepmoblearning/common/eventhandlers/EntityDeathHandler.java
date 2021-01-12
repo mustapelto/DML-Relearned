@@ -1,14 +1,19 @@
-package mustapelto.deepmoblearning.common.handlers;
+package mustapelto.deepmoblearning.common.eventhandlers;
 
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -24,7 +29,12 @@ public class EntityDeathHandler {
     private static final NonNullList<UUID> killedEntityUUIDBlacklist = NonNullList.create();
 
     @SubscribeEvent
-    private static void entityDeath(LivingDeathEvent event) {
+    public static void dropEvent(LivingDropsEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public static void entityDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer)
             handlePlayerDeath(event);
         else
@@ -73,7 +83,15 @@ public class EntityDeathHandler {
         /* TODO: add
         trialKeys.addAll() */
 
+        NonNullList<ItemStack> updatedModels = NonNullList.create();
+        deepLearners.forEach(stack -> updatedModels.addAll(updateModels(stack, event, player)));
 
+        if (updatedModels.isEmpty())
+            return; // No models found -> nothing more to do
+
+        // TODO: add glitch armor pristine drop
+
+        // TODO: add glitch sword effects
     }
 
     // Helper Functions
@@ -82,15 +100,23 @@ public class EntityDeathHandler {
         NonNullList<ItemStack> deepLearnerItems = ItemDeepLearner.getContainedItems(deepLearner);
         NonNullList<ItemStack> updatedModels = NonNullList.create();
 
-        DMLRelearned.logger.info("Entity killed: " + event.getEntityLiving().getName());
-
-
-        /*deepLearnerItems.forEach(stack -> {
+        deepLearnerItems.forEach(stack -> {
             if (!(stack.getItem() instanceof ItemDataModel))
                 return;
 
+            EnumMobType mobType = DataModelHelper.getMobType(stack);
+            MobMetaData mobMetaData = DataModelHelper.getMobMetaData(stack);
 
-        })*/
+            if (mobType == null || mobMetaData == null)
+                return;
+
+            if (MobMetaDataStore.dataMobListContainsEntity(mobType, event.getEntityLiving())) {
+                DataModelHelper.increaseKillCount(stack, player);
+                updatedModels.add(stack);
+            }
+        });
+        ItemDeepLearner.setContainedItems(deepLearner, deepLearnerItems);
+
         return updatedModels;
     }
 

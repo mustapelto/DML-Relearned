@@ -2,9 +2,10 @@ package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.ServerProxy;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.registry.ItemRegistry;
+import mustapelto.deepmoblearning.common.util.FileHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
@@ -35,9 +36,12 @@ public class DMLRelearned
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
+        FileHelper.init(event);
 
+        MobMetaDataManager.init();
+
+        // Network Stuff
         DMLPacketHandler.registerPackets();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new DMLGuiHandler());
     }
 

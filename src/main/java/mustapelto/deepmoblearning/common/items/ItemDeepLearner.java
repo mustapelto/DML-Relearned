@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemDeepLearner extends ItemBase implements IGuiItem {
+public class ItemDeepLearner extends DMLItem implements IGuiItem {
     public ItemDeepLearner() {
         super("deep_learner", 1);
     }

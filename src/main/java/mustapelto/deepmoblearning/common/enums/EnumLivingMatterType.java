@@ -20,7 +20,7 @@ public enum EnumLivingMatterType {
     }
 
     EnumLivingMatterType(String name, int defaultXP) {
-        this(name, defaultXP, DMLConstants.VANILLA);
+        this(name, defaultXP, DMLConstants.MINECRAFT);
     }
 
     public String getName() {
@@ -36,7 +36,7 @@ public enum EnumLivingMatterType {
     }
 
     public boolean isVanilla() {
-        return modID.equals(DMLConstants.VANILLA);
+        return modID.equals(DMLConstants.MINECRAFT);
     }
 
     private String getDisplayName() {

@@ -1,11 +1,10 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.DMLConstants.GuiColors;
-import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.Minecraft;
@@ -117,11 +116,9 @@ public class DeepLearnerGui extends GuiContainer {
         // At least 1 data model -> display metadata
         if (dataModels.size() > 0) {
             ItemStack currentModelStack = dataModels.get(currentModelIndex);
-            EnumMobType mobType = DataModelHelper.getMobType(currentModelStack);
+            MobMetaData mobMetaData = DataModelHelper.getMobMetaData(currentModelStack);
 
-            if (mobType != null) {
-                MobMetaData mobMetaData = MobMetaDataStore.getMetaData(mobType);
-
+            if (mobMetaData != null) {
                 renderMetaData(textureManager, mobMetaData, left, top, currentModelStack);
                 renderMobDisplayBox(textureManager, left, top);
 
@@ -129,23 +126,20 @@ public class DeepLearnerGui extends GuiContainer {
 
                 if (mainEntity != null) {
                     renderEntity(mainEntity,
-                            mobMetaData.getInterfaceScale(),
-                            left + mobMetaData.getInterfaceOffsetX(),
-                            top + 80 + mobMetaData.getInterfaceOffsetY(),
+                            mobMetaData.getDisplayEntityScale(),
+                            left + mobMetaData.getDisplayEntityOffsetX(),
+                            top + 80 + mobMetaData.getDisplayEntityOffsetY(),
                             partialTicks);
                 }
 
-                if (mobMetaData instanceof MobMetaData.MobMetaDataExtra) {
-                    MobMetaData.MobMetaDataExtra mobMetaDataExtra = (MobMetaData.MobMetaDataExtra) mobMetaData;
-                    Entity extraEntity = mobMetaDataExtra.getEntityExtra(world);
+                Entity extraEntity = mobMetaData.getExtraEntity(world);
 
-                    if (extraEntity != null) {
-                        renderEntity(extraEntity,
-                                mobMetaDataExtra.getInterfaceScale(),
-                                left + mobMetaDataExtra.getExtraInterfaceOffsetX(),
-                                top + 80 + mobMetaDataExtra.getExtraInterfaceOffsetY(),
-                                partialTicks);
-                    }
+                if (extraEntity != null) {
+                    renderEntity(extraEntity,
+                            mobMetaData.getDisplayEntityScale(),
+                            left + mobMetaData.getDisplayExtraEntityOffsetX(),
+                            top + 80 + mobMetaData.getDisplayExtraEntityOffsetY(),
+                            partialTicks);
                 }
             }
         } else {
@@ -188,7 +182,7 @@ public class DeepLearnerGui extends GuiContainer {
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(stack);
         String mobName = mobMetaData.getDisplayName();
         String mobPluralName = mobMetaData.getDisplayNamePlural();
-        String[] mobTrivia = mobMetaData.getTrivia();
+        String[] mobTrivia = mobMetaData.getMobTrivia();
         int totalKills = DataModelHelper.getTotalKillCount(stack);
         int killsToNextTier = DataModelHelper.getKillsToNextTier(stack);
         int numHearts = mobMetaData.getNumberOfHearts();

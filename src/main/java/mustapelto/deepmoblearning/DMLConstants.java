@@ -25,13 +25,14 @@ public class DMLConstants {
 
     public static final class DataModel {
         public static final int MAX_TIER = 4;
+        public static final String DEFAULT_MODEL_NAME = "deepmoblearning:data_model_default";
     }
 
     public static final class DeepLearner {
         public static final int INTERNAL_SLOTS = 4;
     }
 
-    public static final String VANILLA = "vanilla";
+    public static final String MINECRAFT = "minecraft";
 
     public static final class GuiIDs {
         public static final int DEEP_LEARNER = 0;

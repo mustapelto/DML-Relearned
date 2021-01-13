@@ -1,11 +1,9 @@
 package mustapelto.deepmoblearning.common.eventhandlers;
 
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,8 +14,6 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -104,13 +100,12 @@ public class EntityDeathHandler {
             if (!(stack.getItem() instanceof ItemDataModel))
                 return;
 
-            EnumMobType mobType = DataModelHelper.getMobType(stack);
             MobMetaData mobMetaData = DataModelHelper.getMobMetaData(stack);
 
-            if (mobType == null || mobMetaData == null)
+            if (mobMetaData == null)
                 return;
 
-            if (MobMetaDataStore.dataMobListContainsEntity(mobType, event.getEntityLiving())) {
+            if (mobMetaData.isAssociatedMob(event.getEntityLiving())) {
                 DataModelHelper.increaseKillCount(stack, player);
                 updatedModels.add(stack);
             }

@@ -1,0 +1,9 @@
+1.0.0 (First release)
+---------------------
+
+Major changes:
+- redesigned Data Model and Mob Data system, allowing for JSON configuration (user editable)
+- removed soft dependency on several mods (Twilight Forest, Thermal Foundation, Matter Overdrive, Tinkers' Construct)
+  as it is no longer required due to the new config system
+- made Simulation Chamber and Loot Fabricator sidedness configurable
+- lots of performance optimizations

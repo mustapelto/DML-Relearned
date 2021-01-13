@@ -1,11 +1,9 @@
-package mustapelto.deepmoblearning.common;
+package mustapelto.deepmoblearning;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.util.MathHelper;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -43,29 +41,6 @@ public class DMLConfig {
         }
     }
 
-    @Name("Simulation Chamber Settings")
-    public static final SimulationChamber SIMULATION_CHAMBER = new SimulationChamber();
-
-    public static final class SimulationChamber {
-        @Name("Simulation Tick Costs")
-        @Comment("Simulation costs (RF/t) for data models (min = 0)")
-        public final Map<String, Integer> SIMULATION_TICK_COST = new HashMap<>();
-
-        SimulationChamber() {
-            for (EnumMobType mobType : EnumMobType.values()) {
-                if (mobType.isVanilla() || (Loader.isModLoaded(mobType.getModID()))) {
-                    MobMetaData mobMetaData = MobMetaDataStore.getMetaData(mobType);
-                    if (mobMetaData != null)
-                        SIMULATION_TICK_COST.put(mobType.getName(), mobMetaData.getDefaultRFCost());
-                }
-            }
-        }
-
-        public int getSimulationTickCost(EnumMobType mobType) {
-            return MathHelper.Clamp(SIMULATION_TICK_COST.getOrDefault(mobType.getName(), 0), 0, Integer.MAX_VALUE);
-        }
-    }
-
     @Name("Data Model Experience Tweaks")
     @Comment("Formula: (Kill multiplier) * (Required kills) = (Total data needed for next tier)" +
             "Please tweak these values responsibly if you're building a modpack for public use.\n" +
@@ -99,29 +74,6 @@ public class DMLConfig {
 
         public int getDataRequired(EnumDataModelTier tier) {
             return MathHelper.Clamp(DATA_REQUIRED.getOrDefault(tier.getLevelString(), 0), 1, Integer.MAX_VALUE);
-        }
-    }
-
-    @Name("Mob Settings")
-    public static final MobSettings MOB_SETTINGS = new MobSettings();
-
-    public static class MobSettings {
-        @Name("Data Model Associated Mobs")
-        @Comment("Register entities that count towards leveling up the Data Model\nFormat: modid:entity_name")
-        public final Map<String, String[]> DATA_MODEL_ASSOCIATED_MOBS = new HashMap<>();
-
-        MobSettings() {
-            for (EnumMobType mobType : EnumMobType.values()) {
-                if (mobType.isVanilla() || DMLConstants.ModDependencies.isLoaded(mobType.getModID())) {
-                    MobMetaData mobMetaData = MobMetaDataStore.getMetaData(mobType);
-                    if (mobMetaData != null)
-                        DATA_MODEL_ASSOCIATED_MOBS.put(mobType.getName(), mobMetaData.getDefaultDataMobs());
-                }
-            }
-        }
-
-        public String[] getDataMobs(EnumMobType mobType) {
-            return DATA_MODEL_ASSOCIATED_MOBS.getOrDefault(mobType.getName(), new String[]{});
         }
     }
 

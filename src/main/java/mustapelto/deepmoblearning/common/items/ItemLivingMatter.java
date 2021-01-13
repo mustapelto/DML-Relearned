@@ -1,6 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.DMLConfig;
+import mustapelto.deepmoblearning.DMLConfig;
 import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemLivingMatter extends ItemBase {
+public class ItemLivingMatter extends DMLItem {
     private final EnumLivingMatterType type;
 
     public ItemLivingMatter(EnumLivingMatterType type) {

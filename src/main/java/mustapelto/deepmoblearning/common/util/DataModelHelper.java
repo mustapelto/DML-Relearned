@@ -1,13 +1,11 @@
 package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.DMLConfig;
+import mustapelto.deepmoblearning.DMLConfig;
 import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.mobdata.EnumMobType;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataStore;
+import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -64,14 +62,9 @@ public class DataModelHelper {
     // Calculated Getters
     //
 
-    public static EnumMobType getMobType(ItemStack stack) {
-        Item stackItem = stack.getItem();
-        return stackItem instanceof ItemDataModel ? ((ItemDataModel) stackItem).getMobType() : null;
-    }
-
     public static MobMetaData getMobMetaData(ItemStack stack) {
-        EnumMobType stackMobType = getMobType(stack);
-        return stackMobType != null ? MobMetaDataStore.getMetaData(stackMobType) : null;
+        Item stackItem = stack.getItem();
+        return stackItem instanceof ItemDataModel ? ((ItemDataModel) stackItem).getMobMetaData() : null;
     }
 
     private static EnumDataModelTier getTier(ItemStack stack) {

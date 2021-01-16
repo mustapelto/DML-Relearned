@@ -2,8 +2,7 @@ package mustapelto.deepmoblearning.common.eventhandlers;
 
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
+import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

@@ -14,10 +14,7 @@ import net.minecraft.item.ItemAir;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -92,5 +89,10 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     @Override
     public int getGuiID() {
         return DMLConstants.GuiIDs.DEEP_LEARNER;
+    }
+
+    @Override
+    public ResourceLocation getDefaultResourceLocation() {
+        return null; // Non-generic item -> this should never be called
     }
 }

@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.DMLConfig;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
+import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
@@ -12,28 +12,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemLivingMatter extends DMLItem {
-    private final EnumLivingMatterType type;
+    private final LivingMatterData data;
 
-    public ItemLivingMatter(EnumLivingMatterType type) {
-        super("living_matter_" + type.getName(), 64);
-        this.type = type;
+    public ItemLivingMatter(LivingMatterData data) {
+        super("living_matter_" + data.getItemID(), 64, data.isModLoaded());
+        this.data = data;
     }
 
-    public EnumLivingMatterType getType() {
-        return type;
+    public LivingMatterData getData() {
+        return data;
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", KeyboardHelper.getUseDisplayName()));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", KeyboardHelper.getSneakDisplayName()));
-        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", DMLConfig.LIVING_MATTER.getLivingMatterXP(type)));
+        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", data.getXpValue()));
     }
 
     @Override
@@ -47,5 +48,15 @@ public class ItemLivingMatter extends DMLItem {
         }
 
         return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return data.getDisplayName() + " Matter";
+    }
+
+    @Override
+    public ResourceLocation getDefaultResourceLocation() {
+        return new ResourceLocation(DMLConstants.LivingMatter.DEFAULT_MODEL_NAME);
     }
 }

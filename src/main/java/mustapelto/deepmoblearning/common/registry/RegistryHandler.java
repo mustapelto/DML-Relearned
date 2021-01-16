@@ -1,10 +1,9 @@
 package mustapelto.deepmoblearning.common.registry;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.*;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
+import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
+import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.event.RegistryEvent;
@@ -25,22 +24,10 @@ public class RegistryHandler {
         registeredItems.add(new ItemDataModelBlank());
         registeredItems.add(new ItemDeepLearner());
 
-        registerLivingMatter();
-        registerDataModels();
+        LivingMatterDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemLivingMatter(value)));
+        MobMetaDataManager.getDataStore().forEach(metaData -> registeredItems.add(new ItemDataModel(metaData)));
 
         IForgeRegistry<Item> registry = event.getRegistry();
         registeredItems.forEach(registry::register);
-    }
-
-    private static void registerLivingMatter() {
-        for (EnumLivingMatterType livingMatterType : EnumLivingMatterType.values()) {
-            if (livingMatterType.isVanilla() || DMLConstants.ModDependencies.isLoaded(livingMatterType.getModID())) {
-                registeredItems.add(new ItemLivingMatter(livingMatterType));
-            }
-        }
-    }
-
-    private static void registerDataModels() {
-        MobMetaDataManager.getMetaDataList().forEach(metaData -> registeredItems.add(new ItemDataModel(metaData)));
     }
 }

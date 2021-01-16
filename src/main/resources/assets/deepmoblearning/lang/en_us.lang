@@ -8,23 +8,6 @@ item.deepmoblearning.data_model_blank.name=Blank Data Model
 item.deepmoblearning.deep_learner.name=Deep Learner
 
 #
-# Living Matter Variants
-#
-item.deepmoblearning.living_matter_overworldian.name=Overworldian Matter
-item.deepmoblearning.living_matter_hellish.name=Hellish Matter
-item.deepmoblearning.living_matter_extraterrestrial.name=Extraterrestrial Matter
-item.deepmoblearning.living_matter_twilight.name=Twilight Matter
-
-deepmoblearning.mob_type.overworldian=Overworldian
-deepmoblearning.mob_type.overworldian.formatted=§a%s§r
-deepmoblearning.mob_type.hellish=Hellish
-deepmoblearning.mob_type.hellish.formatted=§c%s§r
-deepmoblearning.mob_type.extraterrestrial=Extraterrestrial
-deepmoblearning.mob_type.extraterrestrial.formatted=§d%s§r
-deepmoblearning.mob_type.twilight=Twilight
-deepmoblearning.mob_type.twilight.formatted=§d%s§r
-
-#
 # Data Model Tiers
 #
 deepmoblearning.data_model.tier.0=Faulty

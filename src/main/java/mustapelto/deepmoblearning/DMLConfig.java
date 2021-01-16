@@ -1,13 +1,9 @@
 package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.util.MathHelper;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.config.Config;
@@ -17,30 +13,9 @@ import net.minecraftforge.common.config.Config.Comment;
 import java.util.HashMap;
 import java.util.Map;
 
-@Config(modid = DMLConstants.ModInfo.ID, name = "dml-relearned", category = "")
+@Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dmlRelearned", category = "")
 @EventBusSubscriber
 public class DMLConfig {
-    @Name("Living Matter Settings")
-    public static final LivingMatter LIVING_MATTER = new LivingMatter();
-
-    public static final class LivingMatter {
-        @Name("Living Matter XP")
-        @Comment("XP gained by consuming one piece of Living Matter (min = 0)")
-        public final Map<String, Integer> CONSUME_XP_GAIN = new HashMap<>();
-
-        LivingMatter() {
-            for (EnumLivingMatterType livingMatterType : EnumLivingMatterType.values()) {
-                if (livingMatterType.isVanilla() || DMLConstants.ModDependencies.isLoaded(livingMatterType.getModID())) {
-                    CONSUME_XP_GAIN.put(livingMatterType.getName(), livingMatterType.getDefaultXP());
-                }
-            }
-        }
-
-        public int getLivingMatterXP(EnumLivingMatterType livingMatterType) {
-            return MathHelper.Clamp(CONSUME_XP_GAIN.getOrDefault(livingMatterType.getName(), 0), 0, Integer.MAX_VALUE);
-        }
-    }
-
     @Name("Data Model Experience Tweaks")
     @Comment("Formula: (Kill multiplier) * (Required kills) = (Total data needed for next tier)" +
             "Please tweak these values responsibly if you're building a modpack for public use.\n" +

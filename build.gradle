@@ -60,12 +60,6 @@ dependencies {
 
     // deobfProvided "mezz.jei:jei_1.12.2:4.16.1.301:api"
     // runtime "mezz.jei:jei_1.12.2:4.16.1.301"
-
-    compile "curse.maven:matteroverdrive-308192:2699215"
-    compile "curse.maven:cofhcore-69162:2920433"
-    compile "curse.maven:thermalfoundation-222880:2926428"
-    compile "curse.maven:twilightforest-227639:3051450"
-    compile "curse.maven:tconstruct-74072:2902483"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

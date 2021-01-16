@@ -2,7 +2,8 @@ package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.ServerProxy;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaDataManager;
+import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
+import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.registry.ItemRegistry;
 import mustapelto.deepmoblearning.common.util.FileHelper;
@@ -38,7 +39,9 @@ public class DMLRelearned
         logger = event.getModLog();
         FileHelper.init(event);
 
+        // Init Data Managers (for reading/writing config json files)
         MobMetaDataManager.init();
+        LivingMatterDataManager.init();
 
         // Network Stuff
         DMLPacketHandler.registerPackets();

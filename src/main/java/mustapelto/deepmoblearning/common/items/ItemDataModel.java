@@ -1,12 +1,10 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.mobdata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
+import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -14,14 +12,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.List;
 
 public class ItemDataModel extends DMLItem {
     private final MobMetaData metaData;
 
     public ItemDataModel(MobMetaData metaData) {
-        super("data_model_" + metaData.getItemID(), 1);
+        super("data_model_" + metaData.getItemID(), 1, metaData.isModLoaded());
         this.metaData = metaData;
     }
 
@@ -59,9 +56,9 @@ public class ItemDataModel extends DMLItem {
 
             int rfCost = mobMetaData.getSimulationRFCost();
 
-            String livingMatterName = mobMetaData.getLivingMatter();
+            LivingMatterData livingMatterData = mobMetaData.getLivingMatterData();
             tooltip.add(I18n.format("deepmoblearning.data_model.rf_cost", rfCost));
-            tooltip.add(I18n.format("deepmoblearning.data_model.type", livingMatterName));
+            tooltip.add(I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameFormatted()));
         }
     }
 
@@ -70,18 +67,8 @@ public class ItemDataModel extends DMLItem {
         return metaData.getDisplayName() + " Data Model";
     }
 
-    public ItemMeshDefinition getMeshDefinition() {
-        return new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                ResourceLocation location = stack.getItem().getRegistryName();
-                try {
-                    Minecraft.getMinecraft().getResourceManager().getAllResources(location);
-                } catch (IOException exception) {
-                    location = new ResourceLocation(DMLConstants.DataModel.DEFAULT_MODEL_NAME);
-                }
-                return new ModelResourceLocation(location, "inventory");
-            }
-        };
+    @Override
+    public ResourceLocation getDefaultResourceLocation() {
+        return new ResourceLocation(DMLConstants.DataModel.DEFAULT_MODEL_NAME);
     }
 }

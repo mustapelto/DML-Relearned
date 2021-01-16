@@ -1,85 +1,79 @@
-package mustapelto.deepmoblearning.common.mobdata;
+package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import mustapelto.deepmoblearning.DMLConfig;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.common.enums.EnumLivingMatterType;
 import mustapelto.deepmoblearning.common.util.FileHelper;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
 public class MobMetaDataManager {
-    private static NonNullList<MobMetaData> mobMetaDataStore;
+    private static NonNullList<MobMetaData> dataStore;
 
     public static void init() {
-        File jsonFile = new File(FileHelper.configDML, "MobData.json");
+        File jsonFile = new File(FileHelper.configDML, "Mobs.json");
 
         if (!jsonFile.exists()) {
             generateDefaultDataFile(jsonFile);
         }
 
-        mobMetaDataStore = NonNullList.create();
+        dataStore = NonNullList.create();
 
-        readMobDataFromFile(jsonFile);
+        readDataFromFile(jsonFile);
     }
 
     private static void generateDefaultDataFile(File jsonFile) {
-        JsonObject mobDataObject = new JsonObject();
-        mobDataObject.add("vanillaHostile", generateVanillaHostileData());
-        mobDataObject.add("thermalExpansion", generateThermalExpansionData());
-        mobDataObject.add("twilightForest", generateTwilightForestData());
-        mobDataObject.add("tinkersConstruct", generateTinkersConstructData());
-        mobDataObject.add("matterOverdrive", generateMatterOverdriveData());
+        JsonObject dataObject = new JsonObject();
+        dataObject.add("vanillaHostile", generateVanillaHostileData());
+        dataObject.add("thermalExpansion", generateThermalExpansionData());
+        dataObject.add("twilightForest", generateTwilightForestData());
+        dataObject.add("tinkersConstruct", generateTinkersConstructData());
+        dataObject.add("matterOverdrive", generateMatterOverdriveData());
 
         try {
-            FileHelper.writeObject(mobDataObject, jsonFile);
+            FileHelper.writeObject(dataObject, jsonFile);
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not write default mob config file!");
         }
     }
 
-    private static void readMobDataFromFile(File file) {
-        JsonObject mobDataObject;
+    public static void readDataFromFile(File jsonFile) {
+        JsonObject dataObject;
         try {
-            mobDataObject = FileHelper.readObject(file);
+            dataObject = FileHelper.readObject(jsonFile);
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not read mob config file! This will cause the mod to malfunction.");
             return;
         }
 
-        Set<Map.Entry<String, JsonElement>> entrySet = mobDataObject.entrySet();
+        Set<Map.Entry<String, JsonElement>> entrySet = dataObject.entrySet();
         entrySet.forEach(entry -> {
             if (!(entry.getValue() instanceof JsonArray))
                 return;
             JsonArray contents = (JsonArray) entry.getValue();
-            contents.forEach(block -> mobMetaDataStore.add(new MobMetaData(block.getAsJsonObject())));
+            contents.forEach(block -> dataStore.add(new MobMetaData(block.getAsJsonObject())));
         });
     }
 
-    public static NonNullList<MobMetaData> getMetaDataList() {
-        return mobMetaDataStore;
+    public static NonNullList<MobMetaData> getDataStore() {
+        return dataStore;
     }
 
-    public static JsonArray generateVanillaHostileData() {
+    private static JsonArray generateVanillaHostileData() {
         JsonArray mobDataArray = new JsonArray();
 
         mobDataArray.add(MobMetaData.createJsonObject("blaze",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Blaze", "",
                 10,
-                EnumLivingMatterType.HELLISH.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.ID,
                 new String[]{"Bring buckets of water, and watch in despair", "as it evaporates, and everything is on fire.", "You are on fire."},
                 256,
                 "",
@@ -92,10 +86,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("creeper",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Creeper", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"Will blow up your base if", "left unattended."},
                 80,
                 "",
@@ -108,10 +102,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("dragon",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Ender Dragon", "",
                 100,
-                EnumLivingMatterType.EXTRATERRESTRIAL.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
                 new String[]{"Resides in the End, does not harbor treasure.", "Destroy its crystals and break the cycle!"},
                 2560,
                 "",
@@ -124,10 +118,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("enderman",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Enderman", "Endermen",
                 20,
-                EnumLivingMatterType.EXTRATERRESTRIAL.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
                 new String[]{"Friendly unless provoked, dislikes rain.", "Teleports short distances."},
                 512,
                 "",
@@ -140,10 +134,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("ghast",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Ghast", "",
                 10,
-                EnumLivingMatterType.HELLISH.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.ID,
                 new String[]{"If you hear something that sounds like", "a crying llama, you're probably hearing a ghast."},
                 372,
                 "",
@@ -156,10 +150,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("guardian",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Guardian", "",
                 15,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"Lurking in the oceans.", "Uses some sort of sonar beam as", "a means of attack."},
                 340,
                 "",
@@ -172,10 +166,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("shulker",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Shulker", "",
                 15,
-                EnumLivingMatterType.EXTRATERRESTRIAL.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
                 new String[]{"Found in End cities.", "Sneaky little buggers."},
                 256,
                 "",
@@ -188,10 +182,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("skeleton",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Skeleton", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"A formidable archer, which seems to be running", "some sort of cheat engine.", "A shield could prove useful."},
                 80,
                 "",
@@ -204,10 +198,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("slime",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Slime", "",
                 8,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"The bouncing bouncer", "bounces, bounces and bounces", "Bounces and bou- squish! -\"A new slime haiku\""},
                 150,
                 "",
@@ -220,10 +214,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("spider",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Spider", "",
                 8,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"Nocturnal douchebags, beware!", "Drops strands of string for some reason."},
                 80,
                 "",
@@ -236,10 +230,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("witch",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Witch", "Witches",
                 13,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"Affinity with potions and concoctions.", "Likes cats.", "Beware!"},
                 120,
                 "",
@@ -252,10 +246,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("wither",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Wither", "",
                 150,
-                EnumLivingMatterType.EXTRATERRESTRIAL.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
                 new String[]{"Do not approach this enemy. Run!", "I mean it has 3 heads, what could", "possibly go wrong?"},
                 2048,
                 "",
@@ -268,10 +262,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("wither_skeleton",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Wither Skeleton", "",
                 10,
-                EnumLivingMatterType.HELLISH.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.ID,
                 new String[]{"Inflicts the Wither effect.", "Bring milk!"},
                 880,
                 "",
@@ -284,10 +278,10 @@ public class MobMetaDataManager {
         ));
 
         mobDataArray.add(MobMetaData.createJsonObject("zombie",
-                "minecraft",
+                DMLConstants.MINECRAFT,
                 "Zombie", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"They go moan in the night.", "Does not understand the need for", "personal space."},
                 80,
                 "",
@@ -309,7 +303,7 @@ public class MobMetaDataManager {
                 "thermalfoundation",
                 "Thermal Elemental", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"Blizzes, Blitzes and Basalzes.", "Siblings of the Blaze.", "Their master really liked words starting with B."},
                 256,
                 "",
@@ -331,7 +325,7 @@ public class MobMetaDataManager {
                 "twilightforest",
                 "Forest creature", "",
                 0,
-                EnumLivingMatterType.TWILIGHT.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
                 new String[]{"Nagas, Liches and flying books.", "What the hell have you walked into?"},
                 256,
                 "Gain data by defeating non-vanilla mobs in the Naga Courtyard and Lich Tower.",
@@ -353,7 +347,7 @@ public class MobMetaDataManager {
                 "twilightforest",
                 "Swamp creature", "",
                 0,
-                EnumLivingMatterType.TWILIGHT.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
                 new String[]{"This realm sure could use some building regulations.", "How are you even allowed to build a huge maze", "in your basement!?"},
                 256,
                 "Gain data by defeating non-vanilla mobs in the Swamp Labyrinth and Hydra Lair.",
@@ -377,7 +371,7 @@ public class MobMetaDataManager {
                 "twilightforest",
                 "Glacier inhabitant", "",
                 0,
-                EnumLivingMatterType.TWILIGHT.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
                 new String[]{"Here you'll find caves with ancient beasts", "and Elsa's wicked distant cousin Aurora.", "(Elsa might \"let it go\", but Aurora sure won't!)"},
                 256,
                 "Gain data by defeating non-vanilla mobs in the Yeti Lair and Ice Tower.",
@@ -402,7 +396,7 @@ public class MobMetaDataManager {
                 "twilightforest",
                 "Darkwood creature", "",
                 0,
-                EnumLivingMatterType.TWILIGHT.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
                 new String[]{"Spooky scary strongholds send shivers down", "your spine, the Ur-Ghast will shock your", "soul and seal your doom tonight!"},
                 256,
                 "Gain data by defeating non-vanilla mobs in the Goblin Knight Stronghold and Dark Tower.",
@@ -438,7 +432,7 @@ public class MobMetaDataManager {
                 "tconstruct",
                 "Blue Slime", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"The elusive blue slime. Seemingly a", "part of some sort of power hierarchy,", "since there's a bunch of \"King slimes\" around."},
                 256,
                 "",
@@ -460,7 +454,7 @@ public class MobMetaDataManager {
                 "matteroverdrive",
                 "Rogue Android", "",
                 10,
-                EnumLivingMatterType.OVERWORLDIAN.getName(),
+                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 new String[]{"It's not simply an android.", "It's a life form, entirely unique.", "Meep morp."},
                 256,
                 "",

@@ -56,7 +56,9 @@ public abstract class DMLItem extends Item {
             }
             return true;
         }
+        DMLRelearned.logger.info("Couldn't find model file");
         return false;
+
     }
 
     /**

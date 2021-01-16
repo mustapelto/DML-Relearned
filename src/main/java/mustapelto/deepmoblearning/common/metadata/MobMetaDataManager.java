@@ -3,7 +3,6 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import mustapelto.deepmoblearning.DMLConfig;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.FileHelper;
@@ -11,11 +10,12 @@ import net.minecraft.util.NonNullList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class MobMetaDataManager {
-    private static NonNullList<MobMetaData> dataStore;
+    private static HashMap<String, MobMetaData> dataStore;
 
     public static void init() {
         File jsonFile = new File(FileHelper.configDML, "Mobs.json");
@@ -24,7 +24,7 @@ public class MobMetaDataManager {
             generateDefaultDataFile(jsonFile);
         }
 
-        dataStore = NonNullList.create();
+        dataStore = new HashMap<>();
 
         readDataFromFile(jsonFile);
     }
@@ -58,12 +58,19 @@ public class MobMetaDataManager {
             if (!(entry.getValue() instanceof JsonArray))
                 return;
             JsonArray contents = (JsonArray) entry.getValue();
-            contents.forEach(block -> dataStore.add(new MobMetaData(block.getAsJsonObject())));
+            contents.forEach(block -> {
+                MobMetaData data = new MobMetaData(block.getAsJsonObject());
+                dataStore.put(data.itemID, data);
+            });
         });
     }
 
-    public static NonNullList<MobMetaData> getDataStore() {
+    public static HashMap<String, MobMetaData> getDataStore() {
         return dataStore;
+    }
+
+    public static MobMetaData getMetaData(String id) {
+        return dataStore.get(id);
     }
 
     private static JsonArray generateVanillaHostileData() {

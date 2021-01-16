@@ -25,7 +25,7 @@ public class RegistryHandler {
         registeredItems.add(new ItemDeepLearner());
 
         LivingMatterDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemLivingMatter(value)));
-        MobMetaDataManager.getDataStore().forEach(metaData -> registeredItems.add(new ItemDataModel(metaData)));
+        MobMetaDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemDataModel(value)));
 
         IForgeRegistry<Item> registry = event.getRegistry();
         registeredItems.forEach(registry::register);

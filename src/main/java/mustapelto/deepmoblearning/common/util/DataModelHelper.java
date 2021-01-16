@@ -61,9 +61,14 @@ public class DataModelHelper {
     // Calculated Getters
     //
 
-    public static MobMetaData getMobMetaData(ItemStack stack) {
+    public static ItemDataModel getDataModelItem(ItemStack stack) {
         Item stackItem = stack.getItem();
-        return stackItem instanceof ItemDataModel ? ((ItemDataModel) stackItem).getMobMetaData() : null;
+        return stackItem instanceof ItemDataModel ? (ItemDataModel) stackItem : null;
+    }
+
+    public static MobMetaData getMobMetaData(ItemStack stack) {
+        ItemDataModel stackItem = getDataModelItem(stack);
+        return stackItem != null ? stackItem.getMobMetaData() : null;
     }
 
     private static EnumDataModelTier getTier(ItemStack stack) {

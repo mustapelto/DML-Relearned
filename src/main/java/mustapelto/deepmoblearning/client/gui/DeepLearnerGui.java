@@ -18,6 +18,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.io.IOException;
@@ -245,7 +246,7 @@ public class DeepLearnerGui extends GuiContainer {
         // Obfuscate if hearts == 0 (for models with multiple mobs, e.g. Twilight Forest)
         drawString(fontRenderer,
                 numHearts == 0 ?
-                        "§k10§r" :
+                        TextFormatting.OBFUSCATED + "10" + TextFormatting.RESET :
                         Integer.toString(numHearts),
                 left + 239,
                 topStart + (2 * ROW_SPACING) - 1,

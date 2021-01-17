@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -26,7 +27,8 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    @Nonnull
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         Item mainHand = playerIn.getHeldItemMainhand().getItem();
         Item offHand = playerIn.getHeldItemOffhand().getItem();
 
@@ -38,7 +40,7 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.deep_learner.hud"));
 
         NonNullList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
@@ -82,17 +84,12 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
         return false;
     }
 
     @Override
     public int getGuiID() {
         return DMLConstants.GuiIDs.DEEP_LEARNER;
-    }
-
-    @Override
-    public ResourceLocation getDefaultResourceLocation() {
-        return null; // Non-generic item -> this should never be called
     }
 }

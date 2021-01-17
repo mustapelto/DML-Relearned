@@ -8,9 +8,10 @@ import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class ItemDataModel extends DMLItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        MobMetaData mobMetaData = ((ItemDataModel)stack.getItem()).getMobMetaData();
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+        MobMetaData mobMetaData = DataModelHelper.getMobMetaData(stack);
 
         if (mobMetaData == null)
             return;
@@ -39,36 +40,32 @@ public class ItemDataModel extends DMLItem {
         }
 
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakKey = KeyboardHelper.getSneakDisplayName();
-            tooltip.add(I18n.format("deepmoblearning.general.more_info", sneakKey));
+            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + KeyboardHelper.getSneakDisplayName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
+            tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
             String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
-            tooltip.add(I18n.format("deepmoblearning.data_model.tier", displayName));
+            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
 
             int tier = DataModelHelper.getTierLevel(stack);
             if (tier < DMLConstants.DataModel.MAX_TIER) {
                 int currentData = DataModelHelper.getCurrentTierCurrentData(stack);
                 int requiredData = DataModelHelper.getCurrentTierRequiredData(stack);
                 int currentKillMultiplier = DataModelHelper.getCurrentTierKillMultiplier(stack);
-                tooltip.add(I18n.format("deepmoblearning.data_model.data_collected", currentData, requiredData));
-                tooltip.add(I18n.format("deepmoblearning.data_model.kill_multiplier", currentKillMultiplier));
+                tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.data_collected", TextFormatting.GRAY + String.valueOf(currentData), String.valueOf(requiredData) + TextFormatting.RESET));
+                tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.kill_multiplier", TextFormatting.GRAY + String.valueOf(currentKillMultiplier) + TextFormatting.RESET));
             }
 
             int rfCost = mobMetaData.getSimulationRFCost();
+            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.rf_cost", TextFormatting.GRAY + String.valueOf(rfCost)) + TextFormatting.RESET);
 
             LivingMatterData livingMatterData = mobMetaData.getLivingMatterData();
-            tooltip.add(I18n.format("deepmoblearning.data_model.rf_cost", rfCost));
-            tooltip.add(I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameFormatted()));
+            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameColor() + livingMatterData.getDisplayName() + TextFormatting.RESET));
         }
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        return metaData.getDisplayName() + " Data Model";
-    }
-
-    @Override
-    public ResourceLocation getDefaultResourceLocation() {
-        return new ResourceLocation(DMLConstants.DataModel.DEFAULT_MODEL_NAME);
+    @Nonnull
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        return TextFormatting.AQUA + metaData.getDisplayName() + " Data Model" + TextFormatting.RESET;
     }
 }

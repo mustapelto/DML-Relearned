@@ -35,36 +35,4 @@ public abstract class DMLItem extends Item {
     public DMLItem(String name, int stackSize) {
         this(name, stackSize, true);
     }
-
-    /**
-     * Test if model file exists.
-     * <p>
-     *     RenderRegistry will use default model (from {@link #getDefaultResourceLocation()}) if it doesn't.
-     *     This is kind of hacky but I haven't found a better way to do this.
-     * </p>
-     * @return True if model file exists, False if it doesn't.
-     */
-    public boolean getModelFileExists() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("assets/deepmoblearning/models/item/" + id + ".json");
-        if (inputStream != null)
-        {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                DMLRelearned.logger.error(e.getMessage());
-                return false;
-            }
-            return true;
-        }
-        DMLRelearned.logger.info("Couldn't find model file");
-        return false;
-
-    }
-
-    /**
-     * Get location of default model.
-     *
-     * @return Varies per item. Non-generic items return null.
-     */
-    public abstract ResourceLocation getDefaultResourceLocation();
 }

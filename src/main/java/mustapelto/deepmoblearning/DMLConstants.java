@@ -10,10 +10,6 @@ public class DMLConstants {
     }
 
     public static final class ModDependencies {
-        public static final String TWILIGHT = "twilightforest";
-        public static final String THERMAL = "thermalfoundation";
-        public static final String TINKERS = "tconstruct";
-        public static final String MO = "matteroverdrive";
         public static final String PATCHOULI = "patchouli";
         public static final String CRAFT_TWEAKER = "crafttweaker";
         public static final String DEP_STRING = ""; //"";after:" + PATCHOULI + ";after:" + CRAFT_TWEAKER;
@@ -24,7 +20,6 @@ public class DMLConstants {
 
     public static final class DataModel {
         public static final int MAX_TIER = 4;
-        public static final String DEFAULT_MODEL_NAME = "deepmoblearning:data_model_default";
     }
 
     public static final class DeepLearner {
@@ -32,7 +27,6 @@ public class DMLConstants {
     }
 
     public static final class LivingMatter {
-        public static final String DEFAULT_MODEL_NAME = "deepmoblearning:living_matter_default";
         public static final class DEFAULT_VALUES {
             public static final class OVERWORLDIAN {
                 public static final String ID = "overworldian";

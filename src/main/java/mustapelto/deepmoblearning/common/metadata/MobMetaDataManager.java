@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.FileHelper;
-import net.minecraft.util.NonNullList;
 
 import java.io.File;
 import java.io.IOException;

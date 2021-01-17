@@ -1,5 +1,3 @@
-#PARSE_ESCAPES
-
 #
 # Misc Items
 #
@@ -11,15 +9,10 @@ item.deepmoblearning.deep_learner.name=Deep Learner
 # Data Model Tiers
 #
 deepmoblearning.data_model.tier.0=Faulty
-deepmoblearning.data_model.tier.0.formatted=§8%s§r
 deepmoblearning.data_model.tier.1=Basic
-deepmoblearning.data_model.tier.1.formatted=§a%s§r
 deepmoblearning.data_model.tier.2=Advanced
-deepmoblearning.data_model.tier.2.formatted=§9%s§r
 deepmoblearning.data_model.tier.3=Superior
-deepmoblearning.data_model.tier.3.formatted=§d%s§r
 deepmoblearning.data_model.tier.4=Self-Aware
-deepmoblearning.data_model.tier.4.formatted=§6%s§r
 
 deepmoblearning.data_model.reached_tier=%s reached the %s tier
 
@@ -28,22 +21,22 @@ deepmoblearning.data_model.reached_tier=%s reached the %s tier
 #
 
 # General
-deepmoblearning.general.more_info=§7- hold §r§o%s§r§7 for more info§r
+deepmoblearning.general.more_info=- hold %s for more info
 
 # Living Matter
-deepmoblearning.living_matter.consume_for_xp=Can be consumed for experience §r(%s)§7
-deepmoblearning.living_matter.consume_stack=Hold §r%s§7 to consume entire stack.
-deepmoblearning.living_matter.xp=§7Experience per item: §a%s§r
+deepmoblearning.living_matter.consume_for_xp=Can be consumed for experience %s
+deepmoblearning.living_matter.consume_stack=Hold %s to consume entire stack.
+deepmoblearning.living_matter.xp=Experience per item: %s
 
 # Data Model
-deepmoblearning.data_model.type=§rType: %s§r
-deepmoblearning.data_model.tier=§rTier: %s§r
-deepmoblearning.data_model.data_collected=§rData collected: §7%s/%s§r
-deepmoblearning.data_model.kill_multiplier=§rData per kill: §7%s§r
-deepmoblearning.data_model.rf_cost=§rSimulation cost: §7%s RF/t§r
+deepmoblearning.data_model.type=Type: %s
+deepmoblearning.data_model.tier=Tier: %s
+deepmoblearning.data_model.data_collected=Data collected: %s/%s
+deepmoblearning.data_model.kill_multiplier=Data per kill: %s
+deepmoblearning.data_model.rf_cost=Simulation cost: %s RF/t
 
 # Deep Learner
-deepmoblearning.deep_learner.hud=Will display a §bHUD§7 when in main hand or offhand and populated with data models
+deepmoblearning.deep_learner.hud=Will display a HUD when in main hand or offhand and populated with data models
 deepmoblearning.deep_learner.contains=Contains the following models
 
 #

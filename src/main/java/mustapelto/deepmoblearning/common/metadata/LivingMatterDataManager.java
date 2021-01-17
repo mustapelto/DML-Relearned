@@ -29,22 +29,22 @@ public class LivingMatterDataManager {
         dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
                 "minecraft",
                 "Overworldian",
-                "§aOverworldian§r",
+                "green",
                 DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.XP));
         dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.ID,
                 "minecraft",
                 "Hellish",
-                "§cHellish§r",
+                "red",
                 DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.XP));
         dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
                 "minecraft",
                 "Extraterrestrial",
-                "§dExtraterrestrial§r",
+                "light_purple",
                 DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.XP));
         dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
                 "twilightforest",
                 "Twilight",
-                "§dTwilight§r",
+                "blue",
                 DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.XP));
 
         try {

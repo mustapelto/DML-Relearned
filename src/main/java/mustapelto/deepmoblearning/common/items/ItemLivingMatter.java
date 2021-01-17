@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
@@ -12,9 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -31,14 +30,15 @@ public class ItemLivingMatter extends DMLItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", KeyboardHelper.getUseDisplayName()));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", KeyboardHelper.getSneakDisplayName()));
         tooltip.add(I18n.format("deepmoblearning.living_matter.xp", data.getXpValue()));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    @Nonnull
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         if (worldIn.isRemote) {
             if (KeyboardHelper.isHoldingSneakKey()) {
                 DMLPacketHandler.network.sendToServer(new MessageLivingMatterConsume(true));
@@ -51,12 +51,8 @@ public class ItemLivingMatter extends DMLItem {
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    @Nonnull
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         return data.getDisplayName() + " Matter";
-    }
-
-    @Override
-    public ResourceLocation getDefaultResourceLocation() {
-        return new ResourceLocation(DMLConstants.LivingMatter.DEFAULT_MODEL_NAME);
     }
 }

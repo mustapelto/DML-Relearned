@@ -4,7 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
+
+import javax.xml.soap.Text;
 
 public abstract class MetaDataBase {
     protected String modID; // Mod ID the item is related to. "minecraft" for vanilla-related items.

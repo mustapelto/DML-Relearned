@@ -4,6 +4,7 @@ import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
+import mustapelto.deepmoblearning.common.util.TextHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -31,8 +33,10 @@ public class ItemLivingMatter extends DMLItem {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", KeyboardHelper.getUseDisplayName()));
-        tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", KeyboardHelper.getSneakDisplayName()));
+        String useString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getUseDisplayName(), TextFormatting.GRAY);
+        String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakDisplayName(), TextFormatting.GRAY);
+        tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", useString));
+        tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", sneakString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.xp", data.getXpValue()));
     }
 

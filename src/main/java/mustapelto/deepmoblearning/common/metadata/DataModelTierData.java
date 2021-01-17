@@ -3,15 +3,14 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nullable;
-
 public class DataModelTierData extends MetaDataBase {
     private final int level; // Tier level. Generated from JSON element order.
-    private final String displayName; // Name shown in tooltips and GUI.
-    private final String displayColor; // Color of name when displayed.
-    private final int killMultiplier; // Amount of data gained from one kill at this tier.
-    private final int dataToNext; // Amount of data (through kills or simulations) required to reach next tier.
-    private final int pristineChance; // Chance (%) to get Pristine Matter on each iteration
+    private final String displayName; // Name shown in tooltips and GUI. (Default = "")
+    private final String displayColor; // Color of name when displayed. (Default = "white")
+    private final int killMultiplier; // Amount of data gained from one kill at this tier. (Range = 0 - MAX_INT, Default = 1)
+    private final int dataToNext; // Amount of data (through kills or simulations) required to reach next tier. (Range = 0 - MAX_INT, Default = 10)
+    private final int pristineChance; // Chance (%) to get Pristine Matter on each iteration (Range = 0 - 100, Default = 10)
+    private final boolean canSimulate; // Can a Data Model of this tier be used in a simulation chamber? (Default = true)
 
     public DataModelTierData(int level, JsonObject data) {
         validate(data, new String[]{"displayName"}, "Data Model Tier Data");
@@ -19,9 +18,10 @@ public class DataModelTierData extends MetaDataBase {
         this.level = level;
         displayName = getOrDefault(data, "displayName", "");
         displayColor = getOrDefault(data, "displayColor", "white");
-        killMultiplier = getOrDefault(data, "killMultiplier", 0, 0, Integer.MAX_VALUE);
-        dataToNext = getOrDefault(data, "dataToNext", 0, 0, Integer.MAX_VALUE);
-        pristineChance = getOrDefault(data, "pristineChance", 0, 0, 100);
+        killMultiplier = getOrDefault(data, "killMultiplier", 1, 0, Integer.MAX_VALUE);
+        dataToNext = getOrDefault(data, "dataToNext", 10, 0, Integer.MAX_VALUE);
+        pristineChance = getOrDefault(data, "pristineChance", 10, 0, 100);
+        canSimulate = getOrDefault(data, "canSimulate", true);
     }
 
     public String getDisplayNameFormatted() {
@@ -42,6 +42,10 @@ public class DataModelTierData extends MetaDataBase {
 
     public int getDataToNext() {
         return dataToNext;
+    }
+
+    public boolean getCanSimulate() {
+        return canSimulate;
     }
 
     @Override

@@ -118,31 +118,34 @@ public class DeepLearnerGui extends GuiContainer {
             ItemStack currentModelStack = dataModels.get(currentModelIndex);
             MobMetaData mobMetaData = DataModelHelper.getMobMetaData(currentModelStack);
 
-            if (mobMetaData != null) {
-                renderMetaData(textureManager, mobMetaData, left, top, currentModelStack);
-                renderMobDisplayBox(textureManager, left, top);
+            if (mobMetaData == null) {
+                return;
+            }
 
-                Entity mainEntity = mobMetaData.getEntity(world);
+            renderMetaData(textureManager, mobMetaData, left, top, currentModelStack);
+            renderMobDisplayBox(textureManager, left, top);
 
-                if (mainEntity != null) {
-                    renderEntity(mainEntity,
-                            mobMetaData.getDisplayEntityScale(),
-                            left + mobMetaData.getDisplayEntityOffsetX(),
-                            top + 80 + mobMetaData.getDisplayEntityOffsetY(),
-                            partialTicks);
-                }
+            // Get and render main entity
+            Entity mainEntity = mobMetaData.getEntity(world);
+            if (mainEntity != null) {
+                renderEntity(mainEntity,
+                        mobMetaData.getDisplayEntityScale(),
+                        left + mobMetaData.getDisplayEntityOffsetX(),
+                        top + 80 + mobMetaData.getDisplayEntityOffsetY(),
+                        partialTicks);
+            }
 
-                Entity extraEntity = mobMetaData.getExtraEntity(world);
-
-                if (extraEntity != null) {
-                    renderEntity(extraEntity,
-                            mobMetaData.getDisplayEntityScale(),
-                            left + mobMetaData.getDisplayExtraEntityOffsetX(),
-                            top + 80 + mobMetaData.getDisplayExtraEntityOffsetY(),
-                            partialTicks);
-                }
+            // Get and render extra entity
+            Entity extraEntity = mobMetaData.getExtraEntity(world);
+            if (extraEntity != null) {
+                renderEntity(extraEntity,
+                        mobMetaData.getDisplayEntityScale(),
+                        left + mobMetaData.getDisplayExtraEntityOffsetX(),
+                        top + 80 + mobMetaData.getDisplayExtraEntityOffsetY(),
+                        partialTicks);
             }
         } else {
+            // No Data Models in Learner
             renderDefaultScreen(left, top);
         }
     }
@@ -178,6 +181,7 @@ public class DeepLearnerGui extends GuiContainer {
         int leftStart = left + 49;
         int topStart = top - 4;
 
+        // Get data from Data Model ItemStack
         String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(stack);
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(stack);
         String mobName = mobMetaData.getDisplayName();
@@ -261,6 +265,8 @@ public class DeepLearnerGui extends GuiContainer {
 
     private void renderEntity(Entity entity, int scale, int x, int y, float partialTicks) {
         EntityRenderer entityRenderer = Minecraft.getMinecraft().entityRenderer;
+
+        // Don't need lightmap for GUI rendering
         entityRenderer.disableLightmap();
 
         GlStateManager.pushMatrix();
@@ -284,6 +290,7 @@ public class DeepLearnerGui extends GuiContainer {
 
         GlStateManager.popMatrix();
 
+        // Re-enable lightmap
         entityRenderer.enableLightmap();
     }
 }

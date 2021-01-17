@@ -3,7 +3,8 @@
     "displayName": "Faulty",
     "displayColor": "dark_gray",
     "killMultiplier": 1,
-    "dataToNext": 6
+    "dataToNext": 6,
+    "canSimulate": false
   },
   {
     "displayName": "Basic",

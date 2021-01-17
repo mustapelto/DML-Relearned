@@ -4,6 +4,7 @@ import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
+import mustapelto.deepmoblearning.common.util.TextHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -39,14 +40,14 @@ public class ItemDataModel extends DMLItem {
         }
 
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + KeyboardHelper.getSneakDisplayName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
+            String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakDisplayName(), TextFormatting.GRAY);
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
             String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
 
             if (!DataModelHelper.isAtMaxTier(stack)) {
-                int currentData = DataModelHelper.getTierCurrentData(stack);
+                int currentData = DataModelHelper.getCurrentTierDataCount(stack);
                 int requiredData = DataModelHelper.getTierRequiredData(stack);
                 int currentKillMultiplier = DataModelHelper.getTierKillMultiplier(stack);
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.data_collected", TextFormatting.GRAY + String.valueOf(currentData), String.valueOf(requiredData) + TextFormatting.RESET));
@@ -58,6 +59,11 @@ public class ItemDataModel extends DMLItem {
 
             LivingMatterData livingMatterData = mobMetaData.getLivingMatterData();
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameFormatted()));
+
+            boolean canSimulate = DataModelHelper.canSimulate(stack);
+            if (!canSimulate) {
+                tooltip.add(TextFormatting.RESET + "" + TextFormatting.RED + I18n.format("deepmoblearning.data_model.cannot_simulate") + TextFormatting.RESET);
+            }
         }
     }
 

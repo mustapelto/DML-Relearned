@@ -5,8 +5,6 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEve
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.Config.Name;
-import net.minecraftforge.common.config.Config.Comment;
 
 @Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dmlRelearned", category = "")
 @EventBusSubscriber

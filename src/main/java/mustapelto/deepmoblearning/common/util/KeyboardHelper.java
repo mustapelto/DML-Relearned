@@ -12,8 +12,17 @@ public class KeyboardHelper {
         return Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName();
     }
 
+    public static String getSprintDisplayName() {
+        return Minecraft.getMinecraft().gameSettings.keyBindSprint.getDisplayName();
+    }
+
     public static boolean isHoldingSneakKey() {
         int keyCode = Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode();
+        return isHoldingKey(keyCode);
+    }
+
+    public static boolean isHoldingSprintKey() {
+        int keyCode = Minecraft.getMinecraft().gameSettings.keyBindSprint.getKeyCode();
         return isHoldingKey(keyCode);
     }
 

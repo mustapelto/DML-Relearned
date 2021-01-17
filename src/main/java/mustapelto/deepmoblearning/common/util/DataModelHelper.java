@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
+import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
@@ -13,6 +14,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 
 public class DataModelHelper {
     //
@@ -27,20 +29,27 @@ public class DataModelHelper {
         NBTHelper.setInt(stack, "tier", tier);
     }
 
-    public static int getCurrentTierKillCount(ItemStack stack) {
-        return NBTHelper.getInt(stack, "killCount", 0);
+    public static int getCurrentTierDataCount(ItemStack stack) {
+        if (NBTHelper.hasKey(stack, "simulationCount") || NBTHelper.hasKey(stack, "killCount")) {
+            // Update DeepMobLearning NBT to DMLRelearned format
+            // i.e. "simulationCount" and "killCount" combined to a single value "dataCount"
+            int currentSimulations = NBTHelper.getInt(stack, "simulationCount", 0);
+            int currentKills = NBTHelper.getInt(stack, "killCount", 0);
+
+            NBTHelper.removeKey(stack, "simulationCount");
+            NBTHelper.removeKey(stack, "killCount");
+
+            DataModelTierData tierData = getTierData(stack);
+            if (tierData == null)
+                return 0;
+
+            NBTHelper.setInt(stack, "dataCount", currentSimulations + currentKills * tierData.getKillMultiplier());
+        }
+        return NBTHelper.getInt(stack, "dataCount", 0);
     }
 
-    public static void setCurrentTierKillCount(ItemStack stack, int count) {
-        NBTHelper.setInt(stack, "killCount", count);
-    }
-
-    public static int getCurrentTierSimulationCount(ItemStack stack) {
-        return NBTHelper.getInt(stack, "simulationCount", 0);
-    }
-
-    public static void setCurrentTierSimulationCount(ItemStack stack, int count) {
-        NBTHelper.setInt(stack, "simulationCount", count);
+    public static void setCurrentTierDataCount(ItemStack stack, int data) {
+        NBTHelper.setInt(stack, "dataCount", data);
     }
 
     public static int getTotalKillCount(ItemStack stack) {
@@ -86,7 +95,14 @@ public class DataModelHelper {
     }
 
     public static boolean isAtMaxTier(ItemStack stack) {
-        return getTierLevel(stack) == DataModelTierDataManager.getMaxLevel();
+        // also true if "over max" in case config has been changed on a running world to include fewer tiers
+        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel();
+    }
+
+    public static boolean canSimulate(ItemStack stack) {
+        // Can this model be run in a simulation chamber?
+        DataModelTierData data = getTierData(stack);
+        return data != null && data.getCanSimulate();
     }
 
     public static String getTierDisplayNameFormatted(ItemStack stack) {
@@ -97,14 +113,6 @@ public class DataModelHelper {
     public static String getNextTierDisplayNameFormatted(ItemStack stack) {
         DataModelTierData data = getNextTierData(stack);
         return (data != null) ? data.getDisplayNameFormatted() : "";
-    }
-
-    public static int getTierCurrentData(ItemStack stack) {
-        int killCount = getCurrentTierKillCount(stack);
-        int simulationCount = getCurrentTierSimulationCount(stack);
-        int killMultiplier = getTierKillMultiplier(stack);
-        return isAtMaxTier(stack) ? 0
-                : simulationCount + killCount * killMultiplier;
     }
 
     public static int getTierRequiredData(ItemStack stack) {
@@ -119,9 +127,9 @@ public class DataModelHelper {
 
     public static int getKillsToNextTier(ItemStack stack) {
         int dataRequired = getTierRequiredData(stack);
-        int currentData = getTierCurrentData(stack);
+        int dataCurrent = getCurrentTierDataCount(stack);
         int killMultiplier = getTierKillMultiplier(stack);
-        return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - currentData, killMultiplier);
+        return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
     }
 
     // Filter out non-data model stacks and return filtered list
@@ -139,16 +147,24 @@ public class DataModelHelper {
     //
     // Data Manipulation
     //
-    public static void increaseKillCount(ItemStack stack, EntityPlayerMP player) {
-        int tier = getTierLevel(stack);
-        int currentKillCount = getCurrentTierKillCount(stack);
+    public static void increaseDataCount(ItemStack stack, EntityPlayerMP player, boolean isKill) {
+        DataModelTierData tierData = getTierData(stack);
+        if (tierData == null)
+            return;
 
-        // TODO: Glitch Sword and Trial Stuff
+        int currentData = getCurrentTierDataCount(stack);
 
-        // Update kill count and set NBT
-        currentKillCount += /*(isGlitchSwordEquipped && !cap.isTrialActive() ? 2 : */1;
-        setCurrentTierKillCount(stack, currentKillCount);
-        setTotalKillCount(stack, getTotalKillCount(stack) + 1);
+        // TODO: Glitch Sword and Trial stuff
+
+        // Update data count and set NBT
+        currentData += isKill ? tierData.getKillMultiplier() : 1; // TODO: *2 if glitch sword equipped and no trial active
+        setCurrentTierDataCount(stack, currentData);
+
+        // Update appropriate total count
+        if (isKill)
+            setTotalKillCount(stack, getTotalKillCount(stack) + 1);
+        else
+            setTotalSimulationCount(stack, getTotalSimulationCount(stack) + 1);
 
         if (tryIncreaseTier(stack)) {
             player.sendMessage(new TextComponentString(
@@ -159,19 +175,82 @@ public class DataModelHelper {
         }
     }
 
+    /**
+     * Increase tier of data model if current data has reached required data
+     *
+     * @param stack DataModel stack to process
+     * @return true if tier could be increased, otherwise false
+     */
     private static boolean tryIncreaseTier(ItemStack stack) {
         int tier = getTierLevel(stack);
         if (tier >= DMLConstants.DataModel.MAX_TIER)
             return false;
 
-        if (getTierCurrentData(stack) >= getTierRequiredData(stack)) {
-            setCurrentTierKillCount(stack, 0);
-            setCurrentTierSimulationCount(stack, 0);
+        int currentData = getCurrentTierDataCount(stack);
+        int requiredData = getTierRequiredData(stack);
+
+        if (currentData >= requiredData) {
+            setCurrentTierDataCount(stack, currentData - requiredData); // extra data carries over to higher tier
             setTierLevel(stack, tier + 1);
 
             return true;
         }
 
         return false;
+    }
+
+    //
+    // Inventory Data Manipulation (e.g. Creative Model Learner)
+    //
+    public static void findAndLevelUpModels(NonNullList<ItemStack> inventory, EntityPlayerMP player, CreativeLevelUpAction action) {
+        for (ItemStack stack : inventory) {
+            if (stack.getItem() instanceof ItemDeepLearner) {
+                NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(stack);
+                for (ItemStack model : deepLearnerContents) {
+                    if (stack.getItem() instanceof ItemDataModel) {
+                        int tier = getTierLevel(stack);
+                        switch (action) {
+                            case DECREASE_TIER:
+                                if (tier > 0)
+                                    setTierLevel(stack, tier - 1);
+                                break;
+                            case INCREASE_TIER:
+                                if (!isAtMaxTier(stack))
+                                    setTierLevel(stack, tier + 1);
+                                break;
+                            case INCREASE_KILLS:
+                                if (!isAtMaxTier(stack))
+                                    increaseDataCount(stack, player, true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public enum CreativeLevelUpAction {
+        INCREASE_TIER(0),
+        INCREASE_KILLS(1),
+        DECREASE_TIER(2);
+
+        private final int value;
+        private static final HashMap<Integer, CreativeLevelUpAction> map = new HashMap<>();
+
+        CreativeLevelUpAction(int value) {
+            this.value = value;
+        }
+
+        static {
+            for (CreativeLevelUpAction creativeLevelUpAction : CreativeLevelUpAction.values())
+                map.put(creativeLevelUpAction.value, creativeLevelUpAction);
+        }
+
+        public int toInt() {
+            return value;
+        }
+
+        public static CreativeLevelUpAction fromInt(int value) {
+            return map.get(value);
+        }
     }
 }

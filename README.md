@@ -10,7 +10,15 @@ Forge Energy to operate, and are fully automatable.
 
 Get started by making a Deep Learner, which will house the data models to train.
 
-## Current mod support
+## Important changes compared to the original mod
+- Fully configurable Data Model types, tiers and Living Matter (JSON files) - including adding/removing models!
+  * Added mob types will use a default model unless supplied
+- Made machine sidedness configurable
+
+## Updating from DeepMobLearning
+This mod uses the same item and block IDs as the original mod, so in-place updating should be possible.
+
+## Current out-of-the-box mod support
 - Thermal Foundation (Thermal Elementals i.e. Blizz, Blitz and Basalz)
 - Twilight Forest (four categories of mobs: Forest, Swamp, Darkwood and Glacier)
 - Tinkers' Construct (Blue Slime)

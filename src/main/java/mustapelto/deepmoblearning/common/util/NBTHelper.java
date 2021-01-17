@@ -17,6 +17,10 @@ public class NBTHelper {
         return stack.getTagCompound();
     }
 
+    public static boolean hasKey(ItemStack stack, String key) {
+        return getTag(stack).hasKey(key);
+    }
+
     public static void setInt(ItemStack stack, String key, int value) {
         getTag(stack).setInteger(key, value);
     }
@@ -31,5 +35,10 @@ public class NBTHelper {
 
     public static NBTTagList getCompoundList(ItemStack stack, String key) {
         return hasTag(stack) ? getTag(stack).getTagList(key, Constants.NBT.TAG_COMPOUND) : null;
+    }
+
+    public static void removeKey(ItemStack stack, String key) {
+        if (hasTag(stack) && hasKey(stack, key))
+            getTag(stack).removeTag(key);
     }
 }

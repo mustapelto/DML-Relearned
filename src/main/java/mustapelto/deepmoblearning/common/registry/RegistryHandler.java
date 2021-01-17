@@ -23,6 +23,7 @@ public class RegistryHandler {
         registeredItems.add(new ItemPolymerClay());
         registeredItems.add(new ItemDataModelBlank());
         registeredItems.add(new ItemDeepLearner());
+        registeredItems.add(new ItemCreativeModelLearner());
 
         DMLRelearned.logger.info("Registering Living Matter...");
         LivingMatterDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemLivingMatter(value)));

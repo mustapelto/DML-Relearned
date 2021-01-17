@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.common.util.MathHelper;
 import net.minecraftforge.fml.common.Loader;
 
 public abstract class MetaDataBase {
@@ -53,6 +54,11 @@ public abstract class MetaDataBase {
 
     protected static int getOrDefault(JsonObject data, String key, int defaultValue) {
         return data.has(key) ? data.get(key).getAsInt() : defaultValue;
+    }
+
+    protected static int getOrDefault(JsonObject data, String key, int defaultValue, int min, int max) {
+        int value = data.has(key) ? data.get(key).getAsInt() : defaultValue;
+        return MathHelper.Clamp(value, min, max);
     }
 
     protected static boolean getOrDefault(JsonObject data, String key, boolean defaultValue) {

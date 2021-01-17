@@ -3,19 +3,19 @@
     {
       "itemID": "overworldian",
       "displayName": "Overworldian",
-      "displayNameColor": "green",
+      "displayColor": "green",
       "xpValue": 10
     },
     {
       "itemID": "hellish",
       "displayName": "Hellish",
-      "displayNameColor": "red",
+      "displayColor": "red",
       "xpValue": 14
     },
     {
       "itemID": "extraterrestrial",
       "displayName": "Extraterrestrial",
-      "displayNameColor": "light_purple",
+      "displayColor": "light_purple",
       "xpValue": 20
     }
   ],
@@ -23,7 +23,7 @@
     {
       "itemID": "twilight",
       "displayName": "Twilight",
-      "displayNameColor": "blue",
+      "displayColor": "blue",
       "xpValue": 30
     }
   ]

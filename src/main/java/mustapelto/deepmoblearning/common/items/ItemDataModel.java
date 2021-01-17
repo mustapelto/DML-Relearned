@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
@@ -46,11 +45,10 @@ public class ItemDataModel extends DMLItem {
             String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
 
-            int tier = DataModelHelper.getTierLevel(stack);
-            if (tier < DMLConstants.DataModel.MAX_TIER) {
-                int currentData = DataModelHelper.getCurrentTierCurrentData(stack);
-                int requiredData = DataModelHelper.getCurrentTierRequiredData(stack);
-                int currentKillMultiplier = DataModelHelper.getCurrentTierKillMultiplier(stack);
+            if (!DataModelHelper.isAtMaxTier(stack)) {
+                int currentData = DataModelHelper.getTierCurrentData(stack);
+                int requiredData = DataModelHelper.getTierRequiredData(stack);
+                int currentKillMultiplier = DataModelHelper.getTierKillMultiplier(stack);
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.data_collected", TextFormatting.GRAY + String.valueOf(currentData), String.valueOf(requiredData) + TextFormatting.RESET));
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.kill_multiplier", TextFormatting.GRAY + String.valueOf(currentKillMultiplier) + TextFormatting.RESET));
             }
@@ -59,7 +57,7 @@ public class ItemDataModel extends DMLItem {
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.rf_cost", TextFormatting.GRAY + String.valueOf(rfCost)) + TextFormatting.RESET);
 
             LivingMatterData livingMatterData = mobMetaData.getLivingMatterData();
-            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameColor() + livingMatterData.getDisplayName() + TextFormatting.RESET));
+            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.type", livingMatterData.getDisplayNameFormatted()));
         }
     }
 

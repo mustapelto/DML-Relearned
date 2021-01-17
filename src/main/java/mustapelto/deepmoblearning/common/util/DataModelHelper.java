@@ -1,9 +1,9 @@
 package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.DMLConfig;
-import mustapelto.deepmoblearning.common.enums.EnumDataModelTier;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
+import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
+import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,6 +11,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
+
+import javax.annotation.Nullable;
 
 public class DataModelHelper {
     //
@@ -61,71 +63,68 @@ public class DataModelHelper {
     // Calculated Getters
     //
 
+    @Nullable
     public static ItemDataModel getDataModelItem(ItemStack stack) {
         Item stackItem = stack.getItem();
         return stackItem instanceof ItemDataModel ? (ItemDataModel) stackItem : null;
     }
 
+    @Nullable
     public static MobMetaData getMobMetaData(ItemStack stack) {
         ItemDataModel stackItem = getDataModelItem(stack);
         return stackItem != null ? stackItem.getMobMetaData() : null;
     }
 
-    private static EnumDataModelTier getTier(ItemStack stack) {
-        return EnumDataModelTier.fromLevel(getTierLevel(stack));
+    @Nullable
+    private static DataModelTierData getTierData(ItemStack stack) {
+        return DataModelTierDataManager.getByLevel(getTierLevel(stack));
     }
 
-    private static EnumDataModelTier getNextTier(ItemStack stack) {
-        return EnumDataModelTier.fromLevel(getTierLevel(stack) + 1);
-    }
-
-    public static String getTierDisplayNameFormatted(ItemStack stack) {
-        return getTier(stack).getDisplayNameFormatted();
-    }
-
-    public static String getNextTierDisplayNameFormatted(ItemStack stack) {
-        return getNextTier(stack).getDisplayNameFormatted();
+    @Nullable
+    private static DataModelTierData getNextTierData(ItemStack stack) {
+        return DataModelTierDataManager.getByLevel(getTierLevel(stack) + 1);
     }
 
     public static boolean isAtMaxTier(ItemStack stack) {
-        return getTier(stack).getLevel() == DMLConstants.DataModel.MAX_TIER;
+        return getTierLevel(stack) == DataModelTierDataManager.getMaxLevel();
     }
 
-    public static int getCurrentTierCurrentData(ItemStack stack) {
+    public static String getTierDisplayNameFormatted(ItemStack stack) {
+        DataModelTierData data = getTierData(stack);
+        return (data != null) ? data.getDisplayNameFormatted() : "";
+    }
+
+    public static String getNextTierDisplayNameFormatted(ItemStack stack) {
+        DataModelTierData data = getNextTierData(stack);
+        return (data != null) ? data.getDisplayNameFormatted() : "";
+    }
+
+    public static int getTierCurrentData(ItemStack stack) {
         int killCount = getCurrentTierKillCount(stack);
         int simulationCount = getCurrentTierSimulationCount(stack);
-        int killMultiplier = getCurrentTierKillMultiplier(stack);
+        int killMultiplier = getTierKillMultiplier(stack);
         return isAtMaxTier(stack) ? 0
                 : simulationCount + killCount * killMultiplier;
     }
 
-    public static int getCurrentTierRequiredData(ItemStack stack) {
-        return DMLConfig.DATA_MODEL_EXPERIENCE_TWEAKS.getDataRequired(getTier(stack));
+    public static int getTierRequiredData(ItemStack stack) {
+        DataModelTierData data = getTierData(stack);
+        return (data != null) ? data.getDataToNext() : 0;
     }
 
-    public static int getCurrentTierKillMultiplier(ItemStack stack) {
-        return DMLConfig.DATA_MODEL_EXPERIENCE_TWEAKS.getKillMultiplier(getTier(stack));
-    }
-
-    // total data required for next tier
-    private static int getTierMaxData(ItemStack stack) {
-        return isAtMaxTier(stack) ? 0 : getCurrentTierRequiredData(stack);
-    }
-
-    // total kills required for next tier
-    private static int getTierMaxKills(ItemStack stack) {
-        int dataRequired = getCurrentTierRequiredData(stack);
-        int killMultiplier = getCurrentTierKillMultiplier(stack);
-        return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired, killMultiplier);
+    public static int getTierKillMultiplier(ItemStack stack) {
+        DataModelTierData data = getTierData(stack);
+        return (data != null) ? data.getKillMultiplier() : 0;
     }
 
     public static int getKillsToNextTier(ItemStack stack) {
-        int dataRequired = getCurrentTierRequiredData(stack);
-        int currentData = getCurrentTierCurrentData(stack);
-        int killMultiplier = getCurrentTierKillMultiplier(stack);
+        int dataRequired = getTierRequiredData(stack);
+        int currentData = getTierCurrentData(stack);
+        int killMultiplier = getTierKillMultiplier(stack);
         return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - currentData, killMultiplier);
     }
 
+    // Filter out non-data model stacks and return filtered list
     public static NonNullList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
         NonNullList<ItemStack> result = NonNullList.create();
 
@@ -165,7 +164,7 @@ public class DataModelHelper {
         if (tier >= DMLConstants.DataModel.MAX_TIER)
             return false;
 
-        if (getCurrentTierCurrentData(stack) >= getCurrentTierRequiredData(stack)) {
+        if (getTierCurrentData(stack) >= getTierRequiredData(stack)) {
             setCurrentTierKillCount(stack, 0);
             setCurrentTierSimulationCount(stack, 0);
             setTierLevel(stack, tier + 1);

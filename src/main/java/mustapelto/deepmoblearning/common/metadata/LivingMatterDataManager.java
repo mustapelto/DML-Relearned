@@ -3,7 +3,6 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 
@@ -15,9 +14,12 @@ import java.util.Set;
 
 public class LivingMatterDataManager {
     private static final LinkedHashMap<String, LivingMatterData> dataStore = new LinkedHashMap<>();
-    private static final File configFile = new File(FileHelper.configDML, "LivingMatter.json");
+    private static final String FILE_NAME = "LivingMatter.json";
+    private static File configFile;
 
     public static void init() {
+        configFile = new File(FileHelper.configDML, FILE_NAME);
+
         if (!configFile.exists()) {
             readDefaultFile();
             writeConfigFile();
@@ -30,7 +32,7 @@ public class LivingMatterDataManager {
     private static void readDefaultFile() {
         JsonObject dataObject;
         try {
-            dataObject = FileHelper.readObject("/settings/LivingMatter.json");
+            dataObject = FileHelper.readObject("/settings/" + FILE_NAME);
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not read default Living Matter config file! This will cause the mod to malfunction.");
             return;

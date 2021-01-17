@@ -14,9 +14,11 @@ import java.util.Set;
 
 public class MobMetaDataManager {
     private static final LinkedHashMap<String, MobMetaData> dataStore = new LinkedHashMap<>();
-    private static final File configFile = new File(FileHelper.configDML, "DataModels.json");
+    private static final String FILE_NAME = "DataModels.json";
+    private static File configFile;
 
     public static void init() {
+        configFile = new File(FileHelper.configDML, FILE_NAME);
         if (!configFile.exists()) {
             readDefaultFile();
             writeConfigFile();
@@ -29,7 +31,7 @@ public class MobMetaDataManager {
     private static void readDefaultFile() {
         JsonObject dataObject;
         try {
-            dataObject = FileHelper.readObject("/settings/DataModels.json");
+            dataObject = FileHelper.readObject("/settings/" + FILE_NAME);
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not read default Data Model config file! This will cause the mod to malfunction.");
             return;
@@ -82,9 +84,5 @@ public class MobMetaDataManager {
 
     public static LinkedHashMap<String, MobMetaData> getDataStore() {
         return dataStore;
-    }
-
-    public static MobMetaData getMetaData(String id) {
-        return dataStore.get(id);
     }
 }

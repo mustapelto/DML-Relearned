@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.ServerProxy;
+import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
@@ -42,6 +43,7 @@ public class DMLRelearned
         // Init Data Managers (for reading/writing config json files)
         MobMetaDataManager.init();
         LivingMatterDataManager.init();
+        DataModelTierDataManager.init();
 
         // Network Stuff
         DMLPacketHandler.registerPackets();
@@ -61,6 +63,7 @@ public class DMLRelearned
     }
 
     public static CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
+        @SuppressWarnings("ConstantConditions")
         @Override
         public ItemStack getTabIconItem() {
             return new ItemStack(ItemRegistry.deep_learner);

@@ -1,33 +1,30 @@
 package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonObject;
-import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 
 public class LivingMatterData extends MetaDataBase {
-    private final String displayName;
-    private final String displayNameColor;
-    private final int xpValue;
+    private final String displayName; // Name shown in tooltips and GUI. Also used for item display name.
+    private final String displayColor; // Color of name when displayed.
+    private final int xpValue; // XP received when item is consumed.
 
     public LivingMatterData(String modID, JsonObject data) {
-        validate(data, new String[]{"itemID"}, "LivingMatterData");
+        validate(data, new String[]{"itemID"}, "Living Matter Data"); // itemID required field for item generation
 
         itemID = getOrDefault(data, "itemID", "");
         this.modID = modID;
         displayName = getOrDefault(data, "displayName", "");
-        displayNameColor = getOrDefault(data, "displayNameColor", "white");
-        xpValue = getOrDefault(data, "xpValue", 0);
+        displayColor = getOrDefault(data, "displayColor", "white");
+        xpValue = getOrDefault(data, "xpValue", 0, 0, Integer.MAX_VALUE);
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    @Nullable
-    public TextFormatting getDisplayNameColor() {
-        return TextFormatting.getValueByName(displayNameColor);
+    public String getDisplayNameFormatted() {
+        TextFormatting formatting = TextFormatting.getValueByName(displayColor);
+        return (formatting != null) ?
+                formatting + displayName + TextFormatting.RESET :
+                displayName;
     }
 
     public int getXpValue() {
@@ -40,7 +37,7 @@ public class LivingMatterData extends MetaDataBase {
 
         object.addProperty("itemID", itemID);
         object.addProperty("displayName", displayName);
-        object.addProperty("displayNameColor", displayNameColor);
+        object.addProperty("displayColor", displayColor);
         object.addProperty("xpValue", xpValue);
 
         return object;

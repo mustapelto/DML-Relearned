@@ -53,6 +53,6 @@ public class ItemLivingMatter extends DMLItem {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return data.getDisplayName() + " Matter";
+        return data.getDisplayNameFormatted() + " Matter";
     }
 }

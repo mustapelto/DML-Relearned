@@ -37,9 +37,7 @@ public class MobMetaData extends MetaDataBase {
     private final String[] trialRewards;
 
     public MobMetaData(String modID, JsonObject data) {
-        String[] requiredFields = new String[]{
-                "itemID"
-        };
+        String[] requiredFields = new String[]{"itemID"}; // Required field for item generation
 
         validate(data, requiredFields, "MobData");
 
@@ -47,20 +45,20 @@ public class MobMetaData extends MetaDataBase {
         this.modID = modID;
         displayName = getOrDefault(data, "displayName", "");
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
-        numberOfHearts = getOrDefault(data, "numberOfHearts", 0);
+        numberOfHearts = getOrDefault(data, "numberOfHearts", 0, 0, Integer.MAX_VALUE);
         livingMatter = getOrDefault(data, "livingMatter", DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID);
         mobTrivia = getOrDefault(data, "mobTrivia", new String[0]);
-        simulationRFCost = getOrDefault(data, "simulationRFCost", 256);
+        simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, Integer.MAX_VALUE);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
         displayEntityID = getOrDefault(data, "displayEntityID", String.format("%s:%s", modID, itemID));
         displayEntityHeldItem = getOrDefault(data, "displayEntityHeldItem", "");
-        displayEntityScale = getOrDefault(data, "displayEntityScale", 40);
-        displayEntityOffsetX = getOrDefault(data, "displayEntityOffsetX", 0);
-        displayEntityOffsetY = getOrDefault(data, "displayEntityOffsetY", 0);
+        displayEntityScale = getOrDefault(data, "displayEntityScale", 40, 0, 200);
+        displayEntityOffsetX = getOrDefault(data, "displayEntityOffsetX", 0, -200, 200);
+        displayEntityOffsetY = getOrDefault(data, "displayEntityOffsetY", 0, -200, 200);
         displayExtraEntityID = getOrDefault(data, "displayExtraEntityID", "");
         displayExtraEntityIsChild = getOrDefault(data, "displayExtraEntityIsChild", false);
-        displayExtraEntityOffsetX = getOrDefault(data, "displayExtraEntityOffsetX", 0);
-        displayExtraEntityOffsetY = getOrDefault(data, "displayExtraEntityOffsetY", 0);
+        displayExtraEntityOffsetX = getOrDefault(data, "displayExtraEntityOffsetX", 0, -200, 200);
+        displayExtraEntityOffsetY = getOrDefault(data, "displayExtraEntityOffsetY", 0, -200, 200);
         associatedMobs = getOrDefault(data, "associatedMobs", new String[]{ displayEntityID });
         lootItems = getOrDefault(data, "lootItems", new String[]{ "minecraft:wood" });
         trialRewards = getOrDefault(data, "trialRewards", new String[0]);

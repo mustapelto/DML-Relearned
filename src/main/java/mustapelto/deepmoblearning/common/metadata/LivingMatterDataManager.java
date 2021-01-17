@@ -1,79 +1,91 @@
 package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class LivingMatterDataManager {
-    private static HashMap<String, LivingMatterData> dataStore;
+    private static final LinkedHashMap<String, LivingMatterData> dataStore = new LinkedHashMap<>();
+    private static final File configFile = new File(FileHelper.configDML, "LivingMatter.json");
 
     public static void init() {
-        File jsonFile = new File(FileHelper.configDML, "LivingMatter.json");
-
-        if (!jsonFile.exists()) {
-            generateDefaultDataFile(jsonFile);
+        if (!configFile.exists()) {
+            readDefaultFile();
+            writeConfigFile();
+            return;
         }
 
-        dataStore = new HashMap<>();
-
-        readDataFromFile(jsonFile);
+        readConfigFile();
     }
 
-    private static void generateDefaultDataFile(File jsonFile) {
-        JsonArray dataArray = new JsonArray();
-        dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID,
-                "minecraft",
-                "Overworldian",
-                "green",
-                DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.XP));
-        dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.ID,
-                "minecraft",
-                "Hellish",
-                "red",
-                DMLConstants.LivingMatter.DEFAULT_VALUES.HELLISH.XP));
-        dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.ID,
-                "minecraft",
-                "Extraterrestrial",
-                "light_purple",
-                DMLConstants.LivingMatter.DEFAULT_VALUES.EXTRATERRESTRIAL.XP));
-        dataArray.add(LivingMatterData.createJsonObject(DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.ID,
-                "twilightforest",
-                "Twilight",
-                "blue",
-                DMLConstants.LivingMatter.DEFAULT_VALUES.TWILIGHT.XP));
-
+    private static void readDefaultFile() {
+        JsonObject dataObject;
         try {
-            FileHelper.writeArray(dataArray, jsonFile);
+            dataObject = FileHelper.readObject("/settings/LivingMatter.json");
         } catch (IOException e) {
-            DMLRelearned.logger.error("Could not write default Living Matter config file!");
+            DMLRelearned.logger.error("Could not read default Living Matter config file! This will cause the mod to malfunction.");
+            return;
         }
+
+        populateDataStore(dataObject);
     }
 
-    private static void readDataFromFile(File jsonFile) {
-        JsonArray dataArray;
+    private static void readConfigFile() {
+        JsonObject dataObject;
         try {
-            dataArray = FileHelper.readArray(jsonFile);
+            dataObject = FileHelper.readObject(configFile);
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not read Living Matter config file! This will cause the mod to malfunction.");
             return;
         }
 
-        dataArray.forEach(block -> {
-            LivingMatterData data = new LivingMatterData(block.getAsJsonObject());
-            dataStore.put(data.itemID, data);
-        });
+        populateDataStore(dataObject);
+    }
+
+    private static void populateDataStore(JsonObject data) {
+        Set<Map.Entry<String, JsonElement>> entrySet = data.entrySet();
+        for (Map.Entry<String, JsonElement> entry : entrySet) {
+            if (!(entry.getValue() instanceof JsonArray))
+                continue;
+            JsonArray contents = (JsonArray) entry.getValue();
+            for (int i = 0; i < contents.size(); i++) {
+                LivingMatterData livingMatterData = new LivingMatterData(entry.getKey(), contents.get(i).getAsJsonObject());
+                dataStore.put(livingMatterData.itemID, livingMatterData);
+            }
+        }
+    }
+
+    private static void writeConfigFile() {
+        JsonObject data = new JsonObject();
+
+        for (LivingMatterData entry : dataStore.values()) {
+            String modID = entry.getModID();
+            if (!data.has(modID))
+                data.add(modID, new JsonArray());
+            data.get(modID).getAsJsonArray().add(entry.toJsonObject());
+        }
+
+        try {
+            FileHelper.writeObject(data, configFile);
+        } catch (IOException e) {
+            DMLRelearned.logger.error("Could not write Living Matter config file!");
+        }
     }
 
     public static LivingMatterData getByID(String id) {
         return dataStore.get(id);
     }
 
-    public static HashMap<String, LivingMatterData> getDataStore() {
+    public static LinkedHashMap<String, LivingMatterData> getDataStore() {
         return dataStore;
     }
 }

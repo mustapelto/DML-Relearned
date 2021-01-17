@@ -1,0 +1,527 @@
+{
+  "minecraft": [
+    {
+      "itemID": "blaze",
+      "displayName": "Blaze",
+      "numberOfHearts": 10,
+      "livingMatter": "hellish",
+      "mobTrivia": [
+        "Bring buckets of water, and watch in despair",
+        "as it evaporates, and everything is on fire.",
+        "You are on fire."
+      ],
+      "simulationRFCost": 256,
+      "displayEntityID": "minecraft:blaze",
+      "displayEntityScale": 48,
+      "displayEntityOffsetX": 10,
+      "displayEntityOffsetY": 20,
+      "associatedMobs": [
+        "minecraft:blaze"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "creeper",
+      "displayName": "Creeper",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "Will blow up your base if",
+        "left unattended."
+      ],
+      "simulationRFCost": 80,
+      "displayEntityID": "minecraft:creeper",
+      "displayEntityScale": 42,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": 5,
+      "associatedMobs": [
+        "minecraft:creeper"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "dragon",
+      "displayName": "Ender Dragon",
+      "numberOfHearts": 100,
+      "livingMatter": "extraterrestrial",
+      "mobTrivia": [
+        "Resides in the End, does not harbor treasure.",
+        "Destroy its crystals and break the cycle!"
+      ],
+      "simulationRFCost": 2560,
+      "displayEntityID": "minecraft:ender_dragon",
+      "displayEntityScale": 7,
+      "displayEntityOffsetX": 0,
+      "displayEntityOffsetY": -20,
+      "associatedMobs": [
+        "minecraft:ender_dragon"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "enderman",
+      "displayName": "Enderman",
+      "displayNamePlural": "Endermen",
+      "numberOfHearts": 20,
+      "livingMatter": "extraterrestrial",
+      "mobTrivia": [
+        "Friendly unless provoked, dislikes rain.",
+        "Teleports short distances."
+      ],
+      "simulationRFCost": 512,
+      "displayEntityID": "minecraft:enderman",
+      "displayEntityScale": 30,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": 11,
+      "associatedMobs": [
+        "minecraft:enderman",
+        "minecraft:endermite"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "ghast",
+      "displayName": "Ghast",
+      "numberOfHearts": 10,
+      "livingMatter": "hellish",
+      "mobTrivia": [
+        "If you hear something that sounds like",
+        "a crying llama, you're probably hearing a ghast."
+      ],
+      "simulationRFCost": 372,
+      "displayEntityID": "minecraft:ghast",
+      "displayEntityScale": 10,
+      "displayEntityOffsetX": 0,
+      "displayEntityOffsetY": -20,
+      "associatedMobs": [
+        "minecraft:ghast"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "guardian",
+      "displayName": "Guardian",
+      "numberOfHearts": 15,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "Lurking in the oceans.",
+        "Uses some sort of sonar beam as",
+        "a means of attack."
+      ],
+      "simulationRFCost": 340,
+      "displayEntityID": "minecraft:guardian",
+      "displayEntityScale": 36,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": -5,
+      "associatedMobs": [
+        "minecraft:guardian",
+        "minecraft:elder_guardian"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "shulker",
+      "displayName": "Shulker",
+      "numberOfHearts": 15,
+      "livingMatter": "extraterrestrial",
+      "mobTrivia": [
+        "Found in End cities.",
+        "Sneaky little buggers."
+      ],
+      "simulationRFCost": 256,
+      "displayEntityID": "minecraft:shulker",
+      "displayEntityScale": 36,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": -5,
+      "associatedMobs": [
+        "minecraft:shulker"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "skeleton",
+      "displayName": "Skeleton",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "A formidable archer, which seems to be running",
+        "some sort of cheat engine.",
+        "A shield could prove useful."
+      ],
+      "simulationRFCost": 80,
+      "displayEntityID": "minecraft:skeleton",
+      "displayEntityHeldItem": "minecraft:bow",
+      "displayEntityScale": 38,
+      "displayEntityOffsetX": 6,
+      "displayEntityOffsetY": 10,
+      "associatedMobs": [
+        "minecraft:skeleton",
+        "minecraft:stray",
+        "twilightforest:skeleton_druid"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "slime",
+      "displayName": "Slime",
+      "numberOfHearts": 8,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "The bouncing bouncer",
+        "bounces, bounces and bounces",
+        "Bounces and bou- squish! -\"A new slime haiku\""
+      ],
+      "simulationRFCost": 150,
+      "displayEntityID": "minecraft:slime",
+      "displayEntityScale": 60,
+      "displayEntityOffsetX": 10,
+      "displayEntityOffsetY": -16,
+      "associatedMobs": [
+        "minecraft:slime",
+        "minecraft:magma_cube"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "spider",
+      "displayName": "Spider",
+      "numberOfHearts": 8,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "Nocturnal douchebags, beware!",
+        "Drops strands of string for some reason."
+      ],
+      "simulationRFCost": 80,
+      "displayEntityID": "minecraft:creeper",
+      "displayEntityScale": 30,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": 0,
+      "displayExtraEntityID": "minecraft:cave_spider",
+      "displayExtraEntityIsChild": false,
+      "displayExtraEntityOffsetX": 5,
+      "displayExtraEntityOffsetY": -25,
+      "associatedMobs": [
+        "minecraft:spider",
+        "minecraft:cave_spider",
+        "twilightforest:hedge_spider",
+        "twilightforest:king_spider"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "witch",
+      "displayName": "Witch",
+      "displayNamePlural": "Witches",
+      "numberOfHearts": 13,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "Affinity with potions and concoctions.",
+        "Likes cats.",
+        "Beware!"
+      ],
+      "simulationRFCost": 120,
+      "displayEntityID": "minecraft:witch",
+      "displayEntityHeldItem": "minecraft:potion",
+      "displayEntityScale": 34,
+      "displayEntityOffsetX": 4,
+      "displayEntityOffsetY": 11,
+      "associatedMobs": [
+        "minecraft:witch"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "wither",
+      "displayName": "Wither",
+      "numberOfHearts": 150,
+      "livingMatter": "extraterrestrial",
+      "mobTrivia": [
+        "Do not approach this enemy. Run!",
+        "I mean it has 3 heads, what could",
+        "possibly go wrong?"
+      ],
+      "simulationRFCost": 2048,
+      "displayEntityID": "minecraft:wither",
+      "displayEntityScale": 22,
+      "displayEntityOffsetX": 3,
+      "displayEntityOffsetY": 18,
+      "associatedMobs": [
+        "minecraft:wither"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "wither_skeleton",
+      "displayName": "Wither Skeleton",
+      "numberOfHearts": 10,
+      "livingMatter": "hellish",
+      "mobTrivia": [
+        "Inflicts the Wither effect.",
+        "Bring milk!"
+      ],
+      "simulationRFCost": 880,
+      "displayEntityID": "minecraft:wither_skeleton",
+      "displayEntityHeldItem": "minecraft:stone_sword",
+      "displayEntityScale": 33,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": 10,
+      "associatedMobs": [
+        "minecraft:wither_skeleton"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "zombie",
+      "displayName": "Zombie",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "They go moan in the night.",
+        "Does not understand the need for",
+        "personal space."
+      ],
+      "simulationRFCost": 80,
+      "displayEntityID": "minecraft:zombie",
+      "displayEntityScale": 35,
+      "displayEntityOffsetX": -2,
+      "displayEntityOffsetY": 6,
+      "displayExtraEntityID": "minecraft:zombie",
+      "displayExtraEntityIsChild": true,
+      "displayExtraEntityOffsetX": 21,
+      "displayExtraEntityOffsetY": 6,
+      "associatedMobs": [
+        "minecraft:zombie",
+        "minecraft:husk",
+        "minecraft:zombie_villager",
+        "minecraft:zombie_pigman"
+      ],
+      "lootItems": [
+        ""
+      ]
+    }
+  ],
+  "thermalfoundation": [
+    {
+      "itemID": "thermal_elemental",
+      "displayName": "Thermal Elemental",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "Blizzes, Blitzes and Basalzes.",
+        "Siblings of the Blaze.",
+        "Their master really liked words starting with B."
+      ],
+      "simulationRFCost": 256,
+      "displayEntityID": "thermalfoundation:blizz",
+      "displayEntityScale": 48,
+      "displayEntityOffsetX": 10,
+      "displayEntityOffsetY": 20,
+      "associatedMobs": [
+        "thermalfoundation:blizz",
+        "thermalfoundation:blitz",
+        "thermalfoundation:basalz"
+      ],
+      "lootItems": [
+        ""
+      ]
+    }
+  ],
+  "twilightforest": [
+    {
+      "itemID": "twilight_forest",
+      "displayName": "Forest creature",
+      "numberOfHearts": 0,
+      "livingMatter": "twilight",
+      "mobTrivia": [
+        "Nagas, Liches and flying books.",
+        "What the hell have you walked into?"
+      ],
+      "simulationRFCost": 256,
+      "extraTooltip": "Gain data by defeating non-vanilla mobs in the Naga Courtyard and Lich Tower.",
+      "displayEntityID": "twilightforest:lich",
+      "displayEntityScale": 35,
+      "displayEntityOffsetX": 6,
+      "displayEntityOffsetY": 12,
+      "associatedMobs": [
+        "twilightforest:naga",
+        "twilightforest:lich_minion",
+        "twilightforest:lich",
+        "twilightforest:death_tome",
+        "twilightforest:swarm_spider"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "twilight_swamp",
+      "displayName": "Swamp creature",
+      "numberOfHearts": 0,
+      "livingMatter": "twilight",
+      "mobTrivia": [
+        "This realm sure could use some building regulations.",
+        "How are you even allowed to build a huge maze",
+        "in your basement!?"
+      ],
+      "simulationRFCost": 256,
+      "extraTooltip": "Gain data by defeating non-vanilla mobs in the Swamp Labyrinth and Hydra Lair.",
+      "displayEntityID": "minecraft:minotaur",
+      "displayEntityHeldItem": "twilightforest:minotaur_axe",
+      "displayEntityScale": 33,
+      "displayEntityOffsetX": 6,
+      "displayEntityOffsetY": 14,
+      "associatedMobs": [
+        "twilightforest:minotaur",
+        "twilightforest:minoshroom",
+        "twilightforest:maze_slime",
+        "twilightforest:fire_beetle",
+        "twilightforest:pinch_beetle",
+        "twilightforest:slime_beetle",
+        "twilightforest:hydra"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "twilight_glacier",
+      "displayName": "Glacier inhabitant",
+      "numberOfHearts": 0,
+      "livingMatter": "twilight",
+      "mobTrivia": [
+        "Here you'll find caves with ancient beasts",
+        "and Elsa's wicked distant cousin Aurora.",
+        "(Elsa might \"let it go\", but Aurora sure won't!)"
+      ],
+      "simulationRFCost": 256,
+      "extraTooltip": "Gain data by defeating non-vanilla mobs in the Yeti Lair and Ice Tower.",
+      "displayEntityID": "minecraft:snow_queen",
+      "displayEntityScale": 33,
+      "displayEntityOffsetX": 5,
+      "displayEntityOffsetY": 13,
+      "associatedMobs": [
+        "twilightforest:yeti_alpha",
+        "twilightforest:yeti",
+        "twilightforest:winter_wolf",
+        "twilightforest:penguin",
+        "twilightforest:snow_guardian",
+        "twilightforest:stable_ice_core",
+        "twilightforest:unstable_ice_core",
+        "twilightforest:snow_queen"
+      ],
+      "lootItems": [
+        ""
+      ]
+    },
+    {
+      "itemID": "twilight_darkwood",
+      "displayName": "Darkwood creature",
+      "numberOfHearts": 0,
+      "livingMatter": "twilight",
+      "mobTrivia": [
+        "Spooky scary strongholds send shivers down",
+        "your spine, the Ur-Ghast will shock your",
+        "soul and seal your doom tonight!"
+      ],
+      "simulationRFCost": 256,
+      "extraTooltip": "Gain data by defeating non-vanilla mobs in the Goblin Knight Stronghold and Dark Tower.",
+      "displayEntityID": "twilightforest:ur_ghast",
+      "displayEntityScale": 3,
+      "displayEntityOffsetX": -3,
+      "displayEntityOffsetY": -3,
+      "associatedMobs": [
+        "twilightforest:redcap",
+        "twilightforest:blockchain_goblin",
+        "twilightforest:kobold",
+        "twilightforest:goblin_knight_lower",
+        "twilightforest:goblin_knight_upper",
+        "twilightforest:helmet_crab",
+        "twilightforest:knight_phantom",
+        "twilightforest:tower_ghast",
+        "twilightforest:tower_broodling",
+        "twilightforest:tower_golem",
+        "twilightforest:tower_termite",
+        "twilightforest:mini_ghast",
+        "twilightforest:ur_ghast"
+      ],
+      "lootItems": [
+        ""
+      ]
+    }
+  ],
+  "tconstruct": [
+    {
+      "itemID": "tinker_slime",
+      "displayName": "Blue Slime",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "The elusive blue slime. Seemingly a",
+        "part of some sort of power hierarchy,",
+        "since there's a bunch of \"King slimes\" around."
+      ],
+      "simulationRFCost": 256,
+      "displayEntityID": "tconstruct:blue_slime",
+      "displayEntityScale": 60,
+      "displayEntityOffsetX": 10,
+      "displayEntityOffsetY": -16,
+      "associatedMobs": [
+        "tconstruct:blue_slime"
+      ],
+      "lootItems": [
+        ""
+      ]
+    }
+  ],
+  "matteroverdrive": [
+    {
+      "itemID": "mo_android",
+      "displayName": "Rogue Android",
+      "numberOfHearts": 10,
+      "livingMatter": "overworldian",
+      "mobTrivia": [
+        "It's not simply an android.",
+        "It's a life form, entirely unique.",
+        "Meep morp."
+      ],
+      "simulationRFCost": 256,
+      "displayEntityID": "matteroverdrive:rogue_android",
+      "displayEntityScale": 33,
+      "displayEntityOffsetX": 4,
+      "displayEntityOffsetY": 8,
+      "associatedMobs": [
+        "matteroverdrive:ranged_rogue_android",
+        "matteroverdrive:rogue_android"
+      ],
+      "lootItems": [
+        ""
+      ]
+    }
+  ]
+}

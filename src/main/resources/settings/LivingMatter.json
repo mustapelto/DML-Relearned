@@ -1,0 +1,30 @@
+{
+  "minecraft": [
+    {
+      "itemID": "overworldian",
+      "displayName": "Overworldian",
+      "displayNameColor": "green",
+      "xpValue": 10
+    },
+    {
+      "itemID": "hellish",
+      "displayName": "Hellish",
+      "displayNameColor": "red",
+      "xpValue": 14
+    },
+    {
+      "itemID": "extraterrestrial",
+      "displayName": "Extraterrestrial",
+      "displayNameColor": "light_purple",
+      "xpValue": 20
+    }
+  ],
+  "twilightforest": [
+    {
+      "itemID": "twilight",
+      "displayName": "Twilight",
+      "displayNameColor": "blue",
+      "xpValue": 30
+    }
+  ]
+}

@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
-
-import javax.xml.soap.Text;
 
 public abstract class MetaDataBase {
     protected String modID; // Mod ID the item is related to. "minecraft" for vanilla-related items.
@@ -40,7 +37,15 @@ public abstract class MetaDataBase {
         return modID.equals(DMLConstants.MINECRAFT) || Loader.isModLoaded(modID);
     }
 
-    // Methods used for instance initialization / reading from JSON
+    // Methods used for instance initialization / reading and writing JSON
+
+    /**
+     * Returns metadata as JSON object
+     * Does not include mod ID, which is used as a category name in the JSON file
+     *
+     * @return JSON object containing metadata
+     */
+    public abstract JsonObject toJsonObject();
 
     protected static String getOrDefault(JsonObject data, String key, String defaultValue) {
         return data.has(key) ? data.get(key).getAsString() : defaultValue;

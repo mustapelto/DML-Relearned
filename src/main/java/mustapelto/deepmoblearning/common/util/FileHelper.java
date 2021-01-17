@@ -10,10 +10,7 @@ import com.google.gson.stream.JsonWriter;
 import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileHelper {
     public static File configRoot;
@@ -37,8 +34,32 @@ public class FileHelper {
         }
     }
 
+    public static JsonObject readObject(String internalFile) throws IOException {
+        try (
+                InputStream in = DMLRelearned.class.getResourceAsStream(internalFile);
+                JsonReader reader = new JsonReader(new InputStreamReader(in))
+                ){
+            JsonParser parser = new JsonParser();
+            reader.setLenient(true);
+            JsonElement element = parser.parse(reader);
+            return element.getAsJsonObject();
+        }
+    }
+
     public static JsonArray readArray(File file) throws IOException {
         try (JsonReader reader = new JsonReader(new FileReader(file))) {
+            JsonParser parser = new JsonParser();
+            reader.setLenient(true);
+            JsonElement element = parser.parse(reader);
+            return element.getAsJsonArray();
+        }
+    }
+
+    public static JsonArray readArray(String internalFile) throws IOException {
+        try (
+                InputStream in = DMLRelearned.class.getResourceAsStream(internalFile);
+                JsonReader reader = new JsonReader(new InputStreamReader(in))
+        ){
             JsonParser parser = new JsonParser();
             reader.setLenient(true);
             JsonElement element = parser.parse(reader);

@@ -36,7 +36,7 @@ public class MobMetaData extends MetaDataBase {
     private final String[] lootItems;
     private final String[] trialRewards;
 
-    public MobMetaData(JsonObject data) {
+    public MobMetaData(String modID, JsonObject data) {
         String[] requiredFields = new String[]{
                 "itemID"
         };
@@ -44,7 +44,7 @@ public class MobMetaData extends MetaDataBase {
         validate(data, requiredFields, "MobData");
 
         itemID = getOrDefault(data, "itemID", "");
-        modID = getOrDefault(data, "modID", "minecraft");
+        this.modID = modID;
         displayName = getOrDefault(data, "displayName", "");
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
         numberOfHearts = getOrDefault(data, "numberOfHearts", 0);
@@ -160,44 +160,10 @@ public class MobMetaData extends MetaDataBase {
         return Arrays.asList(associatedMobs).contains(name);
     }
 
-    /**
-     * Create JSON object from supplied data
-     * @param itemID ID for associated item (internal name)
-     * @param modID ID of associated mod (vanilla = "minecraft")
-     * @param displayName Entity name to display (Deep Learner, model name) (default = "Unknown")
-     * @param displayNamePlural Plural form of entity name (default =  displayName + "s")
-     * @param numberOfHearts Entity's max health (default = 40)
-     * @param livingMatter Associated living matter type (must be in living matter list) (default = "overworldian")
-     * @param mobTrivia Trivia text for Deep Learner (default = "Nothing is known about this mob.")
-     * @param simulationRFCost Cost for model simulation (RF/t) (default = 256)
-     * @param extraTooltip Extra tooltip shown on hover (default = none)
-     * @param displayEntityID ID of entity to be displayed in Deep Learner (default = modID:itemID)
-     * @param displayEntityHeldItem Item held by displayed entity (default = none)
-     * @param displayEntityScale Scale of displayed entity (default = 10)
-     * @param displayEntityOffsetX GUI x axis offset of displayed entity (default = 0)
-     * @param displayEntityOffsetY GUI y axis offset of displayed entity (default = 0)
-     * @param displayExtraEntityID ID of extra entity to be displayed in Deep Learner (e.g. Zombie child, Cave Spider) (default = none)
-     * @param displayExtraEntityIsChild Is extra entity a child? (Only works for zombies and animals)
-     * @param displayExtraEntityOffsetX GUI x axis offset of extra entity (default = 0)
-     * @param displayExtraEntityOffsetY GUI y axis offset of extra entity (default = 0)
-     * @param associatedMobs Mobs that can be killed to level up model
-     * @param lootItems Items that can be made from pristine matter
-     * @param trialRewards Rewards for max level trial win (only for mobs that have a trial)
-     * @return A JSON object with all relevant data.
-     */
-    public static JsonObject createJsonObject(String itemID, String modID, String displayName, String displayNamePlural,
-                               int numberOfHearts, String livingMatter, String[] mobTrivia,
-                               int simulationRFCost, String extraTooltip, String displayEntityID,
-                               String displayEntityHeldItem, int displayEntityScale, int displayEntityOffsetX,
-                               int displayEntityOffsetY, String displayExtraEntityID,
-                               boolean displayExtraEntityIsChild, int displayExtraEntityOffsetX,
-                               int displayExtraEntityOffsetY, String[] associatedMobs,
-                               String[] lootItems, String[] trialRewards) {
+    public JsonObject toJsonObject() {
         JsonObject object = new JsonObject();
 
         object.addProperty("itemID", itemID);
-        if (!displayName.equals(DMLConstants.MINECRAFT))
-            object.addProperty("modID", modID);
         object.addProperty("displayName", displayName);
         if (!displayNamePlural.equals(""))
             object.addProperty("displayNamePlural", displayNamePlural);

@@ -11,11 +11,11 @@ public class LivingMatterData extends MetaDataBase {
     private final String displayNameColor;
     private final int xpValue;
 
-    public LivingMatterData(JsonObject data) {
+    public LivingMatterData(String modID, JsonObject data) {
         validate(data, new String[]{"itemID"}, "LivingMatterData");
 
         itemID = getOrDefault(data, "itemID", "");
-        modID = getOrDefault(data, "modID", DMLConstants.MINECRAFT);
+        this.modID = modID;
         displayName = getOrDefault(data, "displayName", "");
         displayNameColor = getOrDefault(data, "displayNameColor", "white");
         xpValue = getOrDefault(data, "xpValue", 0);
@@ -34,12 +34,11 @@ public class LivingMatterData extends MetaDataBase {
         return xpValue;
     }
 
-    public static JsonObject createJsonObject(String itemID, String modID, String displayName, String displayNameColor, int xpValue) {
+    @Override
+    public JsonObject toJsonObject() {
         JsonObject object = new JsonObject();
 
         object.addProperty("itemID", itemID);
-        if (!modID.equals(DMLConstants.MINECRAFT))
-            object.addProperty("modID", modID);
         object.addProperty("displayName", displayName);
         object.addProperty("displayNameColor", displayNameColor);
         object.addProperty("xpValue", xpValue);

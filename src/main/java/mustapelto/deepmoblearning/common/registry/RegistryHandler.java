@@ -27,8 +27,11 @@ public class RegistryHandler {
 
         DMLRelearned.logger.info("Registering Living Matter...");
         LivingMatterDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemLivingMatter(value)));
-        DMLRelearned.logger.info("Registering Data Models...");
-        MobMetaDataManager.getDataStore().forEach((key, value) -> registeredItems.add(new ItemDataModel(value)));
+        DMLRelearned.logger.info("Registering Data Models and Pristine Matter...");
+        MobMetaDataManager.getDataStore().forEach((key, value) -> {
+            registeredItems.add(new ItemDataModel(value));
+            registeredItems.add(new ItemPristineMatter(value));
+        });
 
         IForgeRegistry<Item> registry = event.getRegistry();
         registeredItems.forEach(registry::register);

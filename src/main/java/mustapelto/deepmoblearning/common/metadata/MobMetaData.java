@@ -2,12 +2,17 @@ package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -137,12 +142,102 @@ public class MobMetaData extends MetaDataBase {
         return displayExtraEntityOffsetY;
     }
 
-    public String[] getLootItems() {
-        return lootItems;
+    public NonNullList<ItemStack> getLootItems() {
+        return getItemListFromStringArray(lootItems);
     }
 
-    public String[] getTrialRewards() {
-        return trialRewards;
+    public NonNullList<ItemStack> getTrialRewards() {
+        return getItemListFromStringArray(trialRewards);
+    }
+
+    private static NonNullList<ItemStack> getItemListFromStringArray(String[] inputList) {
+        NonNullList<ItemStack> outputList = NonNullList.create();
+
+        for (String entry : inputList) {
+            ItemStack entryStack = getStackFromString(entry);
+            if (!entryStack.isEmpty()) {
+                outputList.add(entryStack);
+            }
+        }
+
+        return outputList;
+    }
+
+    /**
+     * Produce ItemStack from string
+     *
+     * Input format: {@code "modid:itemid,n[,m][,{nbt}]} where
+     * - n: item amount
+     * - m: metadata/damage value (optional)
+     * - nbt: nbt data (optional)
+     *
+     * @param line String array entry representing item
+     * @return An ItemStack according to the string input
+     */
+    private static ItemStack getStackFromString(String line) {
+        String[] values = line.split(",");
+
+        if (values.length < 2) // Invalid entry
+            return ItemStack.EMPTY;
+
+        String itemName = values[0];
+        int amount;
+        int meta = 0;
+        NBTTagCompound nbt = null;
+
+        try {
+            amount = Integer.parseInt(values[1]);
+        } catch (NumberFormatException e) {
+            DMLRelearned.logger.error("Invalid item entry (amount not a valid number");
+            return ItemStack.EMPTY;
+        }
+
+        if (values.length > 2) {
+            boolean couldReadMeta;
+            try {
+                meta = Integer.parseInt(values[2]);
+                couldReadMeta = true;
+            } catch (NumberFormatException e) {
+                couldReadMeta = false;
+            }
+
+            if (!couldReadMeta) {
+                nbt = getNBT(buildNBTString(values, 2));
+            }
+            else if (values.length > 3) {
+                nbt = getNBT(buildNBTString(values, 3));
+            }
+        }
+
+        Item item = Item.getByNameOrId(itemName);
+        if (item == null)
+            return ItemStack.EMPTY;
+
+        ItemStack resultStack = new ItemStack(item, amount, meta);
+
+        if (nbt != null)
+            resultStack.setTagCompound(nbt);
+
+        return resultStack;
+    }
+
+    private static String buildNBTString(String[] values, int startIndex) {
+        StringBuilder nbtString = new StringBuilder();
+        for (int i = startIndex; i < values.length; i++) {
+            nbtString.append(values[i]);
+            if (i < values.length - 1)
+                nbtString.append(",");
+        }
+        return nbtString.toString();
+    }
+
+    private static NBTTagCompound getNBT(String nbtString) {
+        try {
+            return JsonToNBT.getTagFromJson(nbtString);
+        } catch (NBTException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean isAssociatedMob(EntityLivingBase entity) {

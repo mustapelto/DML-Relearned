@@ -21,6 +21,7 @@ import java.io.IOException;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class RenderRegistry {
     private static final ResourceLocation DATA_MODEL_DEFAULT = new ResourceLocation("deepmoblearning:data_model_default");
+    private static final ResourceLocation PRISTINE_MATTER_DEFAULT = new ResourceLocation("deepmoblearning:pristine_matter_default");
     private static final ResourceLocation LIVING_MATTER_DEFAULT = new ResourceLocation("deepmoblearning:living_matter_default");
 
     @SubscribeEvent

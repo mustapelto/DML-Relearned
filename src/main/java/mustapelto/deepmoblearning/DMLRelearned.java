@@ -53,7 +53,7 @@ public class DMLRelearned
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-
+        proxy.registerGuiRenderers();
     }
 
     @EventHandler

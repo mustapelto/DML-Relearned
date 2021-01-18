@@ -24,12 +24,12 @@ public class RenderRegistry {
     private static final ResourceLocation LIVING_MATTER_DEFAULT = new ResourceLocation("deepmoblearning:living_matter_default");
 
     @SubscribeEvent
-    public static void register(ModelRegistryEvent event) {
+    public static void registerModels(ModelRegistryEvent event) {
         DMLRelearned.logger.info("Registering Models...");
-        RegistryHandler.registeredItems.forEach(RenderRegistry::registerItem);
+        RegistryHandler.registeredItems.forEach(RenderRegistry::registerItemModel);
     }
 
-    private static void registerItem(Item item) {
+    private static void registerItemModel(Item item) {
         if (!(item instanceof DMLItem))
             return; // This should never happen. Added to silence IDE warnings.
 

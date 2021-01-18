@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLevelUpModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;

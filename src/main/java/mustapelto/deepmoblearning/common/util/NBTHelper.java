@@ -18,7 +18,7 @@ public class NBTHelper {
     }
 
     public static boolean hasKey(ItemStack stack, String key) {
-        return getTag(stack).hasKey(key);
+        return hasTag(stack) && getTag(stack).hasKey(key);
     }
 
     public static void setInt(ItemStack stack, String key, int value) {
@@ -38,7 +38,9 @@ public class NBTHelper {
     }
 
     public static void removeKey(ItemStack stack, String key) {
-        if (hasTag(stack) && hasKey(stack, key))
+        if (hasKey(stack, key))
             getTag(stack).removeTag(key);
+        if (getTag(stack).hasNoTags())
+            stack.setTagCompound(null);
     }
 }

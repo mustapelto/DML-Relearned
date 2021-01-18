@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemCreativeModelLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;

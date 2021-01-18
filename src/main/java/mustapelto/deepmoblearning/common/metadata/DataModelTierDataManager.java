@@ -13,6 +13,7 @@ public class DataModelTierDataManager {
     private static final LinkedHashMap<Integer, DataModelTierData> dataStore = new LinkedHashMap<>();
     private static final String FILE_NAME = "DataModelTiers.json";
     private static File configFile;
+    private static int maxLevel = 0;
 
     public static void init() {
         configFile = new File(FileHelper.configDML, FILE_NAME);
@@ -55,6 +56,7 @@ public class DataModelTierDataManager {
             JsonObject element = data.get(i).getAsJsonObject();
             DataModelTierData dataModelTierData = new DataModelTierData(i, element);
             dataStore.put(i, dataModelTierData);
+            maxLevel++;
         }
     }
 
@@ -77,6 +79,6 @@ public class DataModelTierDataManager {
     }
 
     public static int getMaxLevel() {
-        return dataStore.size();
+        return maxLevel;
     }
 }

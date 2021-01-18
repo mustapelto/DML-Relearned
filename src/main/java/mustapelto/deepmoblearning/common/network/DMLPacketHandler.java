@@ -13,5 +13,6 @@ public class DMLPacketHandler {
 
     public static void registerPackets() {
         network.registerMessage(MessageLivingMatterConsume.Handler.class, MessageLivingMatterConsume.class, id++, Side.SERVER);
+        network.registerMessage(MessageLevelUpModel.Handler.class, MessageLevelUpModel.class, id++, Side.SERVER);
     }
 }

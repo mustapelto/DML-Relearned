@@ -95,8 +95,9 @@ public class DataModelHelper {
     }
 
     public static boolean isAtMaxTier(ItemStack stack) {
-        // also true if "over max" in case config has been changed on a running world to include fewer tiers
-        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel();
+        // getMaxLevel() returns number of tiers, but tier index starts at 0 so we need to adjust for that
+        // also true if "over max" (in case config has been changed on a running world to include fewer tiers)
+        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel() - 1;
     }
 
     public static boolean canSimulate(ItemStack stack) {
@@ -203,27 +204,28 @@ public class DataModelHelper {
     // Inventory Data Manipulation (e.g. Creative Model Learner)
     //
     public static void findAndLevelUpModels(NonNullList<ItemStack> inventory, EntityPlayerMP player, CreativeLevelUpAction action) {
-        for (ItemStack stack : inventory) {
-            if (stack.getItem() instanceof ItemDeepLearner) {
-                NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(stack);
-                for (ItemStack model : deepLearnerContents) {
-                    if (stack.getItem() instanceof ItemDataModel) {
-                        int tier = getTierLevel(stack);
+        for (ItemStack inventoryStack : inventory) {
+            if (inventoryStack.getItem() instanceof ItemDeepLearner) {
+                NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(inventoryStack);
+                for (ItemStack modelStack : deepLearnerContents) {
+                    if (modelStack.getItem() instanceof ItemDataModel) {
+                        int tier = getTierLevel(modelStack);
                         switch (action) {
                             case DECREASE_TIER:
                                 if (tier > 0)
-                                    setTierLevel(stack, tier - 1);
+                                    setTierLevel(modelStack, tier - 1);
                                 break;
                             case INCREASE_TIER:
-                                if (!isAtMaxTier(stack))
-                                    setTierLevel(stack, tier + 1);
+                                if (!isAtMaxTier(modelStack))
+                                    setTierLevel(modelStack, tier + 1);
                                 break;
                             case INCREASE_KILLS:
-                                if (!isAtMaxTier(stack))
-                                    increaseDataCount(stack, player, true);
+                                if (!isAtMaxTier(modelStack))
+                                    increaseDataCount(modelStack, player, true);
                         }
                     }
                 }
+                ItemDeepLearner.setContainedItems(inventoryStack, deepLearnerContents);
             }
         }
     }

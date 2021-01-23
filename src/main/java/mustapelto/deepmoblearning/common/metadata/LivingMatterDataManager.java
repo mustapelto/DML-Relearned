@@ -60,8 +60,9 @@ public class LivingMatterDataManager {
                 continue;
             JsonArray contents = (JsonArray) entry.getValue();
             for (int i = 0; i < contents.size(); i++) {
-                LivingMatterData livingMatterData = new LivingMatterData(entry.getKey(), contents.get(i).getAsJsonObject());
-                dataStore.put(livingMatterData.itemID, livingMatterData);
+                LivingMatterData livingMatterData = LivingMatterData.create(entry.getKey(), contents.get(i).getAsJsonObject());
+                if (livingMatterData != null)
+                    dataStore.put(livingMatterData.getItemID(), livingMatterData);
             }
         }
     }
@@ -89,5 +90,14 @@ public class LivingMatterDataManager {
 
     public static LinkedHashMap<String, LivingMatterData> getDataStore() {
         return dataStore;
+    }
+
+    /**
+     * @return first entry in dataStore
+     */
+    public static LivingMatterData getDefault() throws IllegalAccessException {
+        if (dataStore.isEmpty())
+            throw new IllegalAccessException("Can't get default item before store is initialized");
+        return dataStore.entrySet().iterator().next().getValue();
     }
 }

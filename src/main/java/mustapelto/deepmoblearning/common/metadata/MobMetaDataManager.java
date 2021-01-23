@@ -59,8 +59,9 @@ public class MobMetaDataManager {
                 continue;
             JsonArray contents = (JsonArray) entry.getValue();
             for (int i = 0; i < contents.size(); i++) {
-                MobMetaData mobData = new MobMetaData(entry.getKey(), contents.get(i).getAsJsonObject());
-                dataStore.put(mobData.itemID, mobData);
+                MobMetaData mobData = MobMetaData.create(entry.getKey(), contents.get(i).getAsJsonObject());
+                if (mobData != null)
+                    dataStore.put(mobData.getItemID(), mobData);
             }
         }
     }

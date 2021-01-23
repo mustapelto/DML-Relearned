@@ -2,16 +2,21 @@ package mustapelto.deepmoblearning.client;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.models.ModelDynDataModel;
 import mustapelto.deepmoblearning.common.items.DMLItem;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
+import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.registry.RegistryHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +32,7 @@ public class RenderRegistry {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         DMLRelearned.logger.info("Registering Models...");
+        ModelLoaderRegistry.registerLoader(ModelDynDataModel.LoaderDynDataModel.INSTANCE);
         RegistryHandler.registeredItems.forEach(RenderRegistry::registerItemModel);
     }
 
@@ -34,17 +40,23 @@ public class RenderRegistry {
         if (!(item instanceof DMLItem))
             return; // This should never happen. Added to silence IDE warnings.
 
+        ModelResourceLocation modelLocation;
+
         if (item instanceof ItemDataModel) { // Data Models
-            registerFromIdOrDefault((DMLItem) item, "data_model_", ((ItemDataModel) item).getMobMetaData().getItemID(), DATA_MODEL_DEFAULT);
+            MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
+            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
+            ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
         } else if (item instanceof ItemLivingMatter) { // Living Matter
             registerFromIdOrDefault((DMLItem) item, "living_matter_", ((ItemLivingMatter) item).getData().getItemID(), LIVING_MATTER_DEFAULT);
+            return;
         } else { // Unique items
             ResourceLocation registryLocation = item.getRegistryName();
             if (registryLocation == null)
                 return;
-            ModelResourceLocation modelResourceLocation = new ModelResourceLocation(registryLocation, "inventory");
-            ModelLoader.setCustomModelResourceLocation(item, 0, modelResourceLocation);
+            modelLocation = new ModelResourceLocation(registryLocation, "inventory");
         }
+
+        ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
     }
 
     private static void registerFromIdOrDefault(DMLItem item, String fileBaseName, String itemID, ResourceLocation defaultLocation) {

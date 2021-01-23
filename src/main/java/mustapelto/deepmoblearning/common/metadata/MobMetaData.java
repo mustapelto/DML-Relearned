@@ -3,6 +3,7 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
@@ -15,61 +16,146 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Arrays;
 
-public class MobMetaData extends MetaDataBase {
-    private final String displayName;
-    private final String displayNamePlural;
-    private final int numberOfHearts;
-    private final String livingMatter;
-    private final String[] mobTrivia;
-    private final int simulationRFCost;
-    private final String extraTooltip;
-    private final String displayEntityID;
-    private final String displayEntityHeldItem;
-    private final int displayEntityScale;
-    private final int displayEntityOffsetX;
-    private final int displayEntityOffsetY;
-    private final String displayExtraEntityID;
-    private final boolean displayExtraEntityIsChild;
-    private final int displayExtraEntityOffsetX;
-    private final int displayExtraEntityOffsetY;
-    private final String[] associatedMobs;
-    private final String[] lootItems;
-    private final String[] trialRewards;
+import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
+import static mustapelto.deepmoblearning.common.util.JsonHelper.stringArrayToJsonArray;
 
-    public MobMetaData(String modID, JsonObject data) {
-        String[] requiredFields = new String[]{"itemID"}; // Required field for item generation
+public class MobMetaData {
+    private final String modID; // Mod ID the item is related to. "minecraft" for vanilla-related items.
+    private final String itemID; // Used for item registry and texture loading. No default value, item won't load if itemID is not set
+    private final String displayName; // Used on Data Model and Pristine Matter items and in Deep Learner GUI. Default: itemID with first letter capitalized
+    private final String displayNamePlural; // Plural form of display name. Used in Deep Learner GUI. Default: displayName + "s"
+    private final String livingMatter; // Associated Living Matter type. Default: first available
+    private final int simulationRFCost; // Cost to simulate this mob in RF/t. Default: 256
+    private final String extraTooltip; // Extra tooltip to display on Data Model item. Default: ""
+    private final String[] associatedMobs; // List of mobs that will increase model data. Format: "modid:mobname" (e.g. "minecraft:blaze"). Default: modID:itemID
+    private final String[] lootItems; // List of available loot items (produced from Pristine Matter in Loot Fabricator). Format: "modid:itemid" (e.g. "minecraft:stone"). Default: "minecraft:wood"
+    private final String[] trialRewards; // List of rewards from completed trial at max tier. Default: empty list
+    private final int numberOfHearts; // Number of hearts to show in Deep Learner GUI. Default: 10
+    private final String[] mobTrivia; // Trivia text to show in Deep Learner GUI. Default: "Nothing is known about this mob."
+    private final String displayEntityID; // ID of entity to display in Deep Learner GUI. Default: modID:itemID
+    private final String displayEntityHeldItem; // Item held by entity in Deep Learner GUI. Default: ""
+    private final int displayEntityScale; // Scale of entity in Deep Learner GUI. Default: 40
+    private final int displayEntityOffsetX; // X offset of entity in Deep Learner GUI. Default: 0
+    private final int displayEntityOffsetY; // Y offset of entity in Deep Learner GUI. Default: 0
+    private final String displayExtraEntityID; // ID of additional entity to display in Deep Learner GUI. Default: ""
+    private final boolean displayExtraEntityIsChild; // Is additional entity a child form (e.g. zombie)? Default: false
+    private final int displayExtraEntityOffsetX; // X offset of additional entity in Deep Learner GUI. Default: 0
+    private final int displayExtraEntityOffsetY; // Y offset of additional entity in Deep Learner GUI. Default: 0
 
-        validate(data, requiredFields, "MobData");
+    private final String modelName; // Name of data model item = "data_model_" + itemID
+    private final String pristineName; // Name of pristine matter item = "pristine_matter_" + itemID
 
-        itemID = getOrDefault(data, "itemID", "");
+    private MobMetaData(String modID, JsonObject data) {
+        DMLRelearned.logger.info(data.toString());
+        if (!data.has("itemID")) {
+            throw new IllegalArgumentException("Item ID missing on Data Model entry. Cannot create items.");
+        }
+
+        itemID = data.get("itemID").getAsString();
+        modelName = "data_model_" + itemID; // Name of associated data model item
+        pristineName = "pristine_matter_" + itemID; // Name of associated pristine matter item
+
         this.modID = modID;
-        displayName = getOrDefault(data, "displayName", "");
+
+        displayName = getOrDefault(data, "displayName", itemID.substring(0, 1).toUpperCase() + itemID.substring(1));
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
-        numberOfHearts = getOrDefault(data, "numberOfHearts", 0, 0, Integer.MAX_VALUE);
-        livingMatter = getOrDefault(data, "livingMatter", DMLConstants.LivingMatter.DEFAULT_VALUES.OVERWORLDIAN.ID);
-        mobTrivia = getOrDefault(data, "mobTrivia", new String[0]);
+
+        String livingMatter = "";
+        try {
+            livingMatter = getOrDefault(data, "livingMatter", LivingMatterDataManager.getDefault().getItemID());
+        } catch (IllegalAccessException ignored) {}
+        this.livingMatter = livingMatter;
+
         simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, Integer.MAX_VALUE);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
-        displayEntityID = getOrDefault(data, "displayEntityID", String.format("%s:%s", modID, itemID));
-        displayEntityHeldItem = getOrDefault(data, "displayEntityHeldItem", "");
-        displayEntityScale = getOrDefault(data, "displayEntityScale", 40, 0, 200);
-        displayEntityOffsetX = getOrDefault(data, "displayEntityOffsetX", 0, -200, 200);
-        displayEntityOffsetY = getOrDefault(data, "displayEntityOffsetY", 0, -200, 200);
-        displayExtraEntityID = getOrDefault(data, "displayExtraEntityID", "");
-        displayExtraEntityIsChild = getOrDefault(data, "displayExtraEntityIsChild", false);
-        displayExtraEntityOffsetX = getOrDefault(data, "displayExtraEntityOffsetX", 0, -200, 200);
-        displayExtraEntityOffsetY = getOrDefault(data, "displayExtraEntityOffsetY", 0, -200, 200);
-        associatedMobs = getOrDefault(data, "associatedMobs", new String[]{ displayEntityID });
+
+        String defaultEntityString = String.format("%s:%s", modID, itemID); // Used if entry for associatedMobs or deepLearnerDisplay.entityID is empty
+
+        associatedMobs = getOrDefault(data, "associatedMobs", new String[]{ defaultEntityString });
         lootItems = getOrDefault(data, "lootItems", new String[]{ "minecraft:wood" });
         trialRewards = getOrDefault(data, "trialRewards", new String[0]);
+
+        // Read Deep Learner Display Settings
+        JsonObject displaySettings = data.get("deepLearnerDisplay").getAsJsonObject();
+
+        numberOfHearts = getOrDefault(displaySettings, "numberOfHearts", 0, 0, Integer.MAX_VALUE);
+        mobTrivia = getOrDefault(displaySettings, "mobTrivia", new String[]{ "Nothing is known about this mob." });
+        displayEntityID = getOrDefault(displaySettings, "entityID", String.format("%s:%s", modID, itemID));
+        displayEntityHeldItem = getOrDefault(displaySettings, "entityHeldItem", "");
+        displayEntityScale = getOrDefault(displaySettings, "entityScale", 40, 0, 200);
+        displayEntityOffsetX = getOrDefault(displaySettings, "entityOffsetX", 0, -200, 200);
+        displayEntityOffsetY = getOrDefault(displaySettings, "entityOffsetY", 0, -200, 200);
+        displayExtraEntityID = getOrDefault(displaySettings, "extraEntityID", "");
+        displayExtraEntityIsChild = getOrDefault(displaySettings, "extraEntityIsChild", false);
+        displayExtraEntityOffsetX = getOrDefault(displaySettings, "extraEntityOffsetX", 0, -200, 200);
+        displayExtraEntityOffsetY = getOrDefault(displaySettings, "extraEntityOffsetY", 0, -200, 200);
+    }
+
+    public static MobMetaData create(String modID, JsonObject data) {
+        try {
+            return new MobMetaData(modID, data);
+        } catch (IllegalArgumentException e) {
+            DMLRelearned.logger.warn(e.getMessage());
+            return null;
+        }
     }
 
     // Field Getters and Helpers
+    public boolean isModLoaded() {
+        return modID.equals(DMLConstants.MINECRAFT) || Loader.isModLoaded(modID);
+    }
+
+    public String getModID() {
+        return modID;
+    }
+
+    public String getItemID() {
+        return itemID;
+    }
+
+    @Nullable
+    public ResourceLocation getDataModelTexture() {
+        try {
+            // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + modelName + ".png");
+            Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
+            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + modelName);
+        } catch (IOException e) {
+            // File not found -> use default model and output info
+            DMLRelearned.logger.info("Data Model texture for {} not found. Using default texture.", itemID);
+            return null;
+        }
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    @Nullable
+    public ResourceLocation getPristineMatterTexture() {
+        try {
+            // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + pristineName + ".png");
+            Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
+            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + pristineName);
+        } catch (IOException e) {
+            // File not found -> use default model and output info
+            DMLRelearned.logger.info("Pristine Matter texture for {} not found. Using default texture.", itemID);
+            return null;
+        }
+    }
+
+    public String getPristineName() {
+        return pristineName;
+    }
 
     public String getDisplayName() {
         return !displayName.isEmpty() ? displayName : I18n.format("deepmoblearning.mob_data.unknown_name");
@@ -260,28 +346,33 @@ public class MobMetaData extends MetaDataBase {
         object.addProperty("displayName", displayName);
         if (!displayNamePlural.equals(""))
             object.addProperty("displayNamePlural", displayNamePlural);
-        object.addProperty("numberOfHearts", numberOfHearts);
-        object.addProperty("livingMatter", livingMatter);
-        object.add("mobTrivia", stringArrayToJsonArray(mobTrivia));
         object.addProperty("simulationRFCost", simulationRFCost);
         if (!extraTooltip.equals(""))
             object.addProperty("extraTooltip", extraTooltip);
-        object.addProperty("displayEntityID", displayEntityID);
-        if (!displayEntityHeldItem.equals(""))
-            object.addProperty("displayEntityHeldItem", displayEntityHeldItem);
-        object.addProperty("displayEntityScale", displayEntityScale);
-        object.addProperty("displayEntityOffsetX", displayEntityOffsetX);
-        object.addProperty("displayEntityOffsetY", displayEntityOffsetY);
-        if (!displayExtraEntityID.equals("")) {
-            object.addProperty("displayExtraEntityID", displayExtraEntityID);
-            object.addProperty("displayExtraEntityIsChild", displayExtraEntityIsChild);
-            object.addProperty("displayExtraEntityOffsetX", displayExtraEntityOffsetX);
-            object.addProperty("displayExtraEntityOffsetY", displayExtraEntityOffsetY);
-        }
         object.add("associatedMobs", stringArrayToJsonArray(associatedMobs));
         object.add("lootItems", stringArrayToJsonArray(lootItems));
         if (trialRewards.length > 0)
             object.add("trialRewards", stringArrayToJsonArray(trialRewards));
+
+        JsonObject deepLearnerDisplay = new JsonObject();
+
+        deepLearnerDisplay.addProperty("numberOfHearts", numberOfHearts);
+        deepLearnerDisplay.addProperty("livingMatter", livingMatter);
+        deepLearnerDisplay.add("mobTrivia", stringArrayToJsonArray(mobTrivia));
+        deepLearnerDisplay.addProperty("entityID", displayEntityID);
+        if (!displayEntityHeldItem.equals(""))
+            deepLearnerDisplay.addProperty("entityHeldItem", displayEntityHeldItem);
+        deepLearnerDisplay.addProperty("entityScale", displayEntityScale);
+        deepLearnerDisplay.addProperty("entityOffsetX", displayEntityOffsetX);
+        deepLearnerDisplay.addProperty("entityOffsetY", displayEntityOffsetY);
+        if (!displayExtraEntityID.equals("")) {
+            deepLearnerDisplay.addProperty("extraEntityID", displayExtraEntityID);
+            deepLearnerDisplay.addProperty("extraEntityIsChild", displayExtraEntityIsChild);
+            deepLearnerDisplay.addProperty("extraEntityOffsetX", displayExtraEntityOffsetX);
+            deepLearnerDisplay.addProperty("extraEntityOffsetY", displayExtraEntityOffsetY);
+        }
+
+        object.add("deepLearnerDisplay", deepLearnerDisplay);
 
         return object;
     }

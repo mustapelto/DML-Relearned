@@ -3,7 +3,9 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import net.minecraft.util.text.TextFormatting;
 
-public class DataModelTierData extends MetaDataBase {
+import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
+
+public class DataModelTierData {
     private final int level; // Tier level. Generated from JSON element order.
     private final String displayName; // Name shown in tooltips and GUI. (Default = "")
     private final String displayColor; // Color of name when displayed. (Default = "white")
@@ -13,10 +15,8 @@ public class DataModelTierData extends MetaDataBase {
     private final boolean canSimulate; // Can a Data Model of this tier be used in a simulation chamber? (Default = true)
 
     public DataModelTierData(int level, JsonObject data) {
-        validate(data, new String[]{"displayName"}, "Data Model Tier Data");
-
         this.level = level;
-        displayName = getOrDefault(data, "displayName", "");
+        displayName = getOrDefault(data, "displayName", "Tier " + level);
         displayColor = getOrDefault(data, "displayColor", "white");
         killMultiplier = getOrDefault(data, "killMultiplier", 1, 0, Integer.MAX_VALUE);
         dataToNext = getOrDefault(data, "dataToNext", 10, 0, Integer.MAX_VALUE);
@@ -48,12 +48,6 @@ public class DataModelTierData extends MetaDataBase {
         return canSimulate;
     }
 
-    @Override
-    public boolean isModLoaded() {
-        return true; // Tiers are mod-independent. This should never be called but added as precaution.
-    }
-
-    @Override
     public JsonObject toJsonObject() {
         JsonObject object = new JsonObject();
 

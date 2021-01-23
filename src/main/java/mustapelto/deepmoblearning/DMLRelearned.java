@@ -41,8 +41,9 @@ public class DMLRelearned
         FileHelper.init(event);
 
         // Init Data Managers (for reading/writing config json files)
-        MobMetaDataManager.init();
+        // LivingMatterData has to be initialized before MobMetaData because MobMetaData needs a default LivingMatter value
         LivingMatterDataManager.init();
+        MobMetaDataManager.init();
         DataModelTierDataManager.init();
 
         // Network Stuff

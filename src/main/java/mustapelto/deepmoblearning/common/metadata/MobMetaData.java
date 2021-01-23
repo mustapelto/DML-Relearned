@@ -3,6 +3,7 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
@@ -54,7 +55,6 @@ public class MobMetaData {
     private final String pristineName; // Name of pristine matter item = "pristine_matter_" + itemID
 
     private MobMetaData(String modID, JsonObject data) {
-        DMLRelearned.logger.info(data.toString());
         if (!data.has("itemID")) {
             throw new IllegalArgumentException("Item ID missing on Data Model entry. Cannot create items.");
         }
@@ -121,7 +121,6 @@ public class MobMetaData {
         return itemID;
     }
 
-    @Nullable
     public ResourceLocation getDataModelTexture() {
         try {
             // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
@@ -131,7 +130,7 @@ public class MobMetaData {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Data Model texture for {} not found. Using default texture.", itemID);
-            return null;
+            return ModelDataModel.DEFAULT_MOB_LOCATION;
         }
     }
 

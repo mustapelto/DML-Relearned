@@ -1,11 +1,16 @@
 package mustapelto.deepmoblearning.common.metadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.common.util.FileHelper;
+import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -85,5 +90,19 @@ public class MobMetaDataManager {
 
     public static LinkedHashMap<String, MobMetaData> getDataStore() {
         return dataStore;
+    }
+
+    public static ImmutableSet<ResourceLocation> getModelTextures() {
+        ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
+
+        builder.add(ModelDataModel.DEFAULT_MOB_LOCATION);
+        dataStore.forEach((k, v) -> builder.add(v.getDataModelTexture()));
+
+        return builder.build();
+    }
+
+    @Nullable
+    public static MobMetaData getFromID(String id) {
+        return dataStore.get(id);
     }
 }

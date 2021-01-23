@@ -2,7 +2,7 @@ package mustapelto.deepmoblearning.client;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelDynDataModel;
+import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.common.items.DMLItem;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ItemLayerModel;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -32,7 +32,7 @@ public class RenderRegistry {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         DMLRelearned.logger.info("Registering Models...");
-        ModelLoaderRegistry.registerLoader(ModelDynDataModel.LoaderDynDataModel.INSTANCE);
+        ModelLoaderRegistry.registerLoader(ModelDataModel.LoaderDataModel.INSTANCE);
         RegistryHandler.registeredItems.forEach(RenderRegistry::registerItemModel);
     }
 
@@ -43,9 +43,12 @@ public class RenderRegistry {
         ModelResourceLocation modelLocation;
 
         if (item instanceof ItemDataModel) { // Data Models
-            MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
-            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
-            ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
+            // MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
+            // modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
+            // ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
+            ModelLoader.setCustomMeshDefinition(item, stack -> ModelDataModel.LOCATION);
+            ModelBakery.registerItemVariants(item, ModelDataModel.LOCATION);
+            return;
         } else if (item instanceof ItemLivingMatter) { // Living Matter
             registerFromIdOrDefault((DMLItem) item, "living_matter_", ((ItemLivingMatter) item).getData().getItemID(), LIVING_MATTER_DEFAULT);
             return;

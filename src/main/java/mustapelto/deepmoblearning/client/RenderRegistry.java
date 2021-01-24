@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -43,11 +42,11 @@ public class RenderRegistry {
         ModelResourceLocation modelLocation;
 
         if (item instanceof ItemDataModel) { // Data Models
-            // MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
-            // modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
-            // ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
-            ModelLoader.setCustomMeshDefinition(item, stack -> ModelDataModel.LOCATION);
-            ModelBakery.registerItemVariants(item, ModelDataModel.LOCATION);
+            MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
+            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
+            ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
+            //ModelLoader.setCustomMeshDefinition(item, stack -> ModelDataModel.LOCATION);
+            //ModelBakery.registerItemVariants(item, ModelDataModel.LOCATION);
             return;
         } else if (item instanceof ItemLivingMatter) { // Living Matter
             registerFromIdOrDefault((DMLItem) item, "living_matter_", ((ItemLivingMatter) item).getData().getItemID(), LIVING_MATTER_DEFAULT);

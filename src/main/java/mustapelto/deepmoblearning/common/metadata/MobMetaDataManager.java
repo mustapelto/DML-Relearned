@@ -1,10 +1,9 @@
 package mustapelto.deepmoblearning.common.metadata;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.common.util.FileHelper;
@@ -92,10 +91,14 @@ public class MobMetaDataManager {
         return dataStore;
     }
 
-    public static ImmutableSet<ResourceLocation> getModelTextures() {
-        ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
+    public static ImmutableMap<String, ResourceLocation> getModelTextures() {
+        ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 
-        dataStore.forEach((k, v) -> builder.add(v.getDataModelTexture()));
+        dataStore.forEach((k, v) -> {
+            ResourceLocation dataModelTexture = v.getDataModelTexture();
+            if (!dataModelTexture.getResourcePath().equals(ModelDataModel.DEFAULT_LOCATION.getResourcePath()))
+                builder.put(k, v.getDataModelTexture());
+        });
 
         return builder.build();
     }

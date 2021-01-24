@@ -130,7 +130,7 @@ public class MobMetaData {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Data Model texture for {} not found. Using default texture.", itemID);
-            return ModelDataModel.DEFAULT_MOB_LOCATION;
+            return ModelDataModel.DEFAULT_LOCATION;
         }
     }
 

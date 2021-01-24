@@ -10,16 +10,37 @@ import net.minecraftforge.common.config.Config.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dmlRelearned")
+@Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dmlRelearned", category = "")
 @EventBusSubscriber
 public class DMLConfig {
-    @Name("Loot Fabricator RF Cost")
-    @Comment("Energy cost of Loot Fabricator in RF/t")
-    @RangeInt(min = 0)
-    public static int LOOT_FABRICATOR_RF_COST = 256;
+    @Name("General Settings")
+    public static GeneralSettings GENERAL_SETTINGS = new GeneralSettings();
+
+    public static class GeneralSettings {
+        @Name("Simulation Chamber Processing Time")
+        @Comment("Time it takes for the Simulation Chamber to run one iteration (in ticks)")
+        @RangeInt(min = 1, max = 1200)
+        public int SIMULATION_CHAMBER_PROCESSING_TIME = 301;
+
+        @Name("Loot Fabricator RF Cost")
+        @Comment("Energy cost of Loot Fabricator in RF/t")
+        @RangeInt(min = 0, max = 25600)
+        public int LOOT_FABRICATOR_RF_COST = 256;
+
+        @Name("Loot Fabricator Processing Time")
+        @Comment("Time it takes for the Loot Fabricator to process one item (in ticks)")
+        @RangeInt(min = 1, max = 1200)
+        public int LOOT_FABRICATOR_PROCESSING_TIME = 51;
+
+        @Name("Is Glitch Armor Creative Flight Enabled?")
+        public static boolean GLITCH_CREATIVE_FLIGHT = true;
+
+        @Name("Is Sooted Redstone Crafting Enabled?")
+        public static boolean SOOTED_REDSTONE_CRAFTING = true;
+    }
 
     @Name("GUI Overlay Settings")
-    @Comment("Configure appearance of Data Model experience overlay")
+    @Comment("Configure the appearance of the Data Model experience overlay")
     public static GuiOverlaySettings GUI_OVERLAY_SETTINGS = new GuiOverlaySettings();
 
     public static class GuiOverlaySettings {
@@ -61,12 +82,6 @@ public class DMLConfig {
             return GuiPosition.fromString(POSITION);
         }
     }
-
-    @Name("Is Glitch Armor Creative Flight Enabled?")
-    public static boolean GLITCH_CREATIVE_FLIGHT = true;
-
-    @Name("Is Sooted Redstone Crafting Enabled?")
-    public static boolean SOOTED_REDSTONE_CRAFTING = true;
 
     @SubscribeEvent
     public static void onConfigChanged(OnConfigChangedEvent event) {

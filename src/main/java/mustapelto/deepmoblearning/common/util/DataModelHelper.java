@@ -111,6 +111,11 @@ public class DataModelHelper {
         return (data != null) ? data.getDisplayNameFormatted() : "";
     }
 
+    public static String getTierDisplayNameFormatted(ItemStack stack, String template) {
+        DataModelTierData data = getTierData(stack);
+        return (data != null) ? data.getDisplayNameFormatted(template) : "";
+    }
+
     public static String getNextTierDisplayNameFormatted(ItemStack stack) {
         DataModelTierData data = getNextTierData(stack);
         return (data != null) ? data.getDisplayNameFormatted() : "";

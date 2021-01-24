@@ -6,7 +6,6 @@ import net.minecraft.util.text.TextFormatting;
 import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
 
 public class DataModelTierData {
-    private final int level; // Tier level. Generated from JSON element order.
     private final String displayName; // Name shown in tooltips and GUI. (Default = "")
     private final String displayColor; // Color of name when displayed. (Default = "white")
     private final int killMultiplier; // Amount of data gained from one kill at this tier. (Range = 0 - MAX_INT, Default = 1)
@@ -15,7 +14,6 @@ public class DataModelTierData {
     private final boolean canSimulate; // Can a Data Model of this tier be used in a simulation chamber? (Default = true)
 
     public DataModelTierData(int level, JsonObject data) {
-        this.level = level;
         displayName = getOrDefault(data, "displayName", "Tier " + level);
         displayColor = getOrDefault(data, "displayColor", "white");
         killMultiplier = getOrDefault(data, "killMultiplier", 1, 0, Integer.MAX_VALUE);
@@ -25,15 +23,17 @@ public class DataModelTierData {
     }
 
     public String getDisplayNameFormatted() {
-        TextFormatting formatting = TextFormatting.getValueByName(displayColor);
-
-        return (formatting != null) ?
-                formatting + displayName + TextFormatting.RESET :
-                displayName;
+        return getDisplayNameFormatted("%s");
     }
 
-    public int getLevel() {
-        return level;
+    public String getDisplayNameFormatted(String template) {
+        TextFormatting formatting = TextFormatting.getValueByName(displayColor);
+
+        String text = String.format(template, displayName);
+
+        return (formatting != null) ?
+                formatting + text + TextFormatting.RESET :
+                text;
     }
 
     public int getKillMultiplier() {
@@ -59,6 +59,8 @@ public class DataModelTierData {
             object.addProperty("dataToNext", dataToNext);
         if (pristineChance > 0)
             object.addProperty("pristineChance", pristineChance);
+        if (!canSimulate)
+            object.addProperty("canSimulate", false);
 
         return object;
     }

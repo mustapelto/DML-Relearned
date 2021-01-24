@@ -1,14 +1,8 @@
-#
-# Misc Items
-#
+# Item Names
 item.deepmoblearning.polymer_clay.name=Polymer Clay
 item.deepmoblearning.data_model_blank.name=Blank Data Model
 item.deepmoblearning.deep_learner.name=Deep Learner
 item.deepmoblearning.creative_model_learner.name=Creative Model Learner
-
-#
-# Tooltips
-#
 
 # General
 deepmoblearning.general.more_info=- hold %s for more info
@@ -18,29 +12,23 @@ deepmoblearning.living_matter.consume_for_xp=%s to consume for experience.
 deepmoblearning.living_matter.consume_stack=Hold %s to consume entire stack.
 deepmoblearning.living_matter.xp=Experience per item: %s
 
+# Pristine Matter
+deepmoblearning.pristine_matter.display_name=Pristine %s Matter
+
 # Data Model
+deepmoblearning.data_model.display_name=%s Data Model
 deepmoblearning.data_model.type=Type: %s
 deepmoblearning.data_model.tier=Tier: %s
 deepmoblearning.data_model.data_collected=Data collected: %s/%s
 deepmoblearning.data_model.kill_multiplier=Data per kill: %s
 deepmoblearning.data_model.rf_cost=Simulation cost: %s RF/t
 deepmoblearning.data_model.cannot_simulate=Data Model cannot be used in a Simulation Chamber at this tier.
+deepmoblearning.data_model.reached_tier=%s reached the %s tier
 
 # Deep Learner
 deepmoblearning.deep_learner.hud=Will display a HUD when in main hand or offhand and populated with data models
 deepmoblearning.deep_learner.contains=Contains the following models
 
-# Creative Model Learner
-deepmoblearning.creative_model_learner.description=A creative item that can change levels of data models inside a Deep Learner.
-deepmoblearning.creative_model_learner.increase_tier=%s to increase tier.
-deepmoblearning.creative_model_learner.decrease_tier=%s to decrease tier.
-deepmoblearning.creative_model_learner.increase_kills=%s to simulate kills.
-
-#
-# UI Texts
-#
-
-# Deep Learner
 deepmoblearning.deep_learner.heading_name=Name
 deepmoblearning.deep_learner.heading_information=Information
 deepmoblearning.deep_learner.model_tier=Model Tier: %s
@@ -56,20 +44,15 @@ deepmoblearning.deep_learner.no_model.line_4=when they are placed in the Deep Le
 deepmoblearning.deep_learner.no_model.line_5=In order to collect data, you must
 deepmoblearning.deep_learner.no_model.line_6=deliver the killing blow.
 
-#
-# Messages
-#
+# Creative Model Learner
+deepmoblearning.creative_model_learner.description=A creative item that can change levels of data models inside a Deep Learner.
+deepmoblearning.creative_model_learner.increase_tier=%s to increase tier.
+deepmoblearning.creative_model_learner.decrease_tier=%s to decrease tier.
+deepmoblearning.creative_model_learner.increase_kills=%s to simulate kills.
 
-deepmoblearning.data_model.reached_tier=%s reached the %s tier
-
-#
 # Mob Data
-#
-
 deepmoblearning.mob_data.unknown_name=Unknown
 deepmoblearning.mob_data.unknown_trivia=Nothing is known about this mob.
 
-#
 # Creative Tab
-#
 itemGroup.deepmoblearning=DML Relearned

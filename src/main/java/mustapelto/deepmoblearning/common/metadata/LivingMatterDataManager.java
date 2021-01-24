@@ -1,10 +1,13 @@
 package mustapelto.deepmoblearning.common.metadata;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.common.util.FileHelper;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,5 +102,17 @@ public class LivingMatterDataManager {
         if (dataStore.isEmpty())
             throw new IllegalAccessException("Can't get default item before store is initialized");
         return dataStore.entrySet().iterator().next().getValue();
+    }
+
+    public static ImmutableMap<String, ResourceLocation> getLivingMatterTextures() {
+        ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+
+        dataStore.forEach((k, v) -> {
+            ResourceLocation livingMatterTexture = v.getLivingMatterTexture();
+            if (!livingMatterTexture.getResourcePath().equals(ModelDataModel.DEFAULT_LOCATION.getResourcePath()))
+                builder.put(k, livingMatterTexture);
+        });
+
+        return builder.build();
     }
 }

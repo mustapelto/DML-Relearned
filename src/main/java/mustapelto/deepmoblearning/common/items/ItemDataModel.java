@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
@@ -70,6 +71,9 @@ public class ItemDataModel extends DMLItem {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return TextFormatting.AQUA + metaData.getDisplayName() + " Data Model" + TextFormatting.RESET;
+        return TextFormatting.AQUA +
+                I18n.format("deepmoblearning.data_model.display_name", metaData.getDisplayName()) +
+                DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") +
+                TextFormatting.RESET;
     }
 }

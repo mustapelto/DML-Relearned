@@ -63,7 +63,7 @@ public class DMLRelearned
 
     }
 
-    public static CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
+    public static final CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
         @SuppressWarnings("ConstantConditions")
         @Override
         public ItemStack getTabIconItem() {

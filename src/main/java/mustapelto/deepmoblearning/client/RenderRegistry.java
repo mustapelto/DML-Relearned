@@ -3,13 +3,14 @@ package mustapelto.deepmoblearning.client;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
+import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
+import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import mustapelto.deepmoblearning.common.items.DMLItem;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.registry.RegistryHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -24,14 +25,12 @@ import java.io.IOException;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class RenderRegistry {
-    private static final ResourceLocation DATA_MODEL_DEFAULT = new ResourceLocation("deepmoblearning:data_model_default");
-    private static final ResourceLocation PRISTINE_MATTER_DEFAULT = new ResourceLocation("deepmoblearning:pristine_matter_default");
-    private static final ResourceLocation LIVING_MATTER_DEFAULT = new ResourceLocation("deepmoblearning:living_matter_default");
-
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         DMLRelearned.logger.info("Registering Models...");
         ModelLoaderRegistry.registerLoader(ModelDataModel.LoaderDataModel.INSTANCE);
+        ModelLoaderRegistry.registerLoader(ModelPristineMatter.LoaderPristineMatter.INSTANCE);
+        ModelLoaderRegistry.registerLoader(ModelLivingMatter.LoaderLivingMatter.INSTANCE);
         RegistryHandler.registeredItems.forEach(RenderRegistry::registerItemModel);
     }
 
@@ -41,16 +40,12 @@ public class RenderRegistry {
 
         ModelResourceLocation modelLocation;
 
-        if (item instanceof ItemDataModel) { // Data Models
-            MobMetaData metaData = ((ItemDataModel) item).getMobMetaData();
-            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, metaData.getModelName()), "inventory");
-            ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
-            //ModelLoader.setCustomMeshDefinition(item, stack -> ModelDataModel.LOCATION);
-            //ModelBakery.registerItemVariants(item, ModelDataModel.LOCATION);
-            return;
-        } else if (item instanceof ItemLivingMatter) { // Living Matter
-            registerFromIdOrDefault((DMLItem) item, "living_matter_", ((ItemLivingMatter) item).getData().getItemID(), LIVING_MATTER_DEFAULT);
-            return;
+        if (item instanceof ItemDataModel || item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
+            ResourceLocation registryName = item.getRegistryName();
+            if (registryName == null)
+                return;
+            String registryItem = registryName.getResourcePath();
+            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, registryItem), "inventory");
         } else { // Unique items
             ResourceLocation registryLocation = item.getRegistryName();
             if (registryLocation == null)
@@ -59,29 +54,5 @@ public class RenderRegistry {
         }
 
         ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
-    }
-
-    private static void registerFromIdOrDefault(DMLItem item, String fileBaseName, String itemID, ResourceLocation defaultLocation) {
-        // Full path location for checking if resource exists
-        ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "models/item/" + fileBaseName + itemID + ".json");
-
-        // Normal location for model loading
-        ResourceLocation locationFromRegistry = item.getRegistryName();
-
-        if (locationFromRegistry == null)
-            return; // Should never happen but prevents IDE warnings
-
-        try {
-            // Will throw FileNotFoundException if model file doesn't exist in mod jar or resource packs
-            Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
-        } catch (IOException e) {
-            // File not found -> use default model and output info
-            DMLRelearned.logger.info("Model resource not found: {}. Using default model.", locationFromId.toString());
-            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(defaultLocation, "inventory"));
-            return;
-        }
-
-        // File found -> use model from file
-        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(locationFromRegistry, "inventory"));
     }
 }

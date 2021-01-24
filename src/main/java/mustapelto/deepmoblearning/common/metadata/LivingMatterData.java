@@ -3,10 +3,16 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.models.ModelDataModel;
+import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
+
+import java.io.IOException;
 
 import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
 
@@ -17,6 +23,8 @@ public class LivingMatterData {
     private final String displayColor; // Color of name when displayed.
     private final int xpValue; // XP received when item is consumed.
 
+    private final String itemName;
+
     private LivingMatterData(String modID, JsonObject data) {
         if (!data.has("itemID")) {
             throw new IllegalArgumentException("Item ID missing on Data Model entry. Cannot create items.");
@@ -24,6 +32,7 @@ public class LivingMatterData {
 
         itemID = data.get("itemID").getAsString();
         this.modID = modID;
+        itemName = "living_matter_" + itemID;
 
         displayName = getOrDefault(data, "displayName", itemID.substring(0, 1).toUpperCase() + itemID.substring(1));
         displayColor = getOrDefault(data, "displayColor", "white");
@@ -36,6 +45,19 @@ public class LivingMatterData {
         } catch (IllegalArgumentException e) {
             DMLRelearned.logger.warn(e.getMessage());
             return null;
+        }
+    }
+
+    public ResourceLocation getLivingMatterTexture() {
+        try {
+            // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + itemName + ".png");
+            Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
+            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + itemName);
+        } catch (IOException e) {
+            // File not found -> use default model and output info
+            DMLRelearned.logger.info("Living Matter texture for {} not found. Using default texture.", itemID);
+            return ModelLivingMatter.DEFAULT_LOCATION;
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
+import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
@@ -21,7 +22,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -74,7 +74,7 @@ public class MobMetaData {
         } catch (IllegalAccessException ignored) {}
         this.livingMatter = livingMatter;
 
-        simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, Integer.MAX_VALUE);
+        simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, 25600);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
 
         String defaultEntityString = String.format("%s:%s", modID, itemID); // Used if entry for associatedMobs or deepLearnerDisplay.entityID is empty
@@ -134,11 +134,6 @@ public class MobMetaData {
         }
     }
 
-    public String getModelName() {
-        return modelName;
-    }
-
-    @Nullable
     public ResourceLocation getPristineMatterTexture() {
         try {
             // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
@@ -148,7 +143,7 @@ public class MobMetaData {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Pristine Matter texture for {} not found. Using default texture.", itemID);
-            return null;
+            return ModelPristineMatter.DEFAULT_LOCATION;
         }
     }
 

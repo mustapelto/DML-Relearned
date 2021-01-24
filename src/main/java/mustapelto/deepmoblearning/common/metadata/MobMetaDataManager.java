@@ -6,10 +6,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
+import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -97,14 +97,21 @@ public class MobMetaDataManager {
         dataStore.forEach((k, v) -> {
             ResourceLocation dataModelTexture = v.getDataModelTexture();
             if (!dataModelTexture.getResourcePath().equals(ModelDataModel.DEFAULT_LOCATION.getResourcePath()))
-                builder.put(k, v.getDataModelTexture());
+                builder.put(k, dataModelTexture);
         });
 
         return builder.build();
     }
 
-    @Nullable
-    public static MobMetaData getFromID(String id) {
-        return dataStore.get(id);
+    public static ImmutableMap<String, ResourceLocation> getPristineTextures() {
+        ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+
+        dataStore.forEach((k, v) -> {
+            ResourceLocation pristineMatterTexture = v.getPristineMatterTexture();
+            if (!pristineMatterTexture.getResourcePath().equals(ModelPristineMatter.DEFAULT_LOCATION.getResourcePath()))
+                builder.put(k, pristineMatterTexture);
+        });
+
+        return builder.build();
     }
 }

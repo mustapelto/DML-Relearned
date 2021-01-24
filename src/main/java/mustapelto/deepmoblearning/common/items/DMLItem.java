@@ -3,14 +3,8 @@ package mustapelto.deepmoblearning.common.items;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class DMLItem extends Item {
-    private final String id;
-
     /**
      * @param name Item id (for internal use)
      * @param stackSize Item max stack size
@@ -22,8 +16,6 @@ public abstract class DMLItem extends Item {
         setMaxStackSize(stackSize);
         if (addToCreative) // only add item to creative tab if its associated mod is loaded (checked by subclass)
             setCreativeTab(DMLRelearned.creativeTab);
-
-        id = name;
     }
 
     /**

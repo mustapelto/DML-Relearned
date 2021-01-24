@@ -95,7 +95,6 @@ public class MobMetaDataManager {
     public static ImmutableSet<ResourceLocation> getModelTextures() {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
-        builder.add(ModelDataModel.DEFAULT_MOB_LOCATION);
         dataStore.forEach((k, v) -> builder.add(v.getDataModelTexture()));
 
         return builder.build();

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
@@ -25,6 +24,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,10 +32,9 @@ import java.util.function.Function;
 public class ModelDataModel implements IModel {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, "dyn_data_model"), "inventory");
     public static final ResourceLocation DEFAULT_MOB_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_default");
-
     private static final ResourceLocation BASE_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_base");
 
-    public static final IModel MODEL = new ModelDataModel();
+    protected static final IModel BASE_MODEL = new ModelDataModel();
 
     private final ResourceLocation mobLocation;
 
@@ -56,6 +55,7 @@ public class ModelDataModel implements IModel {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
         builder.add(BASE_LOCATION);
+        builder.add(DEFAULT_MOB_LOCATION);
         builder.addAll(MobMetaDataManager.getModelTextures());
 
         return builder.build();
@@ -89,14 +89,14 @@ public class ModelDataModel implements IModel {
         else
             newMobLocation = mobData.getDataModelTexture();
 
-        DMLRelearned.logger.info(newMobLocation.toString());
-
         return new ModelDataModel(newMobLocation);
     }
 
     public enum LoaderDataModel implements ICustomModelLoader
     {
         INSTANCE;
+
+        private static final Map<String, IBakedModel> modelCache = new HashMap<>();
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -108,14 +108,11 @@ public class ModelDataModel implements IModel {
         @Nonnull
         public IModel loadModel(@Nonnull ResourceLocation modelLocation)
         {
-            return MODEL;
+            return BASE_MODEL;
         }
 
         @Override
-        public void onResourceManagerReload(@Nonnull IResourceManager resourceManager)
-        {
-            // no need to clear cache since we create a new model instance
-        }
+        public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {}
     }
 
     private static final class BakedDataModelOverrideHandler extends ItemOverrideList
@@ -176,9 +173,9 @@ public class ModelDataModel implements IModel {
             this.cache = cache;
         }
 
-        public ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> getTransforms() {
+        public ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> getTransforms()
+        {
             return transforms;
         }
     }
-
 }

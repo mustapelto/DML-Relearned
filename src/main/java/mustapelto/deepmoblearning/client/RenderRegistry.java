@@ -27,31 +27,30 @@ public class RenderRegistry {
         ModelLoaderRegistry.registerLoader(ModelDataModel.LoaderDataModel.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelPristineMatter.LoaderPristineMatter.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelLivingMatter.LoaderLivingMatter.INSTANCE);
-        DMLRegistry.registeredItems.forEach(RenderRegistry::registerItemModel);
-        DMLRegistry.registeredBlocks.forEach(block -> registerBlockItemModel(Item.getItemFromBlock(block), block.getRegistryName()));
+        DMLRegistry.registeredItems.forEach(RenderRegistry::registerModel);
+        DMLRegistry.registeredBlocks.forEach(block -> registerModel(Item.getItemFromBlock(block), block.getRegistryName()));
     }
 
-    private static void registerItemModel(Item item) {
-        ModelResourceLocation modelLocation;
+    private static void registerModel(Item item) {
+        ResourceLocation modelLocation;
 
         if (item instanceof ItemDataModel || item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null)
                 return;
             String registryItem = registryName.getResourcePath();
-            modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, registryItem), "inventory");
+            modelLocation = new ResourceLocation(DMLConstants.ModInfo.ID, registryItem);
         } else {
             ResourceLocation registryLocation = item.getRegistryName();
             if (registryLocation == null)
                 return;
-            modelLocation = new ModelResourceLocation(registryLocation, "inventory");
+            modelLocation = registryLocation;
         }
 
-        ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
+        registerModel(item, modelLocation);
     }
 
-    private static void registerBlockItemModel(Item item, ResourceLocation location) {
-        DMLRelearned.logger.info(location);
+    private static void registerModel(Item item, ResourceLocation location) {
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(location, "inventory"));
     }
 }

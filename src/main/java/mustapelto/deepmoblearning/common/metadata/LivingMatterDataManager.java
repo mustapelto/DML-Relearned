@@ -87,21 +87,17 @@ public class LivingMatterDataManager {
         }
     }
 
+
+    /**
+     * @param id id of living matter type
+     * @return living matter data entry with given id, or first in list if invalid id
+     */
     public static LivingMatterData getByID(String id) {
-        return dataStore.get(id);
+        return dataStore.getOrDefault(id, dataStore.entrySet().iterator().next().getValue());
     }
 
     public static LinkedHashMap<String, LivingMatterData> getDataStore() {
         return dataStore;
-    }
-
-    /**
-     * @return first entry in dataStore
-     */
-    public static LivingMatterData getDefault() throws IllegalAccessException {
-        if (dataStore.isEmpty())
-            throw new IllegalAccessException("Can't get default item before store is initialized");
-        return dataStore.entrySet().iterator().next().getValue();
     }
 
     public static ImmutableMap<String, ResourceLocation> getLivingMatterTextures() {

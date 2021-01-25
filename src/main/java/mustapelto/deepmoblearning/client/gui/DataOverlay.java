@@ -1,9 +1,8 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import mustapelto.deepmoblearning.DMLConfig;
-import mustapelto.deepmoblearning.DMLConfig.GuiOverlaySettings.GuiPosition;
+import mustapelto.deepmoblearning.common.DMLConfig;
+import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
 import mustapelto.deepmoblearning.DMLConstants.GuiColors;
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.client.Minecraft;

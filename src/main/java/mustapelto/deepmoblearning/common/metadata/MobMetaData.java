@@ -5,8 +5,8 @@ import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
+import mustapelto.deepmoblearning.common.DMLRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.Item;
@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -33,7 +34,7 @@ public class MobMetaData {
     private final String itemID; // Used for item registry and texture loading. No default value, item won't load if itemID is not set
     private final String displayName; // Used on Data Model and Pristine Matter items and in Deep Learner GUI. Default: itemID with first letter capitalized
     private final String displayNamePlural; // Plural form of display name. Used in Deep Learner GUI. Default: displayName + "s"
-    private final String livingMatter; // Associated Living Matter type. Default: first available
+    private final LivingMatterData livingMatter; // Associated Living Matter type. Default: first available
     private final int simulationRFCost; // Cost to simulate this mob in RF/t. Default: 256
     private final String extraTooltip; // Extra tooltip to display on Data Model item. Default: ""
     private final String[] associatedMobs; // List of mobs that will increase model data. Format: "modid:mobname" (e.g. "minecraft:blaze"). Default: modID:itemID
@@ -68,11 +69,8 @@ public class MobMetaData {
         displayName = getOrDefault(data, "displayName", itemID.substring(0, 1).toUpperCase() + itemID.substring(1));
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
 
-        String livingMatter = "";
-        try {
-            livingMatter = getOrDefault(data, "livingMatter", LivingMatterDataManager.getDefault().getItemID());
-        } catch (IllegalAccessException ignored) {}
-        this.livingMatter = livingMatter;
+        String livingMatterString = getOrDefault(data, "livingMatter", "");
+        this.livingMatter = LivingMatterDataManager.getByID(livingMatterString);
 
         simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, 25600);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
@@ -147,12 +145,18 @@ public class MobMetaData {
         }
     }
 
-    public String getPristineName() {
-        return pristineName;
+    @Nonnull
+    public LivingMatterData getLivingMatterData() {
+        return livingMatter;
+    }
+
+    @Nonnull
+    public ItemStack getPristineMatter() {
+        return new ItemStack(DMLRegistry.registeredPristineMatter.get(itemID));
     }
 
     public String getDisplayName() {
-        return !displayName.isEmpty() ? displayName : I18n.format("deepmoblearning.mob_data.unknown_name");
+        return displayName;
     }
 
     public String getDisplayNamePlural() {
@@ -163,12 +167,8 @@ public class MobMetaData {
         return numberOfHearts;
     }
 
-    public LivingMatterData getLivingMatterData() {
-        return LivingMatterDataManager.getByID(livingMatter);
-    }
-
     public String[] getMobTrivia() {
-        return mobTrivia.length > 0 ? mobTrivia : new String[]{I18n.format("deepmoblearning.mob_data.unknown_trivia")};
+        return mobTrivia;
     }
 
     public int getSimulationRFCost() {
@@ -220,6 +220,19 @@ public class MobMetaData {
 
     public int getDisplayExtraEntityOffsetY() {
         return displayExtraEntityOffsetY;
+    }
+
+    public boolean isAssociatedMob(EntityLivingBase entity) {
+        EntityEntry entityEntry = EntityRegistry.getEntry(entity.getClass());
+        if (entityEntry == null)
+            return false;
+
+        ResourceLocation registryName = entityEntry.getRegistryName();
+        if (registryName == null)
+            return false;
+
+        String name = registryName.toString();
+        return Arrays.asList(associatedMobs).contains(name);
     }
 
     public NonNullList<ItemStack> getLootItems() {
@@ -320,19 +333,6 @@ public class MobMetaData {
         }
     }
 
-    public boolean isAssociatedMob(EntityLivingBase entity) {
-        EntityEntry entityEntry = EntityRegistry.getEntry(entity.getClass());
-        if (entityEntry == null)
-            return false;
-
-        ResourceLocation registryName = entityEntry.getRegistryName();
-        if (registryName == null)
-            return false;
-
-        String name = registryName.toString();
-        return Arrays.asList(associatedMobs).contains(name);
-    }
-
     public JsonObject toJsonObject() {
         JsonObject object = new JsonObject();
 
@@ -351,7 +351,7 @@ public class MobMetaData {
         JsonObject deepLearnerDisplay = new JsonObject();
 
         deepLearnerDisplay.addProperty("numberOfHearts", numberOfHearts);
-        deepLearnerDisplay.addProperty("livingMatter", livingMatter);
+        deepLearnerDisplay.addProperty("livingMatter", livingMatter.getItemID());
         deepLearnerDisplay.add("mobTrivia", stringArrayToJsonArray(mobTrivia));
         deepLearnerDisplay.addProperty("entityID", displayEntityID);
         if (!displayEntityHeldItem.equals(""))

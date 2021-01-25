@@ -5,6 +5,7 @@ import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -46,7 +48,7 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
         NonNullList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
         if (containedDataModels.size() > 0) {
             if (!KeyboardHelper.isHoldingSneakKey()) {
-                tooltip.add(I18n.format("deepmoblearning.general.more_info", KeyboardHelper.getSneakDisplayName()));
+                tooltip.add(I18n.format("deepmoblearning.general.more_info", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()));
             } else {
                 tooltip.add(I18n.format("deepmoblearning.deep_learner.contains"));
                 containedDataModels.forEach(dataModel ->
@@ -91,5 +93,11 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     @Override
     public int getGuiID() {
         return DMLConstants.GuiIDs.DEEP_LEARNER;
+    }
+
+    @Override
+    @Nonnull
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        return TextFormatting.AQUA + super.getItemStackDisplayName(stack) + TextFormatting.RESET;
     }
 }

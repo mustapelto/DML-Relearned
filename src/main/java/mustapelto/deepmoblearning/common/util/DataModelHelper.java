@@ -3,6 +3,7 @@ package mustapelto.deepmoblearning.common.util;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
@@ -160,10 +161,12 @@ public class DataModelHelper {
 
         int currentData = getCurrentTierDataCount(stack);
 
-        // TODO: Glitch Sword and Trial stuff
+        // TODO: Trial stuff
 
         // Update data count and set NBT
-        currentData += isKill ? tierData.getKillMultiplier() : 1; // TODO: *2 if glitch sword equipped and no trial active
+        currentData += isKill ? tierData.getKillMultiplier() : 1;
+        if (isKill && player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword /* && no trial active */)
+            currentData *= 2;
         setCurrentTierDataCount(stack, currentData);
 
         // Update appropriate total count

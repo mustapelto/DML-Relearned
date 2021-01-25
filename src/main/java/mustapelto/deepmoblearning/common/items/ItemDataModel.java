@@ -1,11 +1,12 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
+import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.TextHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -41,11 +42,14 @@ public class ItemDataModel extends DMLItem {
         }
 
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakDisplayName(), TextFormatting.GRAY);
+            String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
-            String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
-            tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
+            if (!DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME) {
+                // Tier not shown in item name -> show in tooltip
+                String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
+                tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
+            }
 
             if (!DataModelHelper.isAtMaxTier(stack)) {
                 int currentData = DataModelHelper.getCurrentTierDataCount(stack);
@@ -71,9 +75,8 @@ public class ItemDataModel extends DMLItem {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return TextFormatting.AQUA +
-                I18n.format("deepmoblearning.data_model.display_name", metaData.getDisplayName()) +
-                DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") +
-                TextFormatting.RESET;
+        String name = I18n.format("deepmoblearning.data_model.display_name", metaData.getDisplayName());
+        String tier = DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME ? DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") : "";
+        return TextFormatting.AQUA + name + tier + TextFormatting.RESET;
     }
 }

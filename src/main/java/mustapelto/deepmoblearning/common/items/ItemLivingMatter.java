@@ -5,6 +5,7 @@ import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.TextHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,8 +34,8 @@ public class ItemLivingMatter extends DMLItem {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        String useString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getUseDisplayName(), TextFormatting.GRAY);
-        String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakDisplayName(), TextFormatting.GRAY);
+        String useString = TextHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName(), TextFormatting.GRAY);
+        String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", useString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", sneakString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.xp", data.getXpValue()));

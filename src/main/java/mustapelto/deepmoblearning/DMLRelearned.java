@@ -1,12 +1,12 @@
 package mustapelto.deepmoblearning;
 
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
+import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.ServerProxy;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.registry.ItemRegistry;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -64,10 +64,9 @@ public class DMLRelearned
     }
 
     public static final CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
-        @SuppressWarnings("ConstantConditions")
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(ItemRegistry.deep_learner);
+            return new ItemStack(DMLRegistry.itemDeepLearner);
         }
     };
 }

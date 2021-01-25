@@ -5,12 +5,10 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
 import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
-import mustapelto.deepmoblearning.common.items.DMLItem;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
-import mustapelto.deepmoblearning.common.registry.RegistryHandler;
-import net.minecraft.client.Minecraft;
+import mustapelto.deepmoblearning.common.DMLRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -21,8 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class RenderRegistry {
     @SubscribeEvent
@@ -31,13 +27,11 @@ public class RenderRegistry {
         ModelLoaderRegistry.registerLoader(ModelDataModel.LoaderDataModel.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelPristineMatter.LoaderPristineMatter.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelLivingMatter.LoaderLivingMatter.INSTANCE);
-        RegistryHandler.registeredItems.forEach(RenderRegistry::registerItemModel);
+        DMLRegistry.registeredItems.forEach(RenderRegistry::registerItemModel);
+        DMLRegistry.registeredBlocks.forEach(block -> registerBlockItemModel(Item.getItemFromBlock(block), block.getRegistryName()));
     }
 
     private static void registerItemModel(Item item) {
-        if (!(item instanceof DMLItem))
-            return; // This should never happen. Added to silence IDE warnings.
-
         ModelResourceLocation modelLocation;
 
         if (item instanceof ItemDataModel || item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
@@ -46,7 +40,7 @@ public class RenderRegistry {
                 return;
             String registryItem = registryName.getResourcePath();
             modelLocation = new ModelResourceLocation(new ResourceLocation(DMLConstants.ModInfo.ID, registryItem), "inventory");
-        } else { // Unique items
+        } else {
             ResourceLocation registryLocation = item.getRegistryName();
             if (registryLocation == null)
                 return;
@@ -54,5 +48,10 @@ public class RenderRegistry {
         }
 
         ModelLoader.setCustomModelResourceLocation(item, 0, modelLocation);
+    }
+
+    private static void registerBlockItemModel(Item item, ResourceLocation location) {
+        DMLRelearned.logger.info(location);
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(location, "inventory"));
     }
 }

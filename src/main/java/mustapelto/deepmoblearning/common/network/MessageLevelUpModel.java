@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemCreativeModelLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
@@ -10,8 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import java.util.HashMap;
 
 public class MessageLevelUpModel implements IMessage {
     private CreativeLevelUpAction increaseTier; // false -> add one kill; true -> add one tier

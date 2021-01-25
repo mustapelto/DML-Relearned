@@ -7,6 +7,7 @@ import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.TextHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,12 +48,12 @@ public class ItemCreativeModelLearner extends DMLItem {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + KeyboardHelper.getSneakDisplayName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
+            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
-            String sneakName = KeyboardHelper.getSneakDisplayName();
-            String sprintName = KeyboardHelper.getSprintDisplayName();
-            String useName = KeyboardHelper.getUseDisplayName();
+            String sneakName = Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName();
+            String sprintName = Minecraft.getMinecraft().gameSettings.keyBindSprint.getDisplayName();
+            String useName = Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName();
 
             String increaseTier = TextHelper.getFormattedString(TextFormatting.ITALIC, sneakName + " + " + useName, TextFormatting.GRAY);
             String decreaseTier = TextHelper.getFormattedString(TextFormatting.ITALIC, sprintName + " + " + useName, TextFormatting.GRAY);

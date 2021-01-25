@@ -3,7 +3,6 @@ package mustapelto.deepmoblearning.common.items;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nonnull;
 
@@ -18,10 +17,6 @@ public class ItemPristineMatter extends DMLItem {
     @Override
     public boolean hasEffect(@Nonnull ItemStack stack) {
         return true; // Make items glow
-    }
-
-    public NonNullList<ItemStack> getLootTable() {
-        return metaData.getLootItems();
     }
 
     @Override

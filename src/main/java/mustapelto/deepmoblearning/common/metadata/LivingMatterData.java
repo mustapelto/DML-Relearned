@@ -3,14 +3,15 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
+import mustapelto.deepmoblearning.common.DMLRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -59,6 +60,11 @@ public class LivingMatterData {
             DMLRelearned.logger.info("Living Matter texture for {} not found. Using default texture.", itemID);
             return ModelLivingMatter.DEFAULT_LOCATION;
         }
+    }
+
+    @Nonnull
+    public ItemStack getItemStack() {
+        return new ItemStack(DMLRegistry.registeredLivingMatter.get(itemID));
     }
 
     public String getModID() {

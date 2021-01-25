@@ -3,6 +3,20 @@ item.deepmoblearning.polymer_clay.name=Polymer Clay
 item.deepmoblearning.data_model_blank.name=Blank Data Model
 item.deepmoblearning.deep_learner.name=Deep Learner
 item.deepmoblearning.creative_model_learner.name=Creative Model Learner
+item.deepmoblearning.soot_covered_redstone.name=Soot-covered Redstone
+item.deepmoblearning.soot_covered_plate.name=Soot-covered Plate
+item.deepmoblearning.glitch_infused_ingot.name=Glitch Infused Ingot
+item.deepmoblearning.glitch_heart.name=Corrupted Glitch Heart
+item.deepmoblearning.glitch_fragment.name=Unstable Glitch Fragment
+
+item.deepmoblearning.glitch_infused_helmet.name=Glitch Infused Helmet
+item.deepmoblearning.glitch_infused_chestplate.name=Glitch Infused Chestplate
+item.deepmoblearning.glitch_infused_leggings.name=Glitch Infused Leggings
+item.deepmoblearning.glitch_infused_boots.name=Glitch Infused Greaves
+item.deepmoblearning.glitch_infused_sword.name=Glitch Infused Sword
+
+# Block Names
+tile.deepmoblearning.infused_ingot_block.name=Glitch Infused Block
 
 # General
 deepmoblearning.general.more_info=- hold %s for more info
@@ -50,9 +64,38 @@ deepmoblearning.creative_model_learner.increase_tier=%s to increase tier.
 deepmoblearning.creative_model_learner.decrease_tier=%s to decrease tier.
 deepmoblearning.creative_model_learner.increase_kills=%s to simulate kills.
 
-# Mob Data
-deepmoblearning.mob_data.unknown_name=Unknown
-deepmoblearning.mob_data.unknown_trivia=Nothing is known about this mob.
+# Soot-Covered Redstone
+deepmoblearning.soot_covered_redstone.tooltip_1=Crafted by crushing %s against
+deepmoblearning.soot_covered_redstone.tooltip_2=a %s (%s)
+
+# Glitch Armor
+deepmoblearning.glitch_armor.tooltip_1=Bonus while full set is equipped
+deepmoblearning.glitch_armor.tooltip_2=(Bonuses are disabled during Trials)
+deepmoblearning.glitch_armor.tooltip_3=  1. %s chance to drop %s Pristine Matter
+deepmoblearning.glitch_armor.tooltip_4=     when a Data Model gains Data.
+deepmoblearning.glitch_armor.tooltip_5=  2. Flight and immunity against fall damage
+
+# Glitch Ingot
+deepmoblearning.glitch_ingot.tooltip_1=Made by stabilizing %s
+deepmoblearning.glitch_ingot.tooltip_2=More info in JEI or the Guidebook
+
+# Glitch Heart
+deepmoblearning.glitch_heart.tooltip=Drops from System Glitches
+
+# Glitch Fragment
+deepmoblearning.glitch_fragment.tooltip_1=Crafted by crushing a %s
+deepmoblearning.glitch_fragment.tooltip_2=against some %s (%s)
+deepmoblearning.glitch_fragment.tooltip_3=Yields %d fragments per crushed heart
+
+# Glitch Sword
+deepmoblearning.glitch_sword.tooltip_1=Bonus: Quick Learner
+deepmoblearning.glitch_sword.tooltip_2=(Bonuses are disabled during Trials)
+deepmoblearning.glitch_sword.tooltip_3=The Data gained from the demise of a mob is doubled.
+deepmoblearning.glitch_sword.tooltip_4=When Data is gained, there is also a small chance
+deepmoblearning.glitch_sword.tooltip_5=that the sword will get a permanent damage increase.
+deepmoblearning.glitch_sword.tooltip_6=Current damage increase: %s (Max %s)
+deepmoblearning.glitch_sword.max_damage_reached=Your %s has now reached peak performance!
+deepmoblearning.glitch_sword.damage_increased=Your %s grows in power!
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned

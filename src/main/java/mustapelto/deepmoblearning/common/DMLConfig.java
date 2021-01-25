@@ -1,5 +1,6 @@
-package mustapelto.deepmoblearning;
+package mustapelto.deepmoblearning.common;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -32,11 +33,24 @@ public class DMLConfig {
         @RangeInt(min = 1, max = 1200)
         public int LOOT_FABRICATOR_PROCESSING_TIME = 51;
 
-        @Name("Is Glitch Armor Creative Flight Enabled?")
-        public static boolean GLITCH_CREATIVE_FLIGHT = true;
+        @Name("Show Data Model tier in item name?")
+        public boolean SHOW_TIER_IN_NAME = true;
 
-        @Name("Is Sooted Redstone Crafting Enabled?")
-        public static boolean SOOTED_REDSTONE_CRAFTING = true;
+        @Name("Glitch Armor Pristine Chance")
+        @Comment("Chance to drop Pristine Matter on Data Model mob kill with full Glitch Armor equipped")
+        @RangeInt(min = 0, max = 100)
+        public int GLITCH_ARMOR_PRISTINE_CHANCE = 18;
+
+        @Name("Glitch Armor Pristine Count")
+        @Comment("Number of Pristine Matter to drop on Data Model mob kill with full Glitch Armor equipped")
+        @RangeInt(min = 0, max = 64)
+        public int GLITCH_ARMOR_PRISTINE_COUNT = 2;
+
+        @Name("Is Glitch Armor Creative Flight Enabled?")
+        public boolean GLITCH_CREATIVE_FLIGHT_ENABLED = true;
+
+        @Name("Is Soot-Covered Redstone Crafting Enabled?")
+        public boolean SOOT_COVERED_REDSTONE_CRAFTING_ENABLED = true;
     }
 
     @Name("GUI Overlay Settings")

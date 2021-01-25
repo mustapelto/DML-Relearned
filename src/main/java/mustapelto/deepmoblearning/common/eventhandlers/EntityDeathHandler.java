@@ -2,6 +2,8 @@ package mustapelto.deepmoblearning.common.eventhandlers;
 
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
+import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
 import mustapelto.deepmoblearning.common.metadata.MobMetaData;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -84,9 +86,21 @@ public class EntityDeathHandler {
         if (updatedModels.isEmpty())
             return; // No models found -> nothing more to do
 
-        // TODO: add glitch armor pristine drop
+        // Chance to drop pristine matter from the model that gained data
+        if (ItemGlitchArmor.isSetEquipped(player)) {
+            // TODO: Don't run if player in trial
+            ItemGlitchArmor.dropPristineMatter(event.getEntityLiving().world, event.getEntityLiving().getPosition(), updatedModels.get(0), player);
+        }
 
-        // TODO: add glitch sword effects
+        if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword) {
+            // TODO: Don't run if player in trial
+            ItemStack sword = player.getHeldItemMainhand();
+            if (ItemGlitchSword.canIncreaseDamage(sword)) {
+                ItemGlitchSword.increaseDamage(sword, player);
+            }
+        }
+
+        // TODO: Attune trial keys
     }
 
     // Helper Functions

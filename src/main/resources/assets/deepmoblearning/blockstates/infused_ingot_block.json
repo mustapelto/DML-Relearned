@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "defaults": { "model": "deepmoblearning:infused_ingot_block" },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

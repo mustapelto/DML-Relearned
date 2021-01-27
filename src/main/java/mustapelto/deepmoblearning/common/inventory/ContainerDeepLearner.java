@@ -1,77 +1,76 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.stackhandlers.ItemHandlerBase;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.stackhandlers.ItemHandlerBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 public class ContainerDeepLearner extends ContainerBase {
     private final ItemHandlerBase itemHandler;
 
-    private final int deepLearnerSlot; // inventory slot to make inaccessible while GUI open
+    private final int deepLearnerSlotIndex; // inventory slot to make inaccessible while GUI open
     private final ItemStack deepLearner;
-    private final EntityEquipmentSlot equipmentSlot;
 
-    public ContainerDeepLearner(InventoryPlayer inventoryPlayer, World world, EntityEquipmentSlot equipmentSlot, ItemStack heldItem) {
-        super(inventoryPlayer, world);
-
-        this.itemHandler = new ItemHandlerBase(ItemDeepLearner.getContainedItems(heldItem));
-        this.deepLearnerSlot = inventoryPlayer.currentItem + DMLConstants.DeepLearner.INTERNAL_SLOTS;
-        this.deepLearner = heldItem;
-        this.equipmentSlot = equipmentSlot;
+    public ContainerDeepLearner(EntityPlayer player) {
+        ItemStack mainHand = player.getHeldItemMainhand();
+        ItemStack offHand = player.getHeldItemOffhand();
+        if (mainHand.getItem() instanceof ItemDeepLearner)
+            deepLearner = mainHand;
+        else if (offHand.getItem() instanceof ItemDeepLearner)
+            deepLearner = offHand;
+        else
+            throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
+        itemHandler = new ItemHandlerBase(ItemDeepLearner.getContainedItems(deepLearner));
+        int dlSlot = ((ItemDeepLearner) deepLearner.getItem()).getInventorySlot();
+        deepLearnerSlotIndex = (dlSlot >= 0) ? dlSlot + DMLConstants.DeepLearner.INTERNAL_SLOTS : dlSlot;
 
         addDataModelSlots();
-        addInventorySlots(inventoryPlayer, 89, 153);
+        addInventorySlots(player.inventory, 89, 153);
     }
 
     private void addDataModelSlots() {
-        addSlotToContainer(new SlotDeepLearner(itemHandler, 0, 257, 100));
-        addSlotToContainer(new SlotDeepLearner(itemHandler, 1, 275, 100));
-        addSlotToContainer(new SlotDeepLearner(itemHandler, 2, 257, 118));
-        addSlotToContainer(new SlotDeepLearner(itemHandler, 3, 275, 118));
+        addSlotToContainer(new SlotDataModel(itemHandler, 0, 257, 100));
+        addSlotToContainer(new SlotDataModel(itemHandler, 1, 275, 100));
+        addSlotToContainer(new SlotDataModel(itemHandler, 2, 257, 118));
+        addSlotToContainer(new SlotDataModel(itemHandler, 3, 275, 118));
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    @Nonnull
+    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack result = super.transferStackInSlot(playerIn, index);
-        updateInventories();
+        ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
         return result;
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (((slotId == deepLearnerSlot) && !equipmentSlot.getName().equals("offhand"))
+    @Nonnull
+    public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull EntityPlayer player) {
+        DMLRelearned.logger.info("Slot: {} - DLIndex: {} - DragType: {} - ClickType: {}", slotId, deepLearnerSlotIndex, dragType, clickTypeIn);
+        // Prevent moving Deep Learner while it is open
+        if (((deepLearnerSlotIndex != -1) && (slotId == deepLearnerSlotIndex))
                 || ((clickTypeIn == ClickType.SWAP) && (dragType == player.inventory.currentItem))) {
             return ItemStack.EMPTY;
         }
 
         ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
-        updateInventories();
+        ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
         return stack;
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer playerIn) {
+    public void onContainerClosed(@Nonnull EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
-        updateInventories();
+        ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return !playerIn.isSpectator();
-    }
-
-    private void updateInventories() {
-        ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
-        ItemStack hand = inventoryPlayer.player.getItemStackFromSlot(equipmentSlot);
-        if (!hand.isEmpty() && !hand.equals(deepLearner)) {
-            inventoryPlayer.player.setItemStackToSlot(equipmentSlot, deepLearner);
-        }
-        inventoryPlayer.markDirty();
     }
 }

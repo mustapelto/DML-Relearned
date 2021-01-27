@@ -7,8 +7,8 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class SlotDeepLearner extends SlotItemHandler {
-    public SlotDeepLearner(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+public class SlotDataModel extends SlotItemHandler {
+    public SlotDataModel(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
     }
 

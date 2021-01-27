@@ -14,8 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
@@ -35,11 +34,20 @@ public class DeepLearnerGui extends GuiContainer {
 
     private static final int ROW_SPACING = 12;
 
-    public DeepLearnerGui(InventoryPlayer inventoryPlayer, World world, EntityEquipmentSlot equipmentSlot, ItemStack heldItem) {
-        super(new ContainerDeepLearner(inventoryPlayer, world, equipmentSlot, heldItem));
+    public DeepLearnerGui(EntityPlayer player, World world) {
+        super(new ContainerDeepLearner(player));
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
         this.world = world;
-        this.deepLearner = heldItem;
+
+        ItemStack mainHand = player.getHeldItemMainhand();
+        ItemStack offHand = player.getHeldItemOffhand();
+        if (mainHand.getItem() instanceof ItemDeepLearner)
+            this.deepLearner = mainHand;
+        else if (offHand.getItem() instanceof ItemDeepLearner)
+            this.deepLearner = offHand;
+        else
+            throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
+
         xSize = 338;
         ySize = 235;
     }

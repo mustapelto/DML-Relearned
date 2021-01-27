@@ -5,17 +5,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 public abstract class ContainerBase extends Container {
-    protected final InventoryPlayer inventoryPlayer;
-    protected final World world;
-
-    protected ContainerBase(InventoryPlayer inventoryPlayer, World world) {
-        this.inventoryPlayer = inventoryPlayer;
-        this.world = world;
-    }
-
     protected void addInventorySlots(InventoryPlayer inventoryPlayer, int xPosition, int yPosition) {
         // Hotbar
         for (int slot = 0; slot < 9; slot++) {
@@ -34,7 +27,8 @@ public abstract class ContainerBase extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    @Nonnull
+    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = inventorySlots.get(index);
 

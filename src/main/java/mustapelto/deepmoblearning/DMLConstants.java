@@ -50,4 +50,14 @@ public class DMLConstants {
         public static final int BRIGHT_LIME = 0x33EFDC;
         public static final int BRIGHT_PURPLE = 0xC768DB;
     }
+
+    public static final class SimulationChamber {
+        public static final int ENERGY_CAPACITY = 2000000;
+        public static final int ENERGY_IN_MAX = 25600;
+    }
+
+    public static final class LootFabricator {
+        public static final int ENERGY_CAPACITY = 2000000;
+        public static final int ENERGY_IN_MAX = 25600;
+    }
 }

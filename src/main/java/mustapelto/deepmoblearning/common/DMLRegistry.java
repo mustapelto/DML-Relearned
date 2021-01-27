@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common;
 
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.blocks.BlockInfusedIngot;
+import mustapelto.deepmoblearning.common.blocks.BlockMachineCasing;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
@@ -30,6 +31,7 @@ public class DMLRegistry {
 
     // Blocks
     public static final BlockInfusedIngot blockInfusedIngot = new BlockInfusedIngot();
+    public static final BlockMachineCasing blockMachineCasing = new BlockMachineCasing();
 
     // Items
     public static final ItemDeepLearner itemDeepLearner = new ItemDeepLearner();
@@ -52,6 +54,7 @@ public class DMLRegistry {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registeredBlocks.add(blockInfusedIngot);
+        registeredBlocks.add(blockMachineCasing);
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registeredBlocks.forEach(registry::register);
@@ -97,7 +100,8 @@ public class DMLRegistry {
         registeredItems.forEach(registry::register);
 
         // Register ItemBlocks
-        // Block Items
-        registry.register(new ItemBlock(blockInfusedIngot).setRegistryName(Objects.requireNonNull(blockInfusedIngot.getRegistryName())));
+        registeredBlocks.forEach(block -> {
+            registry.register(new ItemBlock(block).setRegistryName(Objects.requireNonNull(block.getRegistryName())));
+        });
     }
 }

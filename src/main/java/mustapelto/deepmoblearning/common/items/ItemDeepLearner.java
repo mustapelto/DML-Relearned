@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.DMLGuiHandler;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
@@ -9,13 +9,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemAir;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -23,19 +24,32 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemDeepLearner extends DMLItem implements IGuiItem {
+public class ItemDeepLearner extends DMLItem {
+    private int inventorySlot = -999;
+
     public ItemDeepLearner() {
         super("deep_learner", 1);
     }
 
+    public int getInventorySlot() {
+        return inventorySlot;
+    }
+
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
-        Item mainHand = playerIn.getHeldItemMainhand().getItem();
-        Item offHand = playerIn.getHeldItemOffhand().getItem();
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+        if (!worldIn.isRemote) {
+            // set inventory slot of this Deep Learner (used to prevent moving Deep Learner while container is open)
+            if (handIn == EnumHand.MAIN_HAND)
+                inventorySlot = playerIn.inventory.currentItem;
+            else if (handIn == EnumHand.OFF_HAND && playerIn.getHeldItemMainhand().getItem() instanceof ItemAir)
+                inventorySlot = -1; // -1 == offhand
+            else
+                inventorySlot = -999; // probably offhand activation with non-empty main hand -> don't open GUI
 
-        if (!worldIn.isRemote && (mainHand instanceof ItemDeepLearner || (offHand instanceof ItemDeepLearner && mainHand instanceof ItemAir))) {
-            DMLGuiHandler.openItemGui(playerIn, handIn == EnumHand.MAIN_HAND ? EntityEquipmentSlot.MAINHAND : EntityEquipmentSlot.OFFHAND);
+            DMLRelearned.logger.info("Deep Learner Slot: {}", inventorySlot);
+            if (inventorySlot != -999)
+                playerIn.openGui(DMLRelearned.instance, DMLConstants.GuiIDs.DEEP_LEARNER, worldIn, 0, 0, 0);
         }
 
         return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
@@ -88,11 +102,6 @@ public class ItemDeepLearner extends DMLItem implements IGuiItem {
     @Override
     public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
         return false;
-    }
-
-    @Override
-    public int getGuiID() {
-        return DMLConstants.GuiIDs.DEEP_LEARNER;
     }
 
     @Override

@@ -72,7 +72,7 @@ public class MobMetaData {
         String livingMatterString = getOrDefault(data, "livingMatter", "");
         this.livingMatter = LivingMatterDataManager.getByID(livingMatterString);
 
-        simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, 25600);
+        simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
 
         String defaultEntityString = String.format("%s:%s", modID, itemID); // Used if entry for associatedMobs or deepLearnerDisplay.entityID is empty

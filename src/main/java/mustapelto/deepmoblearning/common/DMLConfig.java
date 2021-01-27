@@ -25,7 +25,7 @@ public class DMLConfig {
 
         @Name("Loot Fabricator RF Cost")
         @Comment("Energy cost of Loot Fabricator in RF/t")
-        @RangeInt(min = 0, max = 25600)
+        @RangeInt(min = 0, max = DMLConstants.LootFabricator.ENERGY_IN_MAX)
         public int LOOT_FABRICATOR_RF_COST = 256;
 
         @Name("Loot Fabricator Processing Time")

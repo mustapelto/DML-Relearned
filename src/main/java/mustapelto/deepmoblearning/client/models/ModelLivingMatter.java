@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;

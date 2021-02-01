@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.models;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
+import mustapelto.deepmoblearning.common.metadata.MobMetadataManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -82,7 +82,7 @@ public class ModelDataModel implements IModel {
         private void initTextureCache() {
             textureCache.clear();
             textureCache.put("blank", BLANK_LOCATION);
-            textureCache.putAll(MobMetaDataManager.getModelTextures());
+            textureCache.putAll(MobMetadataManager.getModelTextures());
             modelCache.clear();
         }
     }

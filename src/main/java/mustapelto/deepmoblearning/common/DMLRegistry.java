@@ -8,8 +8,7 @@ import mustapelto.deepmoblearning.common.blocks.BlockMachineCasing;
 import mustapelto.deepmoblearning.common.blocks.BlockSimulationChamber;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
-import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
+import mustapelto.deepmoblearning.common.metadata.MobMetadataManager;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.NonNullList;
@@ -96,7 +95,7 @@ public class DMLRegistry {
         registeredItems.addAll(registeredLivingMatter.values());
 
         DMLRelearned.logger.info("Registering Data Models and Pristine Matter...");
-        MobMetaDataManager.getDataStore().forEach((key, value) -> {
+        MobMetadataManager.getDataStore().forEach((key, value) -> {
             registeredDataModels.put(key, new ItemDataModel(value));
             registeredPristineMatter.put(key, new ItemPristineMatter(value));
         });

@@ -1,17 +1,17 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public class ItemPristineMatter extends ItemBase {
-    private final MobMetaData metaData;
+    private final MobMetadata metadata;
 
-    public ItemPristineMatter(MobMetaData metaData) {
-        super("pristine_matter_" + metaData.getItemID(), 64, metaData.isModLoaded());
-        this.metaData = metaData;
+    public ItemPristineMatter(MobMetadata metadata) {
+        super("pristine_matter_" + metadata.getItemID(), 64, metadata.isModLoaded());
+        this.metadata = metadata;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class ItemPristineMatter extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return I18n.format("deepmoblearning.pristine_matter.display_name", metaData.getDisplayName());
+        return I18n.format("deepmoblearning.pristine_matter.display_name", metadata.getDisplayName());
     }
 }

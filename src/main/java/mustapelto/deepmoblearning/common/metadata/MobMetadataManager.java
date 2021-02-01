@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MobMetaDataManager {
-    private static final LinkedHashMap<String, MobMetaData> dataStore = new LinkedHashMap<>();
+public class MobMetadataManager {
+    private static final LinkedHashMap<String, MobMetadata> dataStore = new LinkedHashMap<>();
     private static final String FILE_NAME = "DataModels.json";
     private static File configFile;
 
@@ -63,7 +63,7 @@ public class MobMetaDataManager {
                 continue;
             JsonArray contents = (JsonArray) entry.getValue();
             for (int i = 0; i < contents.size(); i++) {
-                MobMetaData mobData = MobMetaData.create(entry.getKey(), contents.get(i).getAsJsonObject());
+                MobMetadata mobData = MobMetadata.create(entry.getKey(), contents.get(i).getAsJsonObject());
                 if (mobData != null)
                     dataStore.put(mobData.getItemID(), mobData);
             }
@@ -73,7 +73,7 @@ public class MobMetaDataManager {
     private static void writeConfigFile() {
         JsonObject data = new JsonObject();
 
-        for (MobMetaData entry : dataStore.values()) {
+        for (MobMetadata entry : dataStore.values()) {
             String modID = entry.getModID();
             if (!data.has(modID))
                 data.add(modID, new JsonArray());
@@ -87,7 +87,7 @@ public class MobMetaDataManager {
         }
     }
 
-    public static LinkedHashMap<String, MobMetaData> getDataStore() {
+    public static LinkedHashMap<String, MobMetadata> getDataStore() {
         return dataStore;
     }
 

@@ -9,8 +9,7 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputDataModel;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputPolymer;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
-import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRequestUpdateSimChamber;
 import mustapelto.deepmoblearning.common.network.MessageUpdateSimChamber;
@@ -77,7 +76,6 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
                     // Enough energy for processing -> void energy and advance process
                     energyStorage.voidEnergy(getSimulationEnergyCost());
                     simulationProgress++;
-                    DMLRelearned.logger.info("Advancing simulation: now at {} / {} ticks", simulationProgress, DMLConfig.GENERAL_SETTINGS.SIMULATION_CHAMBER_PROCESSING_TIME);
                 }
 
                 if (simulationProgress >= DMLConfig.GENERAL_SETTINGS.SIMULATION_CHAMBER_PROCESSING_TIME) {
@@ -88,7 +86,6 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
     }
 
     private void startSimulation() {
-        DMLRelearned.logger.info("Starting simulation");
         simulationRunning = true;
         int pristineChance = DataModelHelper.getPristineChance(getDataModel());
         int random = ThreadLocalRandom.current().nextInt(100);
@@ -102,8 +99,7 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
     }
 
     private void finishSimulation() {
-        DMLRelearned.logger.info("Finishing simulation");
-        MobMetaData mobMetaData = DataModelHelper.getMobMetaData(getDataModel());
+        MobMetadata mobMetaData = DataModelHelper.getMobMetadata(getDataModel());
         if (mobMetaData == null)
             return;
         DataModelHelper.addSimulation(getDataModel());
@@ -121,7 +117,7 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
             if (!oldPristineMatterOutput.isEmpty()) {
                 oldPristineMatterOutput.grow(1);
             } else {
-                ItemStack newPristineMatterOutput = mobMetaData.getPristineMatter(oldLivingMatterOutput.getCount() + 1);
+                ItemStack newPristineMatterOutput = mobMetaData.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
                 outputPristine.setStackInSlot(0, newPristineMatterOutput);
             }
         }

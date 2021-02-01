@@ -29,7 +29,7 @@ import java.util.Arrays;
 import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
 import static mustapelto.deepmoblearning.common.util.JsonHelper.stringArrayToJsonArray;
 
-public class MobMetaData {
+public class MobMetadata {
     private final String modID; // Mod ID the item is related to. "minecraft" for vanilla-related items.
     private final String itemID; // Used for item registry and texture loading. No default value, item won't load if itemID is not set
     private final String displayName; // Used on Data Model and Pristine Matter items and in Deep Learner GUI. Default: itemID with first letter capitalized
@@ -55,7 +55,7 @@ public class MobMetaData {
     private final String modelName; // Name of data model item = "data_model_" + itemID
     private final String pristineName; // Name of pristine matter item = "pristine_matter_" + itemID
 
-    private MobMetaData(String modID, JsonObject data) {
+    private MobMetadata(String modID, JsonObject data) {
         if (!data.has("itemID")) {
             throw new IllegalArgumentException("Item ID missing on Data Model entry. Cannot create items.");
         }
@@ -70,7 +70,7 @@ public class MobMetaData {
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
 
         String livingMatterString = getOrDefault(data, "livingMatter", "");
-        this.livingMatter = LivingMatterDataManager.getByID(livingMatterString);
+        livingMatter = LivingMatterDataManager.getByID(livingMatterString);
 
         simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
         extraTooltip = getOrDefault(data, "extraTooltip", "");
@@ -97,9 +97,9 @@ public class MobMetaData {
         displayExtraEntityOffsetY = getOrDefault(displaySettings, "extraEntityOffsetY", 0, -200, 200);
     }
 
-    public static MobMetaData create(String modID, JsonObject data) {
+    public static MobMetadata create(String modID, JsonObject data) {
         try {
-            return new MobMetaData(modID, data);
+            return new MobMetadata(modID, data);
         } catch (IllegalArgumentException e) {
             DMLRelearned.logger.warn(e.getMessage());
             return null;

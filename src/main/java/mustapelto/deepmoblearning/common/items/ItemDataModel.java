@@ -2,7 +2,7 @@ package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.TextHelper;
@@ -18,20 +18,20 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemDataModel extends ItemBase {
-    private final MobMetaData metaData;
+    private final MobMetadata metadata;
 
-    public ItemDataModel(MobMetaData metaData) {
-        super("data_model_" + metaData.getItemID(), 1, metaData.isModLoaded());
-        this.metaData = metaData;
+    public ItemDataModel(MobMetadata metadata) {
+        super("data_model_" + metadata.getItemID(), 1, metadata.isModLoaded());
+        this.metadata = metadata;
     }
 
-    public MobMetaData getMobMetaData() {
-        return metaData;
+    public MobMetadata getMobMetadata() {
+        return metadata;
     }
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        MobMetaData mobMetaData = DataModelHelper.getMobMetaData(stack);
+        MobMetadata mobMetaData = DataModelHelper.getMobMetadata(stack);
 
         if (mobMetaData == null)
             return;
@@ -75,7 +75,7 @@ public class ItemDataModel extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        String name = I18n.format("deepmoblearning.data_model.display_name", metaData.getDisplayName());
+        String name = I18n.format("deepmoblearning.data_model.display_name", metadata.getDisplayName());
         String tier = DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME ? DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") : "";
         return TextFormatting.AQUA + name + tier + TextFormatting.RESET;
     }

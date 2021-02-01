@@ -1,8 +1,7 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
-import mustapelto.deepmoblearning.common.items.ItemDataModel;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Rect;
@@ -97,7 +96,7 @@ public class SimulationChamberGui extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         final int topStart = guiTop - 3;
 
-        final MobMetaData mobMetaData = DataModelHelper.getMobMetaData(simulationChamber.getDataModel());
+        final MobMetadata mobMetaData = DataModelHelper.getMobMetadata(simulationChamber.getDataModel());
         final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
         textureManager.bindTexture(GuiRegistry.SIMULATION_CHAMBER.BASE);

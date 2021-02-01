@@ -5,7 +5,7 @@ import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
 import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -79,9 +79,9 @@ public class DataModelHelper {
     }
 
     @Nullable
-    public static MobMetaData getMobMetaData(ItemStack stack) {
+    public static MobMetadata getMobMetadata(ItemStack stack) {
         ItemDataModel stackItem = getDataModelItem(stack);
-        return stackItem != null ? stackItem.getMobMetaData() : null;
+        return stackItem != null ? stackItem.getMobMetadata() : null;
     }
 
     @Nullable
@@ -139,7 +139,7 @@ public class DataModelHelper {
     }
 
     public static int getSimulationEnergy(ItemStack stack) {
-        MobMetaData data = getMobMetaData(stack);
+        MobMetadata data = getMobMetadata(stack);
         return (data != null) ? data.getSimulationRFCost() : 0;
     }
 
@@ -154,7 +154,7 @@ public class DataModelHelper {
      * @return true if Data Model's associated Living Matter matches Living Matter stack
      */
     public static boolean getDataModelMatchesLivingMatter(ItemStack dataModel, ItemStack livingMatter) {
-        MobMetaData data = getMobMetaData(dataModel);
+        MobMetadata data = getMobMetadata(dataModel);
         if (data == null)
             return false;
         return data.getLivingMatterData().getItemStack().isItemEqual(livingMatter);
@@ -166,7 +166,7 @@ public class DataModelHelper {
      * @return true if Data Model's associated Pristine Matter matches Pristine Matter stack
      */
     public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
-        MobMetaData data = getMobMetaData(dataModel);
+        MobMetadata data = getMobMetadata(dataModel);
         if (data == null)
             return false;
         return data.getPristineMatter().isItemEqual(pristineMatter);

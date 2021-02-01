@@ -4,7 +4,7 @@ import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,7 +113,7 @@ public class EntityDeathEventHandler {
             if (!(stack.getItem() instanceof ItemDataModel))
                 return;
 
-            MobMetaData mobMetaData = DataModelHelper.getMobMetaData(stack);
+            MobMetadata mobMetaData = DataModelHelper.getMobMetadata(stack);
 
             if (mobMetaData == null)
                 return;

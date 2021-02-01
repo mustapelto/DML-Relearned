@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.gui;
 import mustapelto.deepmoblearning.DMLConstants.GuiColors;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.metadata.MobMetaData;
+import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.Minecraft;
@@ -116,7 +116,7 @@ public class DeepLearnerGui extends GuiContainer {
         // At least 1 data model -> display metadata
         if (dataModels.size() > 0) {
             ItemStack currentModelStack = dataModels.get(currentModelIndex);
-            MobMetaData mobMetaData = DataModelHelper.getMobMetaData(currentModelStack);
+            MobMetadata mobMetaData = DataModelHelper.getMobMetadata(currentModelStack);
 
             if (mobMetaData == null) {
                 return;
@@ -177,7 +177,7 @@ public class DeepLearnerGui extends GuiContainer {
         drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_6"), leftStart, top + 7 * ROW_SPACING, GuiColors.WHITE);
     }
 
-    private void renderMetaData(TextureManager textureManager, MobMetaData mobMetaData, int left, int top, ItemStack stack) {
+    private void renderMetaData(TextureManager textureManager, MobMetadata mobMetaData, int left, int top, ItemStack stack) {
         int leftStart = left + 49;
         int topStart = top - 4;
 

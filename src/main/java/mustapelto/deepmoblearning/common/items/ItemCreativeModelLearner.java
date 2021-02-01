@@ -1,9 +1,7 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLevelUpModel;
-import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.TextHelper;
@@ -22,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemCreativeModelLearner extends DMLItem {
+public class ItemCreativeModelLearner extends ItemBase {
     public ItemCreativeModelLearner() {
         super("creative_model_learner", 1);
     }

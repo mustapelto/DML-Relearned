@@ -20,14 +20,6 @@ public class DMLConstants {
         }
     }
 
-    public static final class DataModel {
-        public static final int MAX_TIER = 4;
-    }
-
-    public static final class DeepLearner {
-        public static final int INTERNAL_SLOTS = 4;
-    }
-
     public static final class Crafting {
         public static final int GLITCH_FRAGMENTS_PER_HEART = 3;
         public static final int SOOTED_REDSTONE_PER_REDSTONE = 1;
@@ -41,6 +33,7 @@ public class DMLConstants {
 
     public static final class GuiIDs {
         public static final int DEEP_LEARNER = 0;
+        public static final int SIMULATION_CHAMBER = 1;
     }
 
     public static final class GuiColors {

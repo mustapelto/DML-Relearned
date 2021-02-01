@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemLivingMatter extends DMLItem {
+public class ItemLivingMatter extends ItemBase {
     private final LivingMatterData data;
 
     public ItemLivingMatter(LivingMatterData data) {

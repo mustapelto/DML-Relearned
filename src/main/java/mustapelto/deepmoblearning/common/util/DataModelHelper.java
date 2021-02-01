@@ -139,6 +139,11 @@ public class DataModelHelper {
         return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
     }
 
+    public static int getSimulationEnergy(ItemStack stack) {
+        MobMetaData data = getMobMetaData(stack);
+        return (data != null) ? data.getSimulationRFCost() : 0;
+    }
+
     // Filter out non-data model stacks and return filtered list
     public static NonNullList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
         NonNullList<ItemStack> result = NonNullList.create();
@@ -192,7 +197,7 @@ public class DataModelHelper {
      */
     private static boolean tryIncreaseTier(ItemStack stack) {
         int tier = getTierLevel(stack);
-        if (tier >= DMLConstants.DataModel.MAX_TIER)
+        if (tier >= DataModelTierDataManager.getMaxLevel())
             return false;
 
         int currentData = getCurrentTierDataCount(stack);

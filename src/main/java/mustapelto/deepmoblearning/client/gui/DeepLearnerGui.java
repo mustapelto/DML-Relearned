@@ -73,9 +73,9 @@ public class DeepLearnerGui extends GuiContainer {
         int y = mouseY - guiTop;
 
         if (dataModels.size() > 1) {
-            if (isHoveringPrevButton(x, y)) {
+            if (BUTTON_PREV.isInside(x, y)) {
                 currentModelIndex = prevItemIndex();
-            } else if (isHoveringNextButton(x, y)) {
+            } else if (BUTTON_NEXT.isInside(x, y)) {
                 currentModelIndex = nextItemIndex();
             }
         }
@@ -83,20 +83,12 @@ public class DeepLearnerGui extends GuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    private boolean isHoveringPrevButton(int x, int y) {
-        return x >= BUTTON_PREV.LEFT && x <= BUTTON_PREV.RIGHT && y >= BUTTON_PREV.TOP && y <= BUTTON_PREV.BOTTOM;
-    }
-
-    private boolean isHoveringNextButton(int x, int y) {
-        return x >= BUTTON_NEXT.LEFT && x <= BUTTON_NEXT.RIGHT && y >= BUTTON_NEXT.TOP && y <= BUTTON_NEXT.BOTTOM;
-    }
-
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        int left = getGuiLeft();
-        int top = getGuiTop();
+        final int left = guiLeft;
+        final int top = guiTop;
 
-        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
         // Draw main GUI
         textureManager.bindTexture(GuiRegistry.DEEP_LEARNER.BASE);
@@ -168,9 +160,9 @@ public class DeepLearnerGui extends GuiContainer {
         drawTexturedModalRect(left + BUTTON_NEXT.LEFT, top + BUTTON_NEXT.TOP, 99, 0, BUTTON_NEXT.WIDTH, BUTTON_NEXT.HEIGHT);
 
         // Hover states
-        if (isHoveringPrevButton(x, y)) {
+        if (BUTTON_PREV.isInside(x, y)) {
             drawTexturedModalRect(left + BUTTON_PREV.LEFT, top + BUTTON_PREV.TOP, 75, 24, BUTTON_PREV.WIDTH, BUTTON_PREV.HEIGHT);
-        } else if (isHoveringNextButton(x, y)) {
+        } else if (BUTTON_NEXT.isInside(x, y)) {
             drawTexturedModalRect(left + BUTTON_NEXT.LEFT, top + BUTTON_NEXT.TOP, 99, 24, BUTTON_NEXT.WIDTH, BUTTON_NEXT.HEIGHT);
         }
     }

@@ -16,4 +16,8 @@ public class Rect {
         RIGHT = left + width;
         BOTTOM = top + height;
     }
+
+    public boolean isInside(int x, int y) {
+        return (x >= LEFT && x <= RIGHT && y >= TOP && y <= BOTTOM);
+    }
 }

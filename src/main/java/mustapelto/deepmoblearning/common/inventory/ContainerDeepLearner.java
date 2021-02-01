@@ -1,9 +1,7 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.stackhandlers.ItemHandlerBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -11,14 +9,15 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public class ContainerDeepLearner extends ContainerBase {
+    public static final int INTERNAL_SLOTS = 4;
     private final ItemHandlerBase itemHandler;
 
     private final int deepLearnerSlotIndex; // inventory slot to make inaccessible while GUI open
     private final ItemStack deepLearner;
 
     public ContainerDeepLearner(EntityPlayer player) {
-        ItemStack mainHand = player.getHeldItemMainhand();
-        ItemStack offHand = player.getHeldItemOffhand();
+        final ItemStack mainHand = player.getHeldItemMainhand();
+        final ItemStack offHand = player.getHeldItemOffhand();
         if (mainHand.getItem() instanceof ItemDeepLearner)
             deepLearner = mainHand;
         else if (offHand.getItem() instanceof ItemDeepLearner)
@@ -26,8 +25,9 @@ public class ContainerDeepLearner extends ContainerBase {
         else
             throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
         itemHandler = new ItemHandlerBase(ItemDeepLearner.getContainedItems(deepLearner));
-        int dlSlot = ((ItemDeepLearner) deepLearner.getItem()).getInventorySlot();
-        deepLearnerSlotIndex = (dlSlot >= 0) ? dlSlot + DMLConstants.DeepLearner.INTERNAL_SLOTS : dlSlot;
+        final int dlSlot = ((ItemDeepLearner) deepLearner.getItem()).getInventorySlot();
+
+        deepLearnerSlotIndex = (dlSlot >= 0) ? dlSlot + INTERNAL_SLOTS : dlSlot;
 
         addDataModelSlots();
         addInventorySlots(player.inventory, 89, 153);

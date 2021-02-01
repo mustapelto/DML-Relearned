@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemGlitchIngot extends DMLItem {
+public class ItemGlitchIngot extends ItemBase {
     public ItemGlitchIngot() {
         super("glitch_infused_ingot", 64);
     }

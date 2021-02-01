@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemSootedRedstone extends DMLItem {
+public class ItemSootedRedstone extends ItemBase {
     public ItemSootedRedstone() {
         super("soot_covered_redstone", 64);
     }

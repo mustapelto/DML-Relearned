@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemGlitchHeart extends DMLItem {
+public class ItemGlitchHeart extends ItemBase {
     public ItemGlitchHeart() {
         super("glitch_heart", 64);
     }

@@ -1,4 +1,4 @@
-package mustapelto.deepmoblearning.common.eventhandlers;
+package mustapelto.deepmoblearning.common.events;
 
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.DMLConstants;
@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @EventBusSubscriber
-public class PlayerHandler {
+public class PlayerEventHandler {
     private static final List<UUID> FLYING_PLAYERS = new ArrayList<>();
 
     @SubscribeEvent

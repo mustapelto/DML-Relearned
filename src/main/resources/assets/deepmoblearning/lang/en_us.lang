@@ -17,6 +17,8 @@ item.deepmoblearning.glitch_infused_sword.name=Glitch Infused Sword
 
 # Block Names
 tile.deepmoblearning.infused_ingot_block.name=Glitch Infused Block
+tile.deepmoblearning.machine_casing.name=Soot-covered Machine Casing
+tile.deepmoblearning.simulation_chamber.name=Simulation Chamber
 
 # General
 deepmoblearning.general.more_info=- hold %s for more info
@@ -96,6 +98,23 @@ deepmoblearning.glitch_sword.tooltip_5=that the sword will get a permanent damag
 deepmoblearning.glitch_sword.tooltip_6=Current damage increase: %s (Max %s)
 deepmoblearning.glitch_sword.max_damage_reached=Your %s has now reached peak performance!
 deepmoblearning.glitch_sword.damage_increased=Your %s grows in power!
+
+# Simulation Chamber
+deepmoblearning.simulation_chamber.simulation_text.launching=Launching runtime
+deepmoblearning.simulation_chamber.simulation_text.iteration=Iteration #%d started
+deepmoblearning.simulation_chamber.simulation_text.loading=Loading model from chip memory
+deepmoblearning.simulation_chamber.simulation_text.assessing=Assessing threat level
+deepmoblearning.simulation_chamber.simulation_text.engaged=Engaged enemy
+deepmoblearning.simulation_chamber.simulation_text.pristine=Pristine procurement
+deepmoblearning.simulation_chamber.simulation_text.succeeded=succeeded
+deepmoblearning.simulation_chamber.simulation_text.failed=failed
+deepmoblearning.simulation_chamber.simulation_text.processing=Processing results
+
+deepmoblearning.simulation_chamber.tooltip.model_data=%s data collected
+deepmoblearning.simulation_chamber.tooltip.model_max=Data model has reached the max tier
+deepmoblearning.simulation_chamber.tooltip.model_missing=Machine is missing a data model
+deepmoblearning.simulation_chamber.tooltip.model_faulty=Cannot run simulation at current data model tier
+deepmoblearning.simulation_chamber.tooltip.sim_cost=Simulation with current data model uses %d RF/t
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned

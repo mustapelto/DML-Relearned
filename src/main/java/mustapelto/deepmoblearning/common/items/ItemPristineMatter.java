@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class ItemPristineMatter extends DMLItem {
+public class ItemPristineMatter extends ItemBase {
     private final MobMetaData metaData;
 
     public ItemPristineMatter(MobMetaData metaData) {

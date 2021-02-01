@@ -1,28 +1,32 @@
 package mustapelto.deepmoblearning.common;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.common.blocks.BlockBase;
 import mustapelto.deepmoblearning.common.blocks.BlockInfusedIngot;
 import mustapelto.deepmoblearning.common.blocks.BlockMachineCasing;
+import mustapelto.deepmoblearning.common.blocks.BlockSimulationChamber;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetaDataManager;
+import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @EventBusSubscriber
 public class DMLRegistry {
     public static final NonNullList<Item> registeredItems = NonNullList.create();
-    public static final NonNullList<Block> registeredBlocks = NonNullList.create();
+    public static final NonNullList<BlockBase> registeredBlocks = NonNullList.create();
 
     // Dynamic items, referenced by ID
     public static final Map<String, ItemLivingMatter> registeredLivingMatter = new HashMap<>();
@@ -32,6 +36,7 @@ public class DMLRegistry {
     // Blocks
     public static final BlockInfusedIngot blockInfusedIngot = new BlockInfusedIngot();
     public static final BlockMachineCasing blockMachineCasing = new BlockMachineCasing();
+    public static final BlockSimulationChamber blockSimulationChamber = new BlockSimulationChamber();
 
     // Items
     public static final ItemDeepLearner itemDeepLearner = new ItemDeepLearner();
@@ -55,9 +60,13 @@ public class DMLRegistry {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registeredBlocks.add(blockInfusedIngot);
         registeredBlocks.add(blockMachineCasing);
+        registeredBlocks.add(blockSimulationChamber);
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registeredBlocks.forEach(registry::register);
+
+        // Register tile entities
+        GameRegistry.registerTileEntity(blockSimulationChamber.getTileEntityClass(),new ResourceLocation(DMLConstants.ModInfo.ID, "simulation_chamber"));
     }
 
     @SubscribeEvent
@@ -100,8 +109,6 @@ public class DMLRegistry {
         registeredItems.forEach(registry::register);
 
         // Register ItemBlocks
-        registeredBlocks.forEach(block -> {
-            registry.register(new ItemBlock(block).setRegistryName(Objects.requireNonNull(block.getRegistryName())));
-        });
+        registeredBlocks.forEach(block -> registry.register(block.getItemBlock()));
     }
 }

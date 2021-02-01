@@ -1,4 +1,4 @@
-package mustapelto.deepmoblearning.common.eventhandlers;
+package mustapelto.deepmoblearning.common.events;
 
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @EventBusSubscriber
-public class EntityDeathHandler {
+public class EntityDeathEventHandler {
     //TODO: Add Trial Stuff
     private static final Integer entityUUIDBlacklistCap = 1000;
     private static final NonNullList<UUID> killedEntityUUIDBlacklist = NonNullList.create();

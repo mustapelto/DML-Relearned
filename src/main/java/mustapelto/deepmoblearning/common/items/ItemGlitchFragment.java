@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemGlitchFragment extends DMLItem {
+public class ItemGlitchFragment extends ItemBase {
     public ItemGlitchFragment() {
         super("glitch_fragment", 64);
     }

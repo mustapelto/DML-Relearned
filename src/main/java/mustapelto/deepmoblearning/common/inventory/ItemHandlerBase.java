@@ -1,4 +1,4 @@
-package mustapelto.deepmoblearning.common.stackhandlers;
+package mustapelto.deepmoblearning.common.inventory;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -19,10 +19,6 @@ public class ItemHandlerBase extends ItemStackHandler {
     }
 
     public NonNullList<ItemStack> getItemStacks() {
-        NonNullList<ItemStack> stacks = NonNullList.create();
-        for (int i = 0; i < getSlots(); i++) {
-            stacks.add(getStackInSlot(i));
-        }
         return stacks;
     }
 

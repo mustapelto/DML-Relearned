@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
@@ -24,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemDeepLearner extends DMLItem {
+public class ItemDeepLearner extends ItemBase {
     private int inventorySlot = -999;
 
     public ItemDeepLearner() {
@@ -72,7 +73,7 @@ public class ItemDeepLearner extends DMLItem {
     }
 
     public static NonNullList<ItemStack> getContainedItems(ItemStack deepLearner) {
-        NonNullList<ItemStack> items = NonNullList.withSize(DMLConstants.DeepLearner.INTERNAL_SLOTS, ItemStack.EMPTY);
+        NonNullList<ItemStack> items = NonNullList.withSize(ContainerDeepLearner.INTERNAL_SLOTS, ItemStack.EMPTY);
         NBTTagList inventory = NBTHelper.getCompoundList(deepLearner, "inventory");
 
         if (inventory != null) {

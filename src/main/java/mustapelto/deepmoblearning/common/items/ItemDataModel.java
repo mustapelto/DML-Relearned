@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemDataModel extends DMLItem {
+public class ItemDataModel extends ItemBase {
     private final MobMetaData metaData;
 
     public ItemDataModel(MobMetaData metaData) {

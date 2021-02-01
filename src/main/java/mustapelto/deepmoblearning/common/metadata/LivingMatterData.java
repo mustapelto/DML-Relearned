@@ -63,8 +63,13 @@ public class LivingMatterData {
     }
 
     @Nonnull
+    public ItemStack getItemStack(int size) {
+        return new ItemStack(DMLRegistry.registeredLivingMatter.get(itemID), size);
+    }
+
+    @Nonnull
     public ItemStack getItemStack() {
-        return new ItemStack(DMLRegistry.registeredLivingMatter.get(itemID));
+        return getItemStack(1);
     }
 
     public String getModID() {

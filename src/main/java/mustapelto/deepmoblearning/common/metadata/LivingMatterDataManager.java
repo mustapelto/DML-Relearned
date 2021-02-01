@@ -56,6 +56,9 @@ public class LivingMatterDataManager {
         populateDataStore(dataObject);
     }
 
+    /**
+     * @param data JSON object containing data to put into store
+     */
     private static void populateDataStore(JsonObject data) {
         Set<Map.Entry<String, JsonElement>> entrySet = data.entrySet();
         for (Map.Entry<String, JsonElement> entry : entrySet) {

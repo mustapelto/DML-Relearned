@@ -119,7 +119,7 @@ public class EntityDeathEventHandler {
                 return;
 
             if (mobMetaData.isAssociatedMob(event.getEntityLiving())) {
-                DataModelHelper.increaseDataCount(stack, player, true);
+                DataModelHelper.addKill(stack, player);
                 updatedModels.add(stack);
             }
         });

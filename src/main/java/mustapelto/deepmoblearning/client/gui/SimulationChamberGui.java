@@ -43,6 +43,14 @@ public class SimulationChamberGui extends GuiContainer {
 
         xSize = WIDTH;
         ySize = HEIGHT;
+
+        simulationChamber.setGuiState(true);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        simulationChamber.setGuiState(false);
+        super.onGuiClosed();
     }
 
     @Override
@@ -57,12 +65,11 @@ public class SimulationChamberGui extends GuiContainer {
         final int x = mouseX - guiLeft;
         final int y = mouseY - guiTop;
 
-        ItemStack dataModel = simulationChamber.getDataModel();
-
         List<String> tooltip = new ArrayList<>();
 
         if (DATA_BAR.isInside(x, y)) {
-            if (dataModel.getItem() instanceof ItemDataModel) {
+            if (simulationChamber.hasDataModel()) {
+                ItemStack dataModel = simulationChamber.getDataModel();
                 if (!DataModelHelper.isAtMaxTier(dataModel)) {
                     String currentData = String.valueOf(DataModelHelper.getCurrentTierDataCount(dataModel));
                     String maxData = String.valueOf(DataModelHelper.getTierRequiredData(dataModel));
@@ -78,8 +85,8 @@ public class SimulationChamberGui extends GuiContainer {
             String currentEnergy = String.valueOf(simulationChamber.getEnergy());
             String maxEnergy = String.valueOf(simulationChamber.getMaxEnergy());
             tooltip.add(currentEnergy + "/" + maxEnergy + " RF");
-            if (dataModel.getItem() instanceof ItemDataModel) {
-                int energyDrain = DataModelHelper.getSimulationEnergy(dataModel);
+            if (simulationChamber.hasDataModel()) {
+                int energyDrain = simulationChamber.getSimulationEnergyCost();
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.sim_cost", energyDrain));
             }
             drawHoveringText(tooltip, x - 90, y - 16);
@@ -107,8 +114,6 @@ public class SimulationChamberGui extends GuiContainer {
         int energyBarHeight = (int)(((float) simulationChamber.getEnergy() / simulationChamber.getMaxEnergy()) * ENERGY_BAR.HEIGHT);
         int energyBarOffset = ENERGY_BAR.HEIGHT - energyBarHeight;
         drawTexturedModalRect(guiLeft + ENERGY_BAR.LEFT, guiTop + ENERGY_BAR.TOP + energyBarOffset, 25, 141, 7, energyBarHeight);
-
-
 
         // Player inventory
         textureManager.bindTexture(GuiRegistry.DEFAULT_GUI);

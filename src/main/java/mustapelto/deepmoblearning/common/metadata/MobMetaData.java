@@ -152,7 +152,12 @@ public class MobMetaData {
 
     @Nonnull
     public ItemStack getPristineMatter() {
-        return new ItemStack(DMLRegistry.registeredPristineMatter.get(itemID));
+        return getPristineMatter(1);
+    }
+
+    @Nonnull
+    public ItemStack getPristineMatter(int size) {
+        return new ItemStack(DMLRegistry.registeredPristineMatter.get(itemID), size);
     }
 
     public String getDisplayName() {

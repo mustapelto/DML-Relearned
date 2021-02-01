@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.util;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
@@ -144,6 +143,35 @@ public class DataModelHelper {
         return (data != null) ? data.getSimulationRFCost() : 0;
     }
 
+    public static int getPristineChance(ItemStack stack) {
+        DataModelTierData data = getTierData(stack);
+        return (data != null) ? data.getPristineChance() : 0;
+    }
+
+    /**
+     * @param dataModel Data Model stack to compare
+     * @param livingMatter Living Matter stack to compare
+     * @return true if Data Model's associated Living Matter matches Living Matter stack
+     */
+    public static boolean getDataModelMatchesLivingMatter(ItemStack dataModel, ItemStack livingMatter) {
+        MobMetaData data = getMobMetaData(dataModel);
+        if (data == null)
+            return false;
+        return data.getLivingMatterData().getItemStack().isItemEqual(livingMatter);
+    }
+
+    /**
+     * @param dataModel Data Model stack to compare
+     * @param pristineMatter Living Matter stack to compare
+     * @return true if Data Model's associated Pristine Matter matches Pristine Matter stack
+     */
+    public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
+        MobMetaData data = getMobMetaData(dataModel);
+        if (data == null)
+            return false;
+        return data.getPristineMatter().isItemEqual(pristineMatter);
+    }
+
     // Filter out non-data model stacks and return filtered list
     public static NonNullList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
         NonNullList<ItemStack> result = NonNullList.create();
@@ -159,26 +187,32 @@ public class DataModelHelper {
     //
     // Data Manipulation
     //
-    public static void increaseDataCount(ItemStack stack, EntityPlayerMP player, boolean isKill) {
+    public static void addSimulation(ItemStack stack) {
+        increaseDataCount(stack, 1);
+        setTotalSimulationCount(stack, getTotalSimulationCount(stack) + 1);
+        tryIncreaseTier(stack);
+    }
+
+    private static void increaseDataCount(ItemStack stack, int amount) {
+        int data = getCurrentTierDataCount(stack);
+        setCurrentTierDataCount(stack, data + amount);
+    }
+
+    public static void addKill(ItemStack stack, EntityPlayerMP player) {
         DataModelTierData tierData = getTierData(stack);
         if (tierData == null)
             return;
 
-        int currentData = getCurrentTierDataCount(stack);
+        int increase = tierData.getKillMultiplier();
 
         // TODO: Trial stuff
 
-        // Update data count and set NBT
-        currentData += isKill ? tierData.getKillMultiplier() : 1;
-        if (isKill && player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword /* && no trial active */)
-            currentData *= 2;
-        setCurrentTierDataCount(stack, currentData);
+        if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword /* && no trial active */)
+            increase *= 2;
+        increaseDataCount(stack, increase);
 
         // Update appropriate total count
-        if (isKill)
-            setTotalKillCount(stack, getTotalKillCount(stack) + 1);
-        else
-            setTotalSimulationCount(stack, getTotalSimulationCount(stack) + 1);
+        setTotalKillCount(stack, getTotalKillCount(stack) + 1);
 
         if (tryIncreaseTier(stack)) {
             player.sendMessage(new TextComponentString(
@@ -234,7 +268,7 @@ public class DataModelHelper {
                                 break;
                             case INCREASE_KILLS:
                                 if (!isAtMaxTier(modelStack))
-                                    increaseDataCount(modelStack, player, true);
+                                    addKill(modelStack, player);
                         }
                     }
                 }

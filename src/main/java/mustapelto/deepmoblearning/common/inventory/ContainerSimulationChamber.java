@@ -32,8 +32,6 @@ public class ContainerSimulationChamber extends ContainerBase {
         addSlotToContainer(new SlotOutput(inventory, 3, PRISTINE_MATTER_SLOT.LEFT, PRISTINE_MATTER_SLOT.TOP)); // Pristine Matter output
 
         addInventorySlots(inventoryPlayer, 36, 153);
-
-        this.tileEntity.setContainerState(true);
     }
 
     @Nonnull
@@ -50,11 +48,5 @@ public class ContainerSimulationChamber extends ContainerBase {
         if (tileEntity.getWorld().getTileEntity(pos) != tileEntity || playerIn.isSpectator())
             return false; // Checks to prevent illegal access
         return playerIn.getDistanceSqToCenter(pos) <= 64; // prevent "long distance" interaction
-    }
-
-    @Override
-    public void onContainerClosed(@Nonnull EntityPlayer playerIn) {
-        tileEntity.setContainerState(false);
-        super.onContainerClosed(playerIn);
     }
 }

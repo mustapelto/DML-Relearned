@@ -48,6 +48,10 @@ public class DataModelTierData {
         return canSimulate;
     }
 
+    public int getPristineChance() {
+        return pristineChance;
+    }
+
     public JsonObject toJsonObject() {
         JsonObject object = new JsonObject();
 

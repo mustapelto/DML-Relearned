@@ -16,10 +16,10 @@ import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRequestUpdateSimChamber;
 import mustapelto.deepmoblearning.common.network.MessageUpdateSimChamber;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
@@ -36,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class TileEntitySimulationChamber extends TileEntity implements ITickable {
+public class TileEntitySimulationChamber extends TileEntityRedstoneControlled implements ITickable {
     private final DMLEnergyStorage energyStorage = new DMLEnergyStorage(DMLConstants.SimulationChamber.ENERGY_CAPACITY, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
 
     private final ItemHandlerBase inputDataModel = new ItemHandlerInputDataModel() {
@@ -56,7 +55,7 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
     private long lastUpdateSent = -1; // Time when last update was sent to client
     private boolean guiOpen = false; // Request update every tick while GUI is open
 
-    //TODO: Redstone control, sidedness config
+    //TODO: sidedness config
 
     @Override
     public void update() {
@@ -73,10 +72,12 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
                 sendUpdateToClient();
             }
 
-            if (!simulationState.isSimulationRunning()) {
-                tryStartSimulation();
-            } else {
-                if (hasEnergyForSimulation()) {
+            if (!simulationState.isSimulationRunning() && canStartSimulation()) {
+                startSimulation();
+            }
+
+            if (simulationState.isSimulationRunning()) {
+                if (canContinueSimulation()) {
                     // Enough energy for processing -> void energy and advance process
                     energyStorage.voidEnergy(getSimulationEnergyCost());
                     simulationState.advanceSimulationProgress();
@@ -97,20 +98,26 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
     }
 
     /**
-     * Start simulation if all requirements are met
+     * Start simulation (only called once all requirements are met)
      */
-    private void tryStartSimulation() {
-        if (hasDataModel() && hasPolymerClay() && canDataModelSimulate() && hasEnergyForSimulation() && !isLivingMatterOutputFull() && !isPristineMatterOutputFull()) {
-            simulationState.setSimulationRunning(true);
+    private void startSimulation() {
+        simulationState.setSimulationRunning(true);
 
-            // Calculate Pristine Matter success
-            int pristineChance = DataModelHelper.getPristineChance(getDataModel());
-            int random = ThreadLocalRandom.current().nextInt(100);
-            simulationState.setPristineSuccess(random < pristineChance);
+        // Calculate Pristine Matter success
+        int pristineChance = DataModelHelper.getPristineChance(getDataModel());
+        int random = ThreadLocalRandom.current().nextInt(100);
+        simulationState.setPristineSuccess(random < pristineChance);
 
-            // Consume Polymer Clay
-            getPolymerClay().shrink(1);
-        }
+        // Consume Polymer Clay
+        getPolymerClay().shrink(1);
+    }
+
+    private boolean canStartSimulation() {
+        return hasDataModel() && hasPolymerClay() && canDataModelSimulate() && hasEnergyForSimulation() && !isLivingMatterOutputFull() && !isPristineMatterOutputFull() && isRedstoneActive();
+    }
+
+    private boolean canContinueSimulation() {
+        return hasEnergyForSimulation() && isRedstoneActive();
     }
 
     /**
@@ -226,11 +233,11 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
     //
 
     private void sendUpdateToClient() {
-        DMLPacketHandler.network.sendToAllTracking(new MessageUpdateSimChamber(this), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 0));
+        DMLPacketHandler.sendToClient(new MessageUpdateSimChamber(this), world, pos);
     }
 
     private void requestUpdateFromServer() {
-        DMLPacketHandler.network.sendToServer(new MessageRequestUpdateSimChamber(this));
+        DMLPacketHandler.sendToServer(new MessageRequestUpdateSimChamber(this));
     }
 
     public void setGuiState(boolean open) {
@@ -242,15 +249,8 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
         this.simulationState.set(simulationState);
     }
 
-    @Override
-    public void onLoad() {
-        if (world.isRemote) {
-            requestUpdateFromServer();
-        }
-    }
-
     //
-    // DISK WRITE/READ
+    // NBT WRITE/READ
     //
 
     @Override
@@ -276,12 +276,9 @@ public class TileEntitySimulationChamber extends TileEntity implements ITickable
             inputPolymer.deserializeNBT(compound.getCompoundTag("polymer"));
             outputLiving.deserializeNBT(compound.getCompoundTag("lOutput"));
             outputPristine.deserializeNBT(compound.getCompoundTag("pOutput"));
-            if (compound.hasKey("isCrafting", Constants.NBT.TAG_BYTE))
-                simulationState.setSimulationRunning(compound.getBoolean("isCrafting"));
-            if (compound.hasKey("craftSuccess", Constants.NBT.TAG_BYTE))
-                simulationState.setPristineSuccess(compound.getBoolean("craftSuccess"));
-            if (compound.hasKey("simulationProgress", Constants.NBT.TAG_INT))
-                simulationState.setSimulationProgress(compound.getInteger("simulationProgress"));
+            simulationState.setSimulationRunning(NBTHelper.getBoolean(compound, "isCrafting", false));
+            simulationState.setPristineSuccess(NBTHelper.getBoolean(compound, "craftSuccess", false));
+            simulationState.setSimulationProgress(NBTHelper.getInteger(compound, "simulationProgress", 0));
         } else { // DML:Relearned tag -> use new tag system
             inputDataModel.deserializeNBT(compound.getCompoundTag("inputDataModel"));
             inputPolymer.deserializeNBT(compound.getCompoundTag("inputPolymer"));

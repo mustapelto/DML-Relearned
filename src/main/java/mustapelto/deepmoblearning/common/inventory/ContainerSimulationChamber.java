@@ -21,7 +21,7 @@ public class ContainerSimulationChamber extends ContainerBase {
         IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         // Add internal slots
-        addSlotToContainer(new SlotDataModel(inventory, 0, DATA_MODEL_SLOT.LEFT, DATA_MODEL_SLOT.TOP));
+        addSlotToContainer(new SlotDataModel(inventory, 0, DATA_MODEL_SLOT.LEFT + 1, DATA_MODEL_SLOT.TOP + 1));
         addSlotToContainer(new SlotPolymerClay(inventory, 1, POLYMER_SLOT.LEFT, POLYMER_SLOT.TOP));
         addSlotToContainer(new SlotOutput(inventory, 2, LIVING_MATTER_SLOT.LEFT, LIVING_MATTER_SLOT.TOP)); // Living Matter output
         addSlotToContainer(new SlotOutput(inventory, 3, PRISTINE_MATTER_SLOT.LEFT, PRISTINE_MATTER_SLOT.TOP)); // Pristine Matter output

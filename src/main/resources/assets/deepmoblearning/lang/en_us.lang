@@ -119,6 +119,9 @@ deepmoblearning.simulation_chamber.error_text.no_polymer=Missing polymer medium
 deepmoblearning.simulation_chamber.error_text.no_energy=System energy levels critical
 deepmoblearning.simulation_chamber.error_text.output_full=Living or Pristine Matter output buffer full
 
+deepmoblearning.simulation_chamber.redstone_deactivated_1=System deactivated
+deepmoblearning.simulation_chamber.redstone_deactivated_2=by redstone signal
+
 deepmoblearning.simulation_chamber.data_model_info.tier=Tier
 deepmoblearning.simulation_chamber.data_model_info.iterations=Iterations
 deepmoblearning.simulation_chamber.data_model_info.pristine=Pristine chance
@@ -128,6 +131,12 @@ deepmoblearning.simulation_chamber.tooltip.model_max=Data model has reached the 
 deepmoblearning.simulation_chamber.tooltip.model_missing=Machine is missing a data model
 deepmoblearning.simulation_chamber.tooltip.model_cannot_simulate=Cannot run simulation at current data model tier
 deepmoblearning.simulation_chamber.tooltip.sim_cost=Simulation with current data model uses %d RF/t
+
+# Redstone Mode Button
+deepmoblearning.redstone_mode.always_on=Always on
+deepmoblearning.redstone_mode.high_on=On with redstone signal
+deepmoblearning.redstone_mode.high_off=Off with redstone signal
+deepmoblearning.redstone_mode.always_off=Always off
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned

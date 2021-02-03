@@ -18,4 +18,8 @@ public class GuiRegistry {
     public static final class SIMULATION_CHAMBER {
         public static final ResourceLocation BASE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber_base.png");
     }
+
+    public static final class BUTTONS {
+        public static final ResourceLocation REDSTONE_BUTTON = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/buttons/button_redstone.png");
+    }
 }

@@ -6,6 +6,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 public class NBTHelper {
+    //
+    // ItemStack methods
+    //
+
     public static boolean hasTag(ItemStack stack) {
         return stack.hasTagCompound();
     }
@@ -29,10 +33,6 @@ public class NBTHelper {
         return hasTag(stack) ? getTag(stack).getInteger(key) : defaultValue;
     }
 
-    public static void setList(ItemStack stack, String key, NBTTagList list) {
-        getTag(stack).setTag(key, list);
-    }
-
     public static NBTTagList getCompoundList(ItemStack stack, String key) {
         return hasTag(stack) ? getTag(stack).getTagList(key, Constants.NBT.TAG_COMPOUND) : null;
     }
@@ -42,5 +42,17 @@ public class NBTHelper {
             getTag(stack).removeTag(key);
         if (getTag(stack).hasNoTags())
             stack.setTagCompound(null);
+    }
+
+    //
+    // NBTTagCompound methods
+    //
+
+    public static int getInteger(NBTTagCompound compound, String key, int defaultValue) {
+        return compound.hasKey(key) ? compound.getInteger(key) : defaultValue;
+    }
+
+    public static boolean getBoolean(NBTTagCompound compound, String key, boolean defaultValue) {
+        return compound.hasKey(key) ? compound.getBoolean(key) : defaultValue;
     }
 }

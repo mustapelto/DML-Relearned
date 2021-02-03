@@ -83,7 +83,7 @@ public class StringAnimator {
     }
 
     public void goToRelativePosition(float relativePosition) {
-        MathHelper.Clamp(relativePosition, 0, 1);
+        relativePosition = MathHelper.Clamp(relativePosition, 0, 1);
         goToPosition(relativePosition * totalDuration);
     }
 

@@ -6,6 +6,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Rect;
 import mustapelto.deepmoblearning.common.util.StringAnimator;
+import mustapelto.deepmoblearning.common.util.TextHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +36,13 @@ public class SimulationChamberGui extends GuiContainer {
     private static final Rect ENERGY_BAR = new Rect(211, 47, 8, 87);
 
     // Item slot locations
-    public static final Rect DATA_MODEL_SLOT = new Rect(-13, 1, 18, 18);
+    public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
     public static final Rect POLYMER_SLOT = new Rect(192, 7, 18, 18);
     public static final Rect LIVING_MATTER_SLOT = new Rect(182, 27, 18, 18);
     public static final Rect PRISTINE_MATTER_SLOT = new Rect(202, 27, 18, 18);
+
+    // Button locations
+    public static final Rect REDSTONE_BUTTON = new Rect(-14, 24, 18, 18);
 
     // Animators for animated strings
     private final StringAnimator progressAnimator = new StringAnimator(); // Used to display simulation progress
@@ -49,11 +54,14 @@ public class SimulationChamberGui extends GuiContainer {
 
     private DataModelError dataModelError = DataModelError.NONE; // Error with model (missing/faulty)?
     private SimulationError simulationError = SimulationError.NONE; // Other error (missing polymer/low energy/output full)?
+    private boolean redstoneDeactivated = false; // Is simulation chamber deactivated by redstone signal?
     private int currentIteration; // Saves data model's current iteration so we don't update display if iteration hasn't changed
     private boolean currentPristineSuccess; // Saves data model's current pristine success state so we don't update display if iteration hasn't changed
 
     private int currentTick = 0; // Ticks since GUI was opened
     private float lastPartial = 0; // Time when GUI was last drawn (ticks + partial tick)
+
+    private final RedstoneModeButton redstoneModeButton;
 
     public SimulationChamberGui(TileEntitySimulationChamber tileEntity, EntityPlayer player) {
         super(new ContainerSimulationChamber(tileEntity, player.inventory));
@@ -68,12 +76,23 @@ public class SimulationChamberGui extends GuiContainer {
 
         dataModel = simulationChamber.getDataModel();
         prepareStringAnimators();
+
+        redstoneModeButton = new RedstoneModeButton(this, simulationChamber, REDSTONE_BUTTON.LEFT, REDSTONE_BUTTON.TOP);
     }
 
     @Override
     public void onGuiClosed() {
         simulationChamber.setGuiState(false);
         super.onGuiClosed();
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (redstoneModeButton.isHovered(mouseX - guiLeft, mouseY - guiTop)) {
+            redstoneModeButton.click(mouseButton);
+            return;
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -111,10 +130,16 @@ public class SimulationChamberGui extends GuiContainer {
         dataModelError = DataModelError.NONE;
         emptyDisplayAnimator.reset();
 
+        // Check redstone state
+        redstoneDeactivated = !simulationChamber.isRedstoneActive();
+        if (redstoneDeactivated)
+            return;
+
         //
         // Check for simulation errors and update animator
         //
-        if (!simulationChamber.hasPolymerClay()) {
+        if (!simulationChamber.hasPolymerClay() && !simulationChamber.getSimulationState().isSimulationRunning()) {
+            // Polymer error only shown if simulation hasn't started already (i.e. can remove remaining polymer while simulation is running)
             if (simulationError == SimulationError.POLYMER)
                 return;
 
@@ -210,6 +235,10 @@ public class SimulationChamberGui extends GuiContainer {
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.sim_cost", energyDrain));
             }
             drawHoveringText(tooltip, x - 90, y - 16);
+        } else if (redstoneModeButton.isHovered(x, y)) {
+            // Draw Redstone Mode Tooltip
+            tooltip = redstoneModeButton.getTooltip();
+            drawHoveringText(tooltip, x - 50, y + 2);
         }
     }
 
@@ -224,7 +253,7 @@ public class SimulationChamberGui extends GuiContainer {
         drawTexturedModalRect(guiLeft + 8, guiTop, 0, 0, 216, 141);
 
         // Data Model Slot
-        drawTexturedModalRect(guiLeft + DATA_MODEL_SLOT.LEFT - 1, guiTop + DATA_MODEL_SLOT.TOP - 1, 0, 141, DATA_MODEL_SLOT.WIDTH, DATA_MODEL_SLOT.HEIGHT);
+        drawTexturedModalRect(guiLeft + DATA_MODEL_SLOT.LEFT, guiTop + DATA_MODEL_SLOT.TOP, 0, 141, DATA_MODEL_SLOT.WIDTH, DATA_MODEL_SLOT.HEIGHT);
 
         // Data Model Experience Bar
         if (dataModelError == DataModelError.NONE) {
@@ -248,6 +277,9 @@ public class SimulationChamberGui extends GuiContainer {
         // Player inventory
         textureManager.bindTexture(GuiRegistry.DEFAULT_GUI);
         drawTexturedModalRect(guiLeft + 28, guiTop + 145, 0, 0, 176, 90);
+
+        // Redstone Mode button
+        redstoneModeButton.drawButton(mouseX - guiLeft, mouseY - guiTop);
 
         // Calculate delta time since last redraw (used to advance string animations)
         float currentPartial = currentTick + partialTicks;
@@ -282,6 +314,12 @@ public class SimulationChamberGui extends GuiContainer {
         if (dataModelError != DataModelError.NONE) {
             emptyDisplayAnimator.advance(advanceAmount);
             strings = emptyDisplayAnimator.getCurrentStrings();
+        } else if (redstoneDeactivated) {
+            strings = new ArrayList<>();
+            strings.add(TextFormatting.RED + TextHelper.getDashedLine(28) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_1"), 28) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_2"), 28) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.getDashedLine(28) + TextFormatting.RESET);
         } else if (simulationError != SimulationError.NONE) {
             simulationErrorAnimator.advance(advanceAmount);
             strings = simulationErrorAnimator.getCurrentStrings();

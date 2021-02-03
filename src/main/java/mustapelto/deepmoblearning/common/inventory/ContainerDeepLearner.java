@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
@@ -45,13 +44,13 @@ public class ContainerDeepLearner extends ContainerBase {
     public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack result = super.transferStackInSlot(playerIn, index);
         ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
+        playerIn.inventory.markDirty();
         return result;
     }
 
     @Override
     @Nonnull
     public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull EntityPlayer player) {
-        DMLRelearned.logger.info("Slot: {} - DLIndex: {} - DragType: {} - ClickType: {}", slotId, deepLearnerSlotIndex, dragType, clickTypeIn);
         // Prevent moving Deep Learner while it is open
         if (((deepLearnerSlotIndex != -1) && (slotId == deepLearnerSlotIndex))
                 || ((clickTypeIn == ClickType.SWAP) && (dragType == player.inventory.currentItem))) {

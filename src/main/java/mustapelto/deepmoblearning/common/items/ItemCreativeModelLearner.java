@@ -57,8 +57,8 @@ public class ItemCreativeModelLearner extends ItemBase {
             String decreaseTier = TextHelper.getFormattedString(TextFormatting.ITALIC, sprintName + " + " + useName, TextFormatting.GRAY);
             String increaseKills = TextHelper.getFormattedString(TextFormatting.ITALIC, useName, TextFormatting.GRAY);
             tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_tier", increaseTier));
-            tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_tier", decreaseTier));
-            tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_tier", increaseKills));
+            tooltip.add(I18n.format("deepmoblearning.creative_model_learner.decrease_tier", decreaseTier));
+            tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_kills", increaseKills));
         }
     }
 }

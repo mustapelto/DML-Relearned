@@ -95,9 +95,8 @@ public class DataModelHelper {
     }
 
     public static boolean isAtMaxTier(ItemStack stack) {
-        // getMaxLevel() returns number of tiers, but tier index starts at 0 so we need to adjust for that
         // also true if "over max" (in case config has been changed on a running world to include fewer tiers)
-        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel() - 1;
+        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel();
     }
 
     public static boolean canSimulate(ItemStack stack) {
@@ -230,8 +229,7 @@ public class DataModelHelper {
      * @return true if tier could be increased, otherwise false
      */
     private static boolean tryIncreaseTier(ItemStack stack) {
-        int tier = getTierLevel(stack);
-        if (tier >= DataModelTierDataManager.getMaxLevel())
+        if (isAtMaxTier(stack))
             return false;
 
         int currentData = getCurrentTierDataCount(stack);
@@ -239,7 +237,7 @@ public class DataModelHelper {
 
         if (currentData >= requiredData) {
             setCurrentTierDataCount(stack, currentData - requiredData); // extra data carries over to higher tier
-            setTierLevel(stack, tier + 1);
+            setTierLevel(stack, getTierLevel(stack) + 1);
 
             return true;
         }

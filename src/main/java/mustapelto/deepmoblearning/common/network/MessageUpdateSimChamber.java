@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
+import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber.SimulationState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -11,40 +12,32 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageUpdateSimChamber implements IMessage {
     private BlockPos pos;
     private int energy;
-    private boolean simulationRunning;
-    private int simulationProgress;
-    private boolean pristineSuccess;
+    private SimulationState simulationState;
 
     public MessageUpdateSimChamber() {}
 
-    public MessageUpdateSimChamber(BlockPos pos, int energy, boolean simulationRunning, int simulationProgress, boolean pristineSuccess) {
+    public MessageUpdateSimChamber(BlockPos pos, int energy, SimulationState simulationState) {
         this.pos = pos;
         this.energy = energy;
-        this.simulationRunning = simulationRunning;
-        this.simulationProgress = simulationProgress;
-        this.pristineSuccess = pristineSuccess;
+        this.simulationState = simulationState;
     }
 
     public MessageUpdateSimChamber(TileEntitySimulationChamber te) {
-        this(te.getPos(), te.getEnergy(), te.isSimulationRunning(), te.getSimulationProgress(), te.isPristineSuccess());
+        this(te.getPos(), te.getEnergy(), te.getSimulationState());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeLong(pos.toLong());
         buf.writeInt(energy);
-        buf.writeBoolean(simulationRunning);
-        buf.writeInt(simulationProgress);
-        buf.writeBoolean(pristineSuccess);
+        buf.writeBytes(simulationState.toBytes());
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         pos = BlockPos.fromLong(buf.readLong());
         energy = buf.readInt();
-        simulationRunning = buf.readBoolean();
-        simulationProgress = buf.readInt();
-        pristineSuccess = buf.readBoolean();
+        simulationState = new SimulationState().fromBytes(buf);
     }
 
     public static class Handler implements IMessageHandler<MessageUpdateSimChamber, IMessage> {
@@ -53,7 +46,7 @@ public class MessageUpdateSimChamber implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                TileEntitySimulationChamber te = (TileEntitySimulationChamber) Minecraft.getMinecraft().world.getTileEntity(message.pos);
                if (te != null) {
-                   te.setState(message.energy, message.simulationRunning, message.simulationProgress, message.pristineSuccess);
+                   te.setState(message.energy, message.simulationState);
                }
             });
             return null;

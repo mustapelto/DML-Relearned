@@ -43,7 +43,7 @@ public class DMLGuiHandler implements IGuiHandler {
                 return new DeepLearnerGui(player, world);
             case DMLConstants.GuiIDs.SIMULATION_CHAMBER:
                 TileEntity simulationChamber = Objects.requireNonNull(world.getTileEntity(new BlockPos(x, y, z)));
-                return new SimulationChamberGui(simulationChamber, player, world);
+                return new SimulationChamberGui(simulationChamber, player);
             default:
                 return null;
         }

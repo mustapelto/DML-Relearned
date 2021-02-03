@@ -106,14 +106,27 @@ deepmoblearning.simulation_chamber.simulation_text.loading=Loading model from ch
 deepmoblearning.simulation_chamber.simulation_text.assessing=Assessing threat level
 deepmoblearning.simulation_chamber.simulation_text.engaged=Engaged enemy
 deepmoblearning.simulation_chamber.simulation_text.pristine=Pristine procurement
-deepmoblearning.simulation_chamber.simulation_text.succeeded=succeeded
-deepmoblearning.simulation_chamber.simulation_text.failed=failed
+deepmoblearning.simulation_chamber.simulation_text.pristine_success=succeeded
+deepmoblearning.simulation_chamber.simulation_text.pristine_failure=failed
 deepmoblearning.simulation_chamber.simulation_text.processing=Processing results
+
+deepmoblearning.simulation_chamber.error_text.error=ERROR: Cannot begin simulation
+deepmoblearning.simulation_chamber.error_text.no_data_model_1=No data model found
+deepmoblearning.simulation_chamber.error_text.no_data_model_2=Please insert data model
+deepmoblearning.simulation_chamber.error_text.model_cannot_simulate_1=Invalid amount of data in model
+deepmoblearning.simulation_chamber.error_text.model_cannot_simulate_2=Please insert valid model
+deepmoblearning.simulation_chamber.error_text.no_polymer=Missing polymer medium
+deepmoblearning.simulation_chamber.error_text.no_energy=System energy levels critical
+deepmoblearning.simulation_chamber.error_text.output_full=Living or Pristine Matter output buffer full
+
+deepmoblearning.simulation_chamber.data_model_info.tier=Tier
+deepmoblearning.simulation_chamber.data_model_info.iterations=Iterations
+deepmoblearning.simulation_chamber.data_model_info.pristine=Pristine chance
 
 deepmoblearning.simulation_chamber.tooltip.model_data=%s data collected
 deepmoblearning.simulation_chamber.tooltip.model_max=Data model has reached the max tier
 deepmoblearning.simulation_chamber.tooltip.model_missing=Machine is missing a data model
-deepmoblearning.simulation_chamber.tooltip.model_faulty=Cannot run simulation at current data model tier
+deepmoblearning.simulation_chamber.tooltip.model_cannot_simulate=Cannot run simulation at current data model tier
 deepmoblearning.simulation_chamber.tooltip.sim_cost=Simulation with current data model uses %d RF/t
 
 # Creative Tab

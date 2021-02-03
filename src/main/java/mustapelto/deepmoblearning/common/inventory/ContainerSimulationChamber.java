@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
-import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,13 +11,12 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
+import static mustapelto.deepmoblearning.client.gui.SimulationChamberGui.*;
+
 public class ContainerSimulationChamber extends ContainerBase {
     private final TileEntitySimulationChamber tileEntity;
 
-    public static final Rect DATA_MODEL_SLOT = new Rect(-13, 1, 18, 18);
-    public static final Rect POLYMER_SLOT = new Rect(176, 7, 18, 18);
-    public static final Rect LIVING_MATTER_SLOT = new Rect(196, 7, 18, 18);
-    public static final Rect PRISTINE_MATTER_SLOT = new Rect(186, 27, 18, 18);
+
 
     public ContainerSimulationChamber(TileEntity tileEntity, InventoryPlayer inventoryPlayer) {
         this.tileEntity = (TileEntitySimulationChamber) tileEntity;
@@ -39,6 +37,7 @@ public class ContainerSimulationChamber extends ContainerBase {
     public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack result = super.transferStackInSlot(playerIn, index);
         tileEntity.markDirty();
+        playerIn.inventory.markDirty();
         return result;
     }
 

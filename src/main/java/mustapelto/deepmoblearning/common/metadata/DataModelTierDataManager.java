@@ -13,7 +13,7 @@ public class DataModelTierDataManager {
     private static final LinkedHashMap<Integer, DataModelTierData> dataStore = new LinkedHashMap<>();
     private static final String FILE_NAME = "DataModelTiers.json";
     private static File configFile;
-    private static int maxLevel = 0;
+    private static int maxLevel = -1; // First added tier is "Tier 0"
 
     public static void init() {
         configFile = new File(FileHelper.configDML, FILE_NAME);

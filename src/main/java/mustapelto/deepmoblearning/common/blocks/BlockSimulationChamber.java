@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockSimulationChamber extends BlockGui<TileEntitySimulationChamber> {
+public class BlockSimulationChamber extends BlockTileEntity<TileEntitySimulationChamber> {
     public BlockSimulationChamber() {
         super("simulation_chamber", Material.ROCK, DMLConstants.GuiIDs.SIMULATION_CHAMBER);
         setHardness(4f);

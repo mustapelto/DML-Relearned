@@ -4,7 +4,6 @@ import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -16,10 +15,8 @@ import static mustapelto.deepmoblearning.client.gui.SimulationChamberGui.*;
 public class ContainerSimulationChamber extends ContainerBase {
     private final TileEntitySimulationChamber tileEntity;
 
-
-
-    public ContainerSimulationChamber(TileEntity tileEntity, InventoryPlayer inventoryPlayer) {
-        this.tileEntity = (TileEntitySimulationChamber) tileEntity;
+    public ContainerSimulationChamber(TileEntitySimulationChamber tileEntity, InventoryPlayer inventoryPlayer) {
+        this.tileEntity = tileEntity;
 
         IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 

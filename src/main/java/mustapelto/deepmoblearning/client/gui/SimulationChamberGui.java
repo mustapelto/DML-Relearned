@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -56,11 +55,11 @@ public class SimulationChamberGui extends GuiContainer {
     private int currentTick = 0; // Ticks since GUI was opened
     private float lastPartial = 0; // Time when GUI was last drawn (ticks + partial tick)
 
-    public SimulationChamberGui(TileEntity tileEntity, EntityPlayer player) {
+    public SimulationChamberGui(TileEntitySimulationChamber tileEntity, EntityPlayer player) {
         super(new ContainerSimulationChamber(tileEntity, player.inventory));
 
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        simulationChamber = (TileEntitySimulationChamber) tileEntity;
+        simulationChamber = tileEntity;
 
         xSize = WIDTH;
         ySize = HEIGHT;

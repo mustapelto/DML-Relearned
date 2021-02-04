@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class ContainerDeepLearner extends ContainerBase {
     public static final int INTERNAL_SLOTS = 4;
-    private final ItemHandlerBase itemHandler;
+    private final ItemHandlerDataModel itemHandler;
 
     private final int deepLearnerSlotIndex; // inventory slot to make inaccessible while GUI open
     private final ItemStack deepLearner;
@@ -23,7 +23,7 @@ public class ContainerDeepLearner extends ContainerBase {
             deepLearner = offHand;
         else
             throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
-        itemHandler = new ItemHandlerBase(ItemDeepLearner.getContainedItems(deepLearner));
+        itemHandler = new ItemHandlerDataModel(ItemDeepLearner.getContainedItems(deepLearner));
         final int dlSlot = ((ItemDeepLearner) deepLearner.getItem()).getInventorySlot();
 
         deepLearnerSlotIndex = (dlSlot >= 0) ? dlSlot + INTERNAL_SLOTS : dlSlot;

@@ -5,10 +5,10 @@ import io.netty.buffer.Unpooled;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerBase;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputDataModel;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputPolymer;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerDataModel;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
 import mustapelto.deepmoblearning.common.metadata.MobMetadata;
@@ -38,15 +38,17 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TileEntitySimulationChamber extends TileEntityRedstoneControlled implements ITickable {
     private final DMLEnergyStorage energyStorage = new DMLEnergyStorage(DMLConstants.SimulationChamber.ENERGY_CAPACITY, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
 
-    private final ItemHandlerBase inputDataModel = new ItemHandlerInputDataModel() {
+    private final ItemHandlerDataModel inputDataModel = new ItemHandlerDataModel() {
         @Override
         protected void onContentsChanged(int slot) {
             onDataModelChanged();
         }
     };
-    private final ItemHandlerBase inputPolymer = new ItemHandlerInputPolymer();
-    private final ItemHandlerBase outputLiving = new ItemHandlerOutput();
-    private final ItemHandlerBase outputPristine = new ItemHandlerOutput();
+    private final ItemHandlerInputWrapper dataModelWrapper = new ItemHandlerInputWrapper(inputDataModel);
+    private final ItemHandlerPolymerClay inputPolymer = new ItemHandlerPolymerClay();
+    private final ItemHandlerInputWrapper polymerWrapper = new ItemHandlerInputWrapper(inputPolymer);
+    private final ItemHandlerOutput outputLiving = new ItemHandlerOutput();
+    private final ItemHandlerOutput outputPristine = new ItemHandlerOutput();
 
     private final SimulationState simulationState = new SimulationState(); // Stores state of simulation (running, progress, pristine success)
     private final SimulationState oldState = new SimulationState().set(simulationState); // Copy of state for comparison (mark for disk save if changed)
@@ -307,7 +309,12 @@ public class TileEntitySimulationChamber extends TileEntityRedstoneControlled im
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new CombinedInvWrapper(inputDataModel, inputPolymer, outputLiving, outputPristine));
+            if (facing == null)
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
+                        new CombinedInvWrapper(inputDataModel, inputPolymer, outputLiving, outputPristine));
+            else
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
+                        new CombinedInvWrapper(dataModelWrapper, polymerWrapper, outputLiving, outputPristine));
         } else if (capability == CapabilityEnergy.ENERGY) {
             return CapabilityEnergy.ENERGY.cast(energyStorage);
         }

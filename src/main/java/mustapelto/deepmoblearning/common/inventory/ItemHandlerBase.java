@@ -5,21 +5,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class ItemHandlerBase extends ItemStackHandler {
+public abstract class ItemHandlerBase extends ItemStackHandler {
     public ItemHandlerBase() {
         super();
     }
 
-    public ItemHandlerBase(int size) {
-        super(size);
-    }
-
     public ItemHandlerBase(NonNullList<ItemStack> stacks) {
         super(stacks);
-    }
-
-    public NonNullList<ItemStack> getItemStacks() {
-        return stacks;
     }
 
     public boolean canInsertItem(ItemStack stack) {

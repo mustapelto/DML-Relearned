@@ -26,7 +26,7 @@ public class ItemGlitchFragment extends ItemBase {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        String glitchHeart = new ItemStack(DMLRegistry.itemGlitchHeart).getDisplayName();
+        String glitchHeart = new ItemStack(DMLRegistry.ITEM_GLITCH_HEART).getDisplayName();
         String obsidian = TextFormatting.RESET + I18n.format("tile.obsidian.name") + TextFormatting.GRAY;
         String leftClick = Minecraft.getMinecraft().gameSettings.keyBindAttack.getDisplayName();
         tooltip.add(I18n.format("deepmoblearning.glitch_fragment.tooltip_1", glitchHeart));

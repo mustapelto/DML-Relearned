@@ -44,7 +44,7 @@ public class PlayerEventHandler {
         if (DMLConfig.GENERAL_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
             if (heldItem instanceof ItemRedstone && clickedBlock == Blocks.COAL_BLOCK) {
                 if (event.getSide() == Side.SERVER) {
-                    spawnItemEntity(hitVector, world, DMLRegistry.itemSootedRedstone, DMLConstants.Crafting.SOOTED_REDSTONE_PER_REDSTONE);
+                    spawnItemEntity(hitVector, world, DMLRegistry.ITEM_SOOTED_REDSTONE, DMLConstants.Crafting.SOOTED_REDSTONE_PER_REDSTONE);
                     stack.shrink(1); // Reduce size of original redstone stack
                 } else {
                     createRandomParticles(hitVector, world, ClientProxy.SmokeType.SMOKE);
@@ -55,7 +55,7 @@ public class PlayerEventHandler {
 
         if (heldItem instanceof ItemGlitchHeart && clickedBlock == Blocks.OBSIDIAN) {
             if (event.getSide() == Side.SERVER) {
-                spawnItemEntity(hitVector, world, DMLRegistry.itemGlitchFragment, DMLConstants.Crafting.GLITCH_FRAGMENTS_PER_HEART);
+                spawnItemEntity(hitVector, world, DMLRegistry.ITEM_GLITCH_FRAGMENT, DMLConstants.Crafting.GLITCH_FRAGMENTS_PER_HEART);
                 stack.shrink(1);
             } else {
                 createRandomParticles(hitVector, world, ClientProxy.SmokeType.CYAN);

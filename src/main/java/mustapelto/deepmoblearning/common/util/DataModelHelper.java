@@ -22,19 +22,19 @@ public class DataModelHelper {
     //
 
     public static int getTierLevel(ItemStack stack) {
-        return NBTHelper.getInt(stack, "tier", 0);
+        return NBTHelper.getInteger(stack, "tier", 0);
     }
 
     public static void setTierLevel(ItemStack stack, int tier) {
-        NBTHelper.setInt(stack, "tier", tier);
+        NBTHelper.setInteger(stack, "tier", tier);
     }
 
     public static int getCurrentTierDataCount(ItemStack stack) {
         if (NBTHelper.hasKey(stack, "simulationCount") || NBTHelper.hasKey(stack, "killCount")) {
             // Update DeepMobLearning NBT to DMLRelearned format
             // i.e. "simulationCount" and "killCount" combined to a single value "dataCount"
-            int currentSimulations = NBTHelper.getInt(stack, "simulationCount", 0);
-            int currentKills = NBTHelper.getInt(stack, "killCount", 0);
+            int currentSimulations = NBTHelper.getInteger(stack, "simulationCount", 0);
+            int currentKills = NBTHelper.getInteger(stack, "killCount", 0);
 
             NBTHelper.removeKey(stack, "simulationCount");
             NBTHelper.removeKey(stack, "killCount");
@@ -43,29 +43,29 @@ public class DataModelHelper {
             if (tierData == null)
                 return 0;
 
-            NBTHelper.setInt(stack, "dataCount", currentSimulations + currentKills * tierData.getKillMultiplier());
+            NBTHelper.setInteger(stack, "dataCount", currentSimulations + currentKills * tierData.getKillMultiplier());
         }
-        return NBTHelper.getInt(stack, "dataCount", 0);
+        return NBTHelper.getInteger(stack, "dataCount", 0);
     }
 
     public static void setCurrentTierDataCount(ItemStack stack, int data) {
-        NBTHelper.setInt(stack, "dataCount", data);
+        NBTHelper.setInteger(stack, "dataCount", data);
     }
 
     public static int getTotalKillCount(ItemStack stack) {
-        return NBTHelper.getInt(stack, "totalKillCount", 0);
+        return NBTHelper.getInteger(stack, "totalKillCount", 0);
     }
 
     public static void setTotalKillCount(ItemStack stack, int count) {
-        NBTHelper.setInt(stack, "totalKillCount", count);
+        NBTHelper.setInteger(stack, "totalKillCount", count);
     }
 
     public static int getTotalSimulationCount(ItemStack stack) {
-        return NBTHelper.getInt(stack, "totalSimulationCount", 0);
+        return NBTHelper.getInteger(stack, "totalSimulationCount", 0);
     }
 
     public static void setTotalSimulationCount(ItemStack stack, int count) {
-        NBTHelper.setInt(stack, "totalSimulationCount", count);
+        NBTHelper.setInteger(stack, "totalSimulationCount", count);
     }
 
     //

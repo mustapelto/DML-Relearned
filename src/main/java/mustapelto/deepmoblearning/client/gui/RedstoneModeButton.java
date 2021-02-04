@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.common.tiles.RedstoneMode;
-import mustapelto.deepmoblearning.common.tiles.TileEntityRedstoneControlled;
+import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 
 public class RedstoneModeButton {
     private final GuiContainer gui;
-    private final TileEntityRedstoneControlled tileEntity;
+    private final TileEntityMachine tileEntity;
     private final int left;
     private final int top;
     private final TextureManager textureManager;
 
-    public RedstoneModeButton(GuiContainer gui, TileEntityRedstoneControlled tileEntity, int left, int top) {
+    public RedstoneModeButton(GuiContainer gui, TileEntityMachine tileEntity, int left, int top) {
         this.gui = gui;
         this.tileEntity = tileEntity;
         this.left = left;

@@ -18,7 +18,7 @@ public class ItemGlitchIngot extends ItemBase {
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        String glitchFragment = new ItemStack(DMLRegistry.itemGlitchFragment).getDisplayName();
+        String glitchFragment = new ItemStack(DMLRegistry.ITEM_GLITCH_FRAGMENT).getDisplayName();
         tooltip.add(I18n.format("deepmoblearning.glitch_ingot.tooltip_1", glitchFragment));
         tooltip.add(I18n.format("deepmoblearning.glitch_ingot.tooltip_2"));
     }

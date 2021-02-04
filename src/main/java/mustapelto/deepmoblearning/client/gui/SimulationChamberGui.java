@@ -72,7 +72,7 @@ public class SimulationChamberGui extends GuiContainer {
         xSize = WIDTH;
         ySize = HEIGHT;
 
-        simulationChamber.setGuiState(true);
+        simulationChamber.setGuiOpen(true);
 
         dataModel = simulationChamber.getDataModel();
         prepareStringAnimators();
@@ -82,7 +82,7 @@ public class SimulationChamberGui extends GuiContainer {
 
     @Override
     public void onGuiClosed() {
-        simulationChamber.setGuiState(false);
+        simulationChamber.setGuiOpen(false);
         super.onGuiClosed();
     }
 
@@ -138,8 +138,9 @@ public class SimulationChamberGui extends GuiContainer {
         //
         // Check for simulation errors and update animator
         //
-        if (!simulationChamber.hasPolymerClay() && !simulationChamber.getSimulationState().isSimulationRunning()) {
-            // Polymer error only shown if simulation hasn't started already (i.e. can remove remaining polymer while simulation is running)
+        if (!simulationChamber.hasPolymerClay() && !simulationChamber.isCrafting()) {
+            // Polymer error only shown if simulation hasn't started already
+            // (remaining polymer can be removed while simulation is running, which should not cause an error display)
             if (simulationError == SimulationError.POLYMER)
                 return;
 
@@ -149,7 +150,7 @@ public class SimulationChamberGui extends GuiContainer {
             return;
         }
 
-        if (!simulationChamber.hasEnergyForSimulation()) {
+        if (!simulationChamber.hasEnergyForCrafting()) {
             if (simulationError == SimulationError.ENERGY)
                 return;
 
@@ -174,7 +175,7 @@ public class SimulationChamberGui extends GuiContainer {
 
         // Update data for current iteration
         int iteration = DataModelHelper.getTotalSimulationCount(dataModel) + 1;
-        boolean pristineSuccess = simulationChamber.getSimulationState().isPristineSuccess();
+        boolean pristineSuccess = simulationChamber.isPristineSuccess();
 
         if ((iteration == currentIteration) && (pristineSuccess == currentPristineSuccess))
             return; // Already updated, no need to do it again
@@ -231,7 +232,7 @@ public class SimulationChamberGui extends GuiContainer {
             String maxEnergy = String.valueOf(simulationChamber.getMaxEnergy());
             tooltip.add(currentEnergy + "/" + maxEnergy + " RF");
             if (simulationChamber.hasDataModel()) {
-                int energyDrain = simulationChamber.getSimulationEnergyCost();
+                int energyDrain = simulationChamber.getCraftingEnergyCost();
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.sim_cost", energyDrain));
             }
             drawHoveringText(tooltip, x - 90, y - 16);
@@ -324,7 +325,7 @@ public class SimulationChamberGui extends GuiContainer {
             simulationErrorAnimator.advance(advanceAmount);
             strings = simulationErrorAnimator.getCurrentStrings();
         } else {
-            float relativeProgress = simulationChamber.getSimulationState().getSimulationRelativeProgress();
+            float relativeProgress = simulationChamber.getRelativeCraftingProgress();
             progressAnimator.goToRelativePosition(relativeProgress);
             strings = progressAnimator.getCurrentStrings();
         }

@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
-import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
+import mustapelto.deepmoblearning.common.tiles.TileEntityBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -9,18 +9,18 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageRequestUpdateSimChamber implements IMessage {
+public class MessageRequestUpdateTileEntity implements IMessage {
     private BlockPos pos;
     private int dimension;
 
-    public MessageRequestUpdateSimChamber() {}
+    public MessageRequestUpdateTileEntity() {}
 
-    public MessageRequestUpdateSimChamber(BlockPos pos, int dimension) {
+    public MessageRequestUpdateTileEntity(BlockPos pos, int dimension) {
         this.pos = pos;
         this.dimension = dimension;
     }
 
-    public MessageRequestUpdateSimChamber(TileEntitySimulationChamber te) {
+    public MessageRequestUpdateTileEntity(TileEntityBase te) {
         this(te.getPos(), te.getWorld().provider.getDimension());
     }
 
@@ -36,12 +36,12 @@ public class MessageRequestUpdateSimChamber implements IMessage {
         dimension = buf.readInt();
     }
 
-    public static class Handler implements IMessageHandler<MessageRequestUpdateSimChamber, IMessage> {
+    public static class Handler implements IMessageHandler<MessageRequestUpdateTileEntity, IMessage> {
         @Override
-        public IMessage onMessage(MessageRequestUpdateSimChamber message, MessageContext ctx) {
+        public IMessage onMessage(MessageRequestUpdateTileEntity message, MessageContext ctx) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
-            TileEntitySimulationChamber te = (TileEntitySimulationChamber) world.getTileEntity(message.pos);
-            return (te != null) ? new MessageUpdateSimChamber(te) : null;
+            TileEntityBase te = (TileEntityBase) world.getTileEntity(message.pos);
+            return (te != null) ? new MessageUpdateTileEntity(te) : null;
         }
     }
 }

@@ -34,6 +34,8 @@ public class DMLConstants {
     public static final class GuiIDs {
         public static final int DEEP_LEARNER = 0;
         public static final int SIMULATION_CHAMBER = 1;
+        public static final int LOOT_FABRICATOR = 2;
+        public static final int TRIAL_KEYSTONE = 3;
     }
 
     public static final class GuiColors {

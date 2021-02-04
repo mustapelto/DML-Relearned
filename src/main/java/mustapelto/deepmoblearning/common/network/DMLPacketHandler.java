@@ -17,9 +17,8 @@ public class DMLPacketHandler {
     public static void registerPackets() {
         network.registerMessage(MessageLivingMatterConsume.Handler.class, MessageLivingMatterConsume.class, id++, Side.SERVER);
         network.registerMessage(MessageLevelUpModel.Handler.class, MessageLevelUpModel.class, id++, Side.SERVER);
-        network.registerMessage(MessageUpdateSimChamber.Handler.class, MessageUpdateSimChamber.class, id++, Side.CLIENT);
-        network.registerMessage(MessageRequestUpdateSimChamber.Handler.class, MessageRequestUpdateSimChamber.class, id++, Side.SERVER);
-        network.registerMessage(MessageRedstonePowerToClient.Handler.class, MessageRedstonePowerToClient.class, id++, Side.CLIENT);
+        network.registerMessage(MessageUpdateTileEntity.Handler.class, MessageUpdateTileEntity.class, id++, Side.CLIENT);
+        network.registerMessage(MessageRequestUpdateTileEntity.Handler.class, MessageRequestUpdateTileEntity.class, id++, Side.SERVER);
         network.registerMessage(MessageRedstoneModeToServer.Handler.class, MessageRedstoneModeToServer.class, id++, Side.SERVER);
     }
 

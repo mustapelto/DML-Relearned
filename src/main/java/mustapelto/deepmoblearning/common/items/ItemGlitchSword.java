@@ -76,11 +76,11 @@ public class ItemGlitchSword extends ItemSword {
     // Helper methods
 
     private static int getPermanentWeaponDamage(ItemStack stack) {
-        return NBTHelper.getInt(stack, "permDamage", 0);
+        return NBTHelper.getInteger(stack, "permDamage", 0);
     }
 
     private static void setPermanentWeaponDamage(ItemStack stack, int damage) {
-        NBTHelper.setInt(stack, "permDamage", damage);
+        NBTHelper.setInteger(stack, "permDamage", damage);
     }
 
     public static boolean canIncreaseDamage(ItemStack stack) {

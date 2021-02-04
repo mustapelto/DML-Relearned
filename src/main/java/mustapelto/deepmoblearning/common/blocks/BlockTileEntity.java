@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.blocks;
 
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.common.tiles.TileEntityRedstoneControlled;
+import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -89,16 +89,17 @@ public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase {
     @Override
     public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
         TileEntity tile = worldIn.getTileEntity(pos);
-        if (tile instanceof TileEntityRedstoneControlled) {
-            ((TileEntityRedstoneControlled) tile).onBlockPlaced();
+        if (tile instanceof TileEntityMachine) {
+            ((TileEntityMachine) tile).onBlockPlaced();
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(@Nonnull IBlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         TileEntity tile = worldIn.getTileEntity(pos);
-        if (tile instanceof TileEntityRedstoneControlled) {
-            ((TileEntityRedstoneControlled) tile).onNeighborChange();
+        if (tile instanceof TileEntityMachine) {
+            ((TileEntityMachine) tile).onNeighborChange();
         }
     }
 

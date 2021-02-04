@@ -2,7 +2,7 @@ package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.tiles.RedstoneMode;
-import mustapelto.deepmoblearning.common.tiles.TileEntityRedstoneControlled;
+import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -23,7 +23,7 @@ public class MessageRedstoneModeToServer implements IMessage {
         this.redstoneMode = redstoneMode;
     }
 
-    public MessageRedstoneModeToServer(TileEntityRedstoneControlled te) {
+    public MessageRedstoneModeToServer(TileEntityMachine te) {
         this(te.getPos(), te.getWorld().provider.getDimension(), te.getRedstoneMode());
     }
 
@@ -46,7 +46,7 @@ public class MessageRedstoneModeToServer implements IMessage {
         public IMessage onMessage(MessageRedstoneModeToServer message, MessageContext ctx) {
             WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             world.addScheduledTask(() -> {
-                TileEntityRedstoneControlled te = (TileEntityRedstoneControlled) world.getTileEntity(message.pos);
+                TileEntityMachine te = (TileEntityMachine) world.getTileEntity(message.pos);
                 if (te != null) {
                     te.setRedstoneMode(message.redstoneMode);
                 }

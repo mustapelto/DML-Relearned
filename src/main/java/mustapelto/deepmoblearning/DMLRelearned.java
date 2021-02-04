@@ -66,7 +66,7 @@ public class DMLRelearned
     public static final CreativeTabs creativeTab = new CreativeTabs(DMLConstants.ModInfo.ID) {
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(DMLRegistry.itemDeepLearner);
+            return new ItemStack(DMLRegistry.ITEM_DEEP_LEARNER);
         }
     };
 }

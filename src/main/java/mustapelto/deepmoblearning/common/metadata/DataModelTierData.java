@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonObject;
+import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraft.util.text.TextFormatting;
 
 import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
@@ -13,13 +14,22 @@ public class DataModelTierData {
     private final int pristineChance; // Chance (%) to get Pristine Matter on each iteration (Range = 0 - 100, Default = 10)
     private final boolean canSimulate; // Can a Data Model of this tier be used in a simulation chamber? (Default = true)
 
-    public DataModelTierData(int level, JsonObject data) {
+    private DataModelTierData(int level, JsonObject data) {
         displayName = getOrDefault(data, "displayName", "Tier " + level);
         displayColor = getOrDefault(data, "displayColor", "white");
         killMultiplier = getOrDefault(data, "killMultiplier", 1, 0, Integer.MAX_VALUE);
         dataToNext = getOrDefault(data, "dataToNext", 10, 0, Integer.MAX_VALUE);
         pristineChance = getOrDefault(data, "pristineChance", 10, 0, 100);
         canSimulate = getOrDefault(data, "canSimulate", true);
+    }
+
+    public static DataModelTierData deserialize(int level, JsonObject data) {
+        try {
+            return new DataModelTierData(level, data);
+        } catch (IllegalArgumentException e) {
+            DMLRelearned.logger.warn(e.getMessage());
+            return null;
+        }
     }
 
     public String getDisplayNameFormatted() {
@@ -52,7 +62,7 @@ public class DataModelTierData {
         return pristineChance;
     }
 
-    public JsonObject toJsonObject() {
+    public JsonObject serialize() {
         JsonObject object = new JsonObject();
 
         object.addProperty("displayName", displayName);

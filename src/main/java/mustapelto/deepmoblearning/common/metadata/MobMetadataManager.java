@@ -63,7 +63,7 @@ public class MobMetadataManager {
                 continue;
             JsonArray contents = (JsonArray) entry.getValue();
             for (int i = 0; i < contents.size(); i++) {
-                MobMetadata mobData = MobMetadata.create(entry.getKey(), contents.get(i).getAsJsonObject());
+                MobMetadata mobData = MobMetadata.deserialize(entry.getKey(), contents.get(i).getAsJsonObject());
                 if (mobData != null)
                     dataStore.put(mobData.getItemID(), mobData);
             }
@@ -77,7 +77,7 @@ public class MobMetadataManager {
             String modID = entry.getModID();
             if (!data.has(modID))
                 data.add(modID, new JsonArray());
-            data.get(modID).getAsJsonArray().add(entry.toJsonObject());
+            data.get(modID).getAsJsonArray().add(entry.serialize());
         }
 
         try {

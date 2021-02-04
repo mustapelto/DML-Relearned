@@ -97,7 +97,7 @@ public class MobMetadata {
         displayExtraEntityOffsetY = getOrDefault(displaySettings, "extraEntityOffsetY", 0, -200, 200);
     }
 
-    public static MobMetadata create(String modID, JsonObject data) {
+    public static MobMetadata deserialize(String modID, JsonObject data) {
         try {
             return new MobMetadata(modID, data);
         } catch (IllegalArgumentException e) {
@@ -338,13 +338,14 @@ public class MobMetadata {
         }
     }
 
-    public JsonObject toJsonObject() {
+    public JsonObject serialize() {
         JsonObject object = new JsonObject();
 
         object.addProperty("itemID", itemID);
         object.addProperty("displayName", displayName);
         if (!displayNamePlural.equals(""))
             object.addProperty("displayNamePlural", displayNamePlural);
+        object.addProperty("livingMatter", livingMatter.getItemID());
         object.addProperty("simulationRFCost", simulationRFCost);
         if (!extraTooltip.equals(""))
             object.addProperty("extraTooltip", extraTooltip);
@@ -356,7 +357,6 @@ public class MobMetadata {
         JsonObject deepLearnerDisplay = new JsonObject();
 
         deepLearnerDisplay.addProperty("numberOfHearts", numberOfHearts);
-        deepLearnerDisplay.addProperty("livingMatter", livingMatter.getItemID());
         deepLearnerDisplay.add("mobTrivia", stringArrayToJsonArray(mobTrivia));
         deepLearnerDisplay.addProperty("entityID", displayEntityID);
         if (!displayEntityHeldItem.equals(""))

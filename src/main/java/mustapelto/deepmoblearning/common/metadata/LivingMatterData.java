@@ -40,7 +40,7 @@ public class LivingMatterData {
         xpValue = getOrDefault(data, "xpValue", 0, 0, Integer.MAX_VALUE);
     }
 
-    public static LivingMatterData create(String modID, JsonObject data) {
+    public static LivingMatterData deserialize(String modID, JsonObject data) {
         try {
             return new LivingMatterData(modID, data);
         } catch (IllegalArgumentException e) {
@@ -95,7 +95,7 @@ public class LivingMatterData {
         return xpValue;
     }
 
-    public JsonObject toJsonObject() {
+    public JsonObject serialize() {
         JsonObject object = new JsonObject();
 
         object.addProperty("itemID", itemID);

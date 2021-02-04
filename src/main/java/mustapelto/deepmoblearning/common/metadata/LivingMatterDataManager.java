@@ -66,7 +66,7 @@ public class LivingMatterDataManager {
                 continue;
             JsonArray contents = (JsonArray) entry.getValue();
             for (int i = 0; i < contents.size(); i++) {
-                LivingMatterData livingMatterData = LivingMatterData.create(entry.getKey(), contents.get(i).getAsJsonObject());
+                LivingMatterData livingMatterData = LivingMatterData.deserialize(entry.getKey(), contents.get(i).getAsJsonObject());
                 if (livingMatterData != null)
                     dataStore.put(livingMatterData.getItemID(), livingMatterData);
             }
@@ -80,7 +80,7 @@ public class LivingMatterDataManager {
             String modID = entry.getModID();
             if (!data.has(modID))
                 data.add(modID, new JsonArray());
-            data.get(modID).getAsJsonArray().add(entry.toJsonObject());
+            data.get(modID).getAsJsonArray().add(entry.serialize());
         }
 
         try {

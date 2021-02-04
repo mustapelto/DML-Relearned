@@ -54,7 +54,7 @@ public class DataModelTierDataManager {
     private static void populateDataStore(JsonArray data) {
         for (int i = 0; i < data.size(); i++) {
             JsonObject element = data.get(i).getAsJsonObject();
-            DataModelTierData dataModelTierData = new DataModelTierData(i, element);
+            DataModelTierData dataModelTierData = DataModelTierData.deserialize(i, element);
             dataStore.put(i, dataModelTierData);
             maxLevel++;
         }
@@ -64,7 +64,7 @@ public class DataModelTierDataManager {
         JsonArray data = new JsonArray();
 
         for (DataModelTierData entry : dataStore.values()) {
-            data.add(entry.toJsonObject());
+            data.add(entry.serialize());
         }
 
         try {

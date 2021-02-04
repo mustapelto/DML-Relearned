@@ -9,40 +9,37 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageUpdateTileEntity implements IMessage {
-    private BlockPos pos;
     private ByteBuf payload;
 
     public MessageUpdateTileEntity() {}
 
-    public MessageUpdateTileEntity(BlockPos pos, ByteBuf payload) {
-        this.pos = pos;
-        this.payload = payload;
+    public MessageUpdateTileEntity(ByteBuf payload) {
+        this.payload = payload.copy();
     }
 
     public MessageUpdateTileEntity(TileEntityBase te) {
-        this(te.getPos(), te.getUpdateData());
+        this(te.getUpdateData());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(pos.toLong());
         buf.writeBytes(payload);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        pos = BlockPos.fromLong(buf.readLong());
-        buf.readBytes(payload);
+        payload = buf.copy();
     }
 
     public static class Handler implements IMessageHandler<MessageUpdateTileEntity, IMessage> {
         @Override
         public IMessage onMessage(MessageUpdateTileEntity message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
-               TileEntityBase te = (TileEntityBase) Minecraft.getMinecraft().world.getTileEntity(message.pos);
-               if (te != null) {
-                   te.handleUpdateData(message.payload);
-               }
+                BlockPos pos = BlockPos.fromLong(message.payload.readLong());
+                TileEntityBase te = (TileEntityBase) Minecraft.getMinecraft().world.getTileEntity(pos);
+                if (te != null) {
+                    te.handleUpdateData(message.payload);
+                }
             });
             return null;
         }

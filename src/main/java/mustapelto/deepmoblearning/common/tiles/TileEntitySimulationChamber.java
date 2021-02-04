@@ -101,12 +101,11 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     }
 
     /**
-     * (Server only) Reset simulation state on data model change. Send updated data to client.
+     * (Server only) Reset simulation state on data model change.
      */
     private void onDataModelChanged() {
         if (!world.isRemote) {
             resetCrafting();
-            sendUpdatePacketToClient();
         }
     }
 

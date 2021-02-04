@@ -41,7 +41,8 @@ public class MessageRequestUpdateTileEntity implements IMessage {
         public IMessage onMessage(MessageRequestUpdateTileEntity message, MessageContext ctx) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             TileEntityBase te = (TileEntityBase) world.getTileEntity(message.pos);
-            return (te != null) ? new MessageUpdateTileEntity(te) : null;
+            // Only reply to request if something has actually changed
+            return (te != null && te.clientNeedsUpdate()) ? new MessageUpdateTileEntity(te) : null;
         }
     }
 }

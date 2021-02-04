@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
@@ -29,10 +28,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     protected boolean crafting = false;
     protected int craftingProgress = 0;
 
-    // Client update
-    private boolean stateChanged = false;
-    private long lastUpdateSent = -1;
-
     // UI
     private boolean guiOpen = false;
 
@@ -44,27 +39,18 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         energyStorage = new DMLEnergyStorage(energyMax, energyReceive);
     }
 
+    // Client/Server Sync
+    protected boolean progressChanged = false; // if true -> server will respond to client's request with update packet
+
     //
     // ITickable
     //
 
     @Override
     public void update() {
-
-        if (world.isRemote) {
-            // While GUI is open, request state update from server every tick to update GUI
-            if (guiOpen)
-                requestUpdatePacketFromServer();
+        if (world.isRemote && guiOpen) {
+            requestUpdatePacketFromServer(); // check if progress has changed on the server (other changes are sent anyway)
             return;
-        }
-
-        // Update progress (server-side only)
-
-        // Send state update to client every 2 seconds
-        long currentTime = world.getTotalWorldTime();
-        if (lastUpdateSent == -1 || (currentTime - lastUpdateSent > 40)) {
-            lastUpdateSent = currentTime;
-            sendUpdatePacketToClient();
         }
 
         if (!crafting && canStartCrafting()) {
@@ -76,9 +62,8 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
             advanceCraftingProgress();
         }
 
-        if (stateChanged || energyStorage.getNeedsUpdate()) {
-            markDirty();
-            stateChanged = false;
+        if (energyStorage.getNeedsUpdate()) {
+            sendUpdatePacketToClient();
         }
     }
 
@@ -87,8 +72,8 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
 
     protected void startCrafting() {
-        stateChanged = true;
         crafting = true;
+        sendUpdatePacketToClient();
     }
 
     protected boolean canStartCrafting() {
@@ -100,10 +85,13 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     }
 
     private void advanceCraftingProgress() {
-        stateChanged = true;
         craftingProgress++;
         if (craftingProgress >= getCraftingDuration())
             finishCrafting();
+
+        // not sending an update packet here
+        // as the client doesn't have to know exact crafting progress
+        // unless GUI is open (which is handled in update method)
     }
 
     protected abstract int getCraftingDuration();
@@ -113,9 +101,9 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     }
 
     protected void resetCrafting() {
-        stateChanged = true;
         crafting = false;
         craftingProgress = 0;
+        sendUpdatePacketToClient();
     }
 
     public float getRelativeCraftingProgress() {
@@ -151,18 +139,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     @Nonnull
     public RedstoneMode getRedstoneMode() {
         return redstoneMode;
-    }
-
-    public boolean isRedstonePowered() {
-        return redstonePowered;
-    }
-
-    public void setRedstonePowered(boolean redstonePowered) {
-        this.redstonePowered = redstonePowered;
-        if (world.isRemote) {
-            IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, state, state, 3);
-        }
     }
 
     public void setRedstoneMode(RedstoneMode mode) {
@@ -209,8 +185,19 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
 
     @Override
+    public boolean clientNeedsUpdate() {
+        return progressChanged;
+    }
+
+    @Override
+    protected void sendUpdatePacketToClient() {
+        progressChanged = false;
+        super.sendUpdatePacketToClient();
+    }
+
+    @Override
     public ByteBuf getUpdateData() {
-        ByteBuf buf = Unpooled.buffer();
+        ByteBuf buf = super.getUpdateData();
         energyStorage.writeToBuffer(buf);
 
         buf.writeInt(redstoneLevel);
@@ -249,7 +236,12 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         redstonePowered = redstoneLevel > 0;
 
         if (redstonePowered != oldRedstonePowerState) {
-            sendUpdatePacketToClient();
+            if (!world.isRemote) {
+                sendUpdatePacketToClient();
+            } else {
+                IBlockState state = world.getBlockState(pos);
+                world.notifyBlockUpdate(pos, state, state, 3);
+            }
         }
     }
 

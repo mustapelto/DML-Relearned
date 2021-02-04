@@ -2,9 +2,11 @@ package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -39,9 +41,13 @@ public class ItemGlitchFragment extends ItemBase {
         return true;
     }
 
-    /*@Nullable
+    @Nullable
     @Override
-    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        //Entity entity = new Entity
-    }*/
+    public Entity createEntity(@Nonnull World world, @Nonnull Entity location, @Nonnull ItemStack itemstack) {
+        Entity result = new EntityItemGlitchFragment(world, location.posX, location.posY, location.posZ, new ItemStack(this, itemstack.getCount()));
+        result.motionX = location.motionX;
+        result.motionY = location.motionY;
+        result.motionZ = location.motionZ;
+        return result;
+    }
 }

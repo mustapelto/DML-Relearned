@@ -1,14 +1,19 @@
 package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
+import mustapelto.deepmoblearning.client.gui.GuiMachine;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
+import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 
@@ -35,8 +40,8 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         energyStorage = new DMLEnergyStorage(0, 0);
     }
 
-    public TileEntityMachine(int energyMax, int energyReceive) {
-        energyStorage = new DMLEnergyStorage(energyMax, energyReceive);
+    public TileEntityMachine(int energyCapacity, int energyMaxReceive) {
+        energyStorage = new DMLEnergyStorage(energyCapacity, energyMaxReceive);
     }
 
     // Client/Server Sync
@@ -76,10 +81,16 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         sendUpdatePacketToClient();
     }
 
+    /**
+     * @return true if machine is redstone-activated and has enough energy
+     */
     protected boolean canStartCrafting() {
         return canContinueCrafting();
     }
 
+    /**
+     * @return true if machine is redstone-activated and has enough energy
+     */
     private boolean canContinueCrafting() {
         return isRedstoneActive() && hasEnergyForCrafting();
     }
@@ -159,6 +170,9 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     public void setGuiOpen(boolean open) {
         this.guiOpen = open;
     }
+
+    public abstract ContainerMachine getContainer(InventoryPlayer inventoryPlayer);
+    public abstract GuiMachine getGUI(EntityPlayer player, World world);
 
     //
     // Capabilities
@@ -283,18 +297,40 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         redstonePowered = NBTHelper.getBoolean(redstoneTag, REDSTONE_POWERED, false);
         redstoneMode = RedstoneMode.byIndex(NBTHelper.getInteger(redstoneTag, REDSTONE_MODE, 0));
 
-        NBTTagCompound craftingTag = compound.getCompoundTag(CRAFTING);
-        crafting = NBTHelper.getBoolean(craftingTag, IS_CRAFTING, false);
-        craftingProgress = NBTHelper.getInteger(craftingTag, CRAFTING_PROGRESS, 0);
+        if (isOldTagSystem(compound)) {
+            // Original DML tag -> use old tag system without nesting and with machine-specific progress tag
+            crafting = NBTHelper.getBoolean(compound, IS_CRAFTING, false);
+            if (this instanceof TileEntitySimulationChamber)
+                craftingProgress = NBTHelper.getInteger(compound, CRAFTING_PROGRESS_SIM_CHAMBER_OLD, 0);
+            else if (this instanceof TileEntityLootFabricator)
+                craftingProgress = NBTHelper.getInteger(compound, CRAFTING_PROGRESS_LOOT_FAB_OLD, 0);
+        } else {
+            // DML:Relearned tag -> use new tag system
+            NBTTagCompound craftingTag = compound.getCompoundTag(CRAFTING);
+            crafting = NBTHelper.getBoolean(craftingTag, IS_CRAFTING, false);
+            craftingProgress = NBTHelper.getInteger(craftingTag, CRAFTING_PROGRESS, 0);
+        }
+    }
+
+    protected boolean isOldTagSystem(NBTTagCompound compound) {
+        return !compound.hasKey(DML_RELEARNED);
     }
 
     // NBT tag names
-    protected static final String DML_RELEARNED = "dml-relearned";
-    private static final String REDSTONE = "redstone";
+    private static final String DML_RELEARNED = "dml-relearned";
+
+    private static final String REDSTONE = "redstone"; // Redstone state subtag
     private static final String REDSTONE_LEVEL = "level";
     private static final String REDSTONE_POWERED = "powered";
     private static final String REDSTONE_MODE = "mode";
-    protected static final String CRAFTING = "crafting";
-    private static final String IS_CRAFTING = "isCrafting";
+
+    protected static final String CRAFTING = "crafting"; // Crafting state subtag
+    private static final String IS_CRAFTING = "isCrafting"; // Old system uses same tag, only not nested
     private static final String CRAFTING_PROGRESS = "progress";
+
+    protected static final String INVENTORY = "inventory"; // Inventory contents subtag (only used by subclasses)
+
+    // Tag names from old mod, used for backwards compatibility
+    private static final String CRAFTING_PROGRESS_SIM_CHAMBER_OLD = "simulationProgress";
+    private static final String CRAFTING_PROGRESS_LOOT_FAB_OLD = "crafingProgress"; // SIC!
 }

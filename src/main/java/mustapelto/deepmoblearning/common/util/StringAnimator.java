@@ -1,14 +1,14 @@
 package mustapelto.deepmoblearning.common.util;
 
-import mustapelto.deepmoblearning.client.gui.SimulationChamberGui;
+import mustapelto.deepmoblearning.client.gui.GuiSimulationChamber;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class StringAnimator {
-    private final LinkedHashMap<SimulationChamberGui.AnimatedString, AnimatedString> strings;
-    private final List<SimulationChamberGui.AnimatedString> keys;
+    private final LinkedHashMap<GuiSimulationChamber.AnimatedString, AnimatedString> strings;
+    private final List<GuiSimulationChamber.AnimatedString> keys;
     private int currentStringIndex;
     private float totalDuration;
     private boolean finished;
@@ -27,18 +27,18 @@ public class StringAnimator {
         strings.values().forEach(AnimatedString::reset);
     }
 
-    public void addString(SimulationChamberGui.AnimatedString key, String string) {
+    public void addString(GuiSimulationChamber.AnimatedString key, String string) {
         addString(key, string, 1, false);
     }
 
-    public void addString(SimulationChamberGui.AnimatedString key, String string, float speed, boolean loop) {
+    public void addString(GuiSimulationChamber.AnimatedString key, String string, float speed, boolean loop) {
         AnimatedString newString = new AnimatedString(string, speed, loop);
         strings.put(key, newString);
         keys.add(key);
         totalDuration += newString.getDuration();
     }
 
-    public void setString(SimulationChamberGui.AnimatedString key, String string) {
+    public void setString(GuiSimulationChamber.AnimatedString key, String string) {
         AnimatedString oldString = strings.get(key);
         AnimatedString newString = new AnimatedString(string, oldString.getSpeed(), oldString.isLoop());
         strings.replace(key, newString);

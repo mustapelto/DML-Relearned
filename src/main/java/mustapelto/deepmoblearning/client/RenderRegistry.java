@@ -35,12 +35,14 @@ public class RenderRegistry {
         ResourceLocation modelLocation;
 
         if (item instanceof ItemDataModel || item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
+            // Custom model registration
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null)
                 return;
             String registryItem = registryName.getResourcePath();
             modelLocation = new ResourceLocation(DMLConstants.ModInfo.ID, registryItem);
         } else {
+            // Default model registration
             ResourceLocation registryLocation = item.getRegistryName();
             if (registryLocation == null)
                 return;

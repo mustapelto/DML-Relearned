@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
 public class DMLConstants {
@@ -31,21 +32,6 @@ public class DMLConstants {
         public static final int DAMAGE_INCREASE_CHANCE = 6;
     }
 
-    public static final class GuiIDs {
-        public static final int DEEP_LEARNER = 0;
-        public static final int SIMULATION_CHAMBER = 1;
-        public static final int LOOT_FABRICATOR = 2;
-        public static final int TRIAL_KEYSTONE = 3;
-    }
-
-    public static final class GuiColors {
-        public static final int AQUA = 0x62D8FF;
-        public static final int WHITE = 0xFFFFFF;
-        public static final int LIME = 0x00FFC0;
-        public static final int BRIGHT_LIME = 0x33EFDC;
-        public static final int BRIGHT_PURPLE = 0xC768DB;
-    }
-
     public static final class SimulationChamber {
         public static final int ENERGY_CAPACITY = 2000000;
         public static final int ENERGY_IN_MAX = 25600;
@@ -54,5 +40,24 @@ public class DMLConstants {
     public static final class LootFabricator {
         public static final int ENERGY_CAPACITY = 2000000;
         public static final int ENERGY_IN_MAX = 25600;
+    }
+
+    public static final class Gui {
+        public static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/default_gui.png");
+        public static final int ROW_SPACING = 12;
+
+        public static final class IDs {
+            public static final int DEEP_LEARNER = 0;
+            public static final int MACHINE = 1;
+            public static final int TRIAL_KEYSTONE = 2;
+        }
+
+        public static final class Colors {
+            public static final int AQUA = 0x62D8FF;
+            public static final int WHITE = 0xFFFFFF;
+            public static final int LIME = 0x00FFC0;
+            public static final int BRIGHT_LIME = 0x33EFDC;
+            public static final int BRIGHT_PURPLE = 0xC768DB;
+        }
     }
 }

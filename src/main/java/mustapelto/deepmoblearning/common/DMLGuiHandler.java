@@ -1,11 +1,9 @@
 package mustapelto.deepmoblearning.common;
 
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.client.gui.DeepLearnerGui;
-import mustapelto.deepmoblearning.client.gui.SimulationChamberGui;
+import mustapelto.deepmoblearning.client.gui.GuiDeepLearner;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
-import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
-import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
+import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -19,13 +17,12 @@ public class DMLGuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
-            case DMLConstants.GuiIDs.DEEP_LEARNER:
+            case DMLConstants.Gui.IDs.DEEP_LEARNER:
                 return new ContainerDeepLearner(player);
-            case DMLConstants.GuiIDs.SIMULATION_CHAMBER:
-                TileEntity simulationChamber = world.getTileEntity(new BlockPos(x, y, z));
-                if (!(simulationChamber instanceof TileEntitySimulationChamber))
-                    return null;
-                return new ContainerSimulationChamber((TileEntitySimulationChamber) simulationChamber, player.inventory);
+            case DMLConstants.Gui.IDs.MACHINE:
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+                if (tileEntity instanceof TileEntityMachine)
+                    return ((TileEntityMachine) tileEntity).getContainer(player.inventory);
             default:
                 return null;
         }
@@ -35,13 +32,12 @@ public class DMLGuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
-            case DMLConstants.GuiIDs.DEEP_LEARNER:
-                return new DeepLearnerGui(player, world);
-            case DMLConstants.GuiIDs.SIMULATION_CHAMBER:
-                TileEntity simulationChamber = world.getTileEntity(new BlockPos(x, y, z));
-                if (!(simulationChamber instanceof  TileEntitySimulationChamber))
-                    return null;
-                return new SimulationChamberGui((TileEntitySimulationChamber) simulationChamber, player);
+            case DMLConstants.Gui.IDs.DEEP_LEARNER:
+                return new GuiDeepLearner(player, world);
+            case DMLConstants.Gui.IDs.MACHINE:
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+                if (tileEntity instanceof TileEntityMachine)
+                    return ((TileEntityMachine) tileEntity).getGUI(player, world);
             default:
                 return null;
         }

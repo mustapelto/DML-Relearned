@@ -1,55 +1,54 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import mustapelto.deepmoblearning.DMLConstants.GuiColors;
-import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
+import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
+import mustapelto.deepmoblearning.client.gui.buttons.ButtonRedstoneMode;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
-import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.Rect;
-import mustapelto.deepmoblearning.common.util.StringAnimator;
-import mustapelto.deepmoblearning.common.util.TextHelper;
+import mustapelto.deepmoblearning.common.util.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulationChamberGui extends GuiContainer {
-    private final FontRenderer fontRenderer;
-    private final TileEntitySimulationChamber simulationChamber; // Sim Chamber that opened this GUI
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DEFAULT_TEXTURE;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+
+public class GuiSimulationChamber extends GuiMachine {
+    // GUI TEXTURES
+    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber_base.png");
 
     // GUI DIMENSIONS
-    private static final int WIDTH = 232;
-    private static final int HEIGHT = 230;
+    public static final int WIDTH = 232;
+    public static final int HEIGHT = 230;
 
-    private static final int ROW_SPACING = 12;
-
-    // XP and Energy Bar locations
+    // XP / ENERGY BAR LOCATIONS
     private static final Rect DATA_BAR = new Rect(13, 47, 8,87);
     private static final Rect ENERGY_BAR = new Rect(211, 47, 8, 87);
 
-    // Item slot locations
+    // ITEM SLOT LOCATIONS
     public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
-    public static final Rect POLYMER_SLOT = new Rect(192, 7, 18, 18);
-    public static final Rect LIVING_MATTER_SLOT = new Rect(182, 27, 18, 18);
-    public static final Rect PRISTINE_MATTER_SLOT = new Rect(202, 27, 18, 18);
+    public static final Point POLYMER_SLOT = new Point(192, 7);
+    public static final Point LIVING_MATTER_SLOT = new Point(182, 27);
+    public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
 
-    // Button locations
+    // BUTTON LOCATIONS
     public static final Rect REDSTONE_BUTTON = new Rect(-14, 24, 18, 18);
 
-    // Animators for animated strings
+    // ANIMATORS (for animated strings)
     private final StringAnimator progressAnimator = new StringAnimator(); // Used to display simulation progress
     private final StringAnimator emptyDisplayAnimator = new StringAnimator(); // Used to display empty screen ("blinking cursor")
     private final StringAnimator dataModelErrorAnimator = new StringAnimator(); // Used to display error messages relating to data model
     private final StringAnimator simulationErrorAnimator= new StringAnimator(); // Used to display other errors (no polymer/energy, output full)
 
+    private final TileEntitySimulationChamber simulationChamber;
     private ItemStack dataModel; // Data Model currently inside Simulation Chamber
 
     private DataModelError dataModelError = DataModelError.NONE; // Error with model (missing/faulty)?
@@ -61,38 +60,20 @@ public class SimulationChamberGui extends GuiContainer {
     private int currentTick = 0; // Ticks since GUI was opened
     private float lastPartial = 0; // Time when GUI was last drawn (ticks + partial tick)
 
-    private final RedstoneModeButton redstoneModeButton;
+    public GuiSimulationChamber(TileEntitySimulationChamber tileEntity, EntityPlayer player, World world) {
+        super(tileEntity, player, world, WIDTH, HEIGHT);
 
-    public SimulationChamberGui(TileEntitySimulationChamber tileEntity, EntityPlayer player) {
-        super(new ContainerSimulationChamber(tileEntity, player.inventory));
-
-        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
         simulationChamber = tileEntity;
 
-        xSize = WIDTH;
-        ySize = HEIGHT;
-
-        simulationChamber.setGuiOpen(true);
-
-        dataModel = simulationChamber.getDataModel();
+        dataModel = tileEntity.getDataModel();
         prepareStringAnimators();
-
-        redstoneModeButton = new RedstoneModeButton(this, simulationChamber, REDSTONE_BUTTON.LEFT, REDSTONE_BUTTON.TOP);
     }
 
     @Override
-    public void onGuiClosed() {
-        simulationChamber.setGuiOpen(false);
-        super.onGuiClosed();
-    }
+    public void initGui() {
+        super.initGui();
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if (redstoneModeButton.isHovered(mouseX - guiLeft, mouseY - guiTop)) {
-            redstoneModeButton.click(mouseButton);
-            return;
-        }
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        buttonList.add(new ButtonRedstoneMode(0, guiLeft + REDSTONE_BUTTON.LEFT, guiTop + REDSTONE_BUTTON.TOP, tileEntity));
     }
 
     @Override
@@ -131,14 +112,14 @@ public class SimulationChamberGui extends GuiContainer {
         emptyDisplayAnimator.reset();
 
         // Check redstone state
-        redstoneDeactivated = !simulationChamber.isRedstoneActive();
+        redstoneDeactivated = !tileEntity.isRedstoneActive();
         if (redstoneDeactivated)
             return;
 
         //
         // Check for simulation errors and update animator
         //
-        if (!simulationChamber.hasPolymerClay() && !simulationChamber.isCrafting()) {
+        if (!simulationChamber.hasPolymerClay() && !tileEntity.isCrafting()) {
             // Polymer error only shown if simulation hasn't started already
             // (remaining polymer can be removed while simulation is running, which should not cause an error display)
             if (simulationError == SimulationError.POLYMER)
@@ -150,7 +131,7 @@ public class SimulationChamberGui extends GuiContainer {
             return;
         }
 
-        if (!simulationChamber.hasEnergyForCrafting()) {
+        if (!tileEntity.hasEnergyForCrafting()) {
             if (simulationError == SimulationError.ENERGY)
                 return;
 
@@ -196,13 +177,6 @@ public class SimulationChamberGui extends GuiContainer {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        renderHoveredToolTip(mouseX, mouseY);
-    }
-
-    @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         final int x = mouseX - guiLeft;
         final int y = mouseY - guiTop;
@@ -228,26 +202,24 @@ public class SimulationChamberGui extends GuiContainer {
             drawHoveringText(tooltip, x + 2, y + 2);
         } else if (ENERGY_BAR.isInside(x, y)) {
             // Draw Energy Bar Tooltip
-            String currentEnergy = String.valueOf(simulationChamber.getEnergy());
-            String maxEnergy = String.valueOf(simulationChamber.getMaxEnergy());
+            String currentEnergy = String.valueOf(tileEntity.getEnergy());
+            String maxEnergy = String.valueOf(tileEntity.getMaxEnergy());
             tooltip.add(currentEnergy + "/" + maxEnergy + " RF");
             if (simulationChamber.hasDataModel()) {
-                int energyDrain = simulationChamber.getCraftingEnergyCost();
+                int energyDrain = tileEntity.getCraftingEnergyCost();
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.sim_cost", energyDrain));
             }
             drawHoveringText(tooltip, x - 90, y - 16);
-        } else if (redstoneModeButton.isHovered(x, y)) {
-            // Draw Redstone Mode Tooltip
-            tooltip = redstoneModeButton.getTooltip();
-            drawHoveringText(tooltip, x - 50, y + 2);
         }
+
+        drawButtonTooltip(mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        textureManager.bindTexture(GuiRegistry.SIMULATION_CHAMBER.BASE);
+        textureManager.bindTexture(BASE_TEXTURE);
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         // Main GUI
@@ -271,16 +243,13 @@ public class SimulationChamberGui extends GuiContainer {
         }
 
         // Energy Bar
-        int energyBarHeight = (int)(((float) simulationChamber.getEnergy() / simulationChamber.getMaxEnergy()) * ENERGY_BAR.HEIGHT);
+        int energyBarHeight = (int)(((float) tileEntity.getEnergy() / tileEntity.getMaxEnergy()) * ENERGY_BAR.HEIGHT);
         int energyBarOffset = ENERGY_BAR.HEIGHT - energyBarHeight;
         drawTexturedModalRect(guiLeft + ENERGY_BAR.LEFT, guiTop + ENERGY_BAR.TOP + energyBarOffset, 25, 141, 7, energyBarHeight);
 
         // Player inventory
-        textureManager.bindTexture(GuiRegistry.DEFAULT_GUI);
+        textureManager.bindTexture(DEFAULT_TEXTURE);
         drawTexturedModalRect(guiLeft + 28, guiTop + 145, 0, 0, 176, 90);
-
-        // Redstone Mode button
-        redstoneModeButton.drawButton(mouseX - guiLeft, mouseY - guiTop);
 
         // Calculate delta time since last redraw (used to advance string animations)
         float currentPartial = currentTick + partialTicks;
@@ -325,7 +294,7 @@ public class SimulationChamberGui extends GuiContainer {
             simulationErrorAnimator.advance(advanceAmount);
             strings = simulationErrorAnimator.getCurrentStrings();
         } else {
-            float relativeProgress = simulationChamber.getRelativeCraftingProgress();
+            float relativeProgress = tileEntity.getRelativeCraftingProgress();
             progressAnimator.goToRelativePosition(relativeProgress);
             strings = progressAnimator.getCurrentStrings();
         }
@@ -335,7 +304,7 @@ public class SimulationChamberGui extends GuiContainer {
 
     private void drawStrings(List<String> strings, int left, int top) {
         for (int i = 0; i < strings.size(); i++) {
-            drawString(fontRenderer, strings.get(i), left, top + i * ROW_SPACING, GuiColors.WHITE);
+            drawString(fontRenderer, strings.get(i), left, top + i * ROW_SPACING, Colors.WHITE);
         }
     }
 

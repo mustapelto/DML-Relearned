@@ -1,14 +1,13 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import mustapelto.deepmoblearning.DMLConstants.GuiColors;
+import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -17,14 +16,24 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.io.IOException;
 
-public class DeepLearnerGui extends GuiContainer {
-    private final FontRenderer fontRenderer;
-    private final World world;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DEFAULT_TEXTURE;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+
+public class GuiDeepLearner extends GuiContainerBase {
+    // GUI Textures
+    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_base.png");
+    public static final ResourceLocation EXTRAS_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_extras.png");
+
+    // GUI Size
+    public static final int WIDTH = 338;
+    public static final int HEIGHT = 235;
+
     private final ItemStack deepLearner; // Deep Learner that opened this GUI
     private NonNullList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
@@ -32,12 +41,8 @@ public class DeepLearnerGui extends GuiContainer {
     private static final Rect BUTTON_PREV = new Rect(-27, 105, 24, 24);
     private static final Rect BUTTON_NEXT = new Rect(-1, 105, 24, 24);
 
-    private static final int ROW_SPACING = 12;
-
-    public DeepLearnerGui(EntityPlayer player, World world) {
-        super(new ContainerDeepLearner(player));
-        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        this.world = world;
+    public GuiDeepLearner(EntityPlayer player, World world) {
+        super(player, world, new ContainerDeepLearner(player), WIDTH, HEIGHT);
 
         ItemStack mainHand = player.getHeldItemMainhand();
         ItemStack offHand = player.getHeldItemOffhand();
@@ -47,16 +52,6 @@ public class DeepLearnerGui extends GuiContainer {
             this.deepLearner = offHand;
         else
             throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
-
-        xSize = 338;
-        ySize = 235;
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        renderHoveredToolTip(mouseX, mouseY);
     }
 
     private int nextItemIndex() {
@@ -91,12 +86,12 @@ public class DeepLearnerGui extends GuiContainer {
         final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
         // Draw main GUI
-        textureManager.bindTexture(GuiRegistry.DEEP_LEARNER.BASE);
+        textureManager.bindTexture(BASE_TEXTURE);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         drawTexturedModalRect(left + 41, top, 0, 0, 256, 140);
 
         // Draw player inventory
-        textureManager.bindTexture(GuiRegistry.DEFAULT_GUI);
+        textureManager.bindTexture(DEFAULT_TEXTURE);
         drawTexturedModalRect(left + 81, top + 145, 0, 0, 176, 90);
 
         // Get list of contained Data Models
@@ -155,7 +150,7 @@ public class DeepLearnerGui extends GuiContainer {
         int y = mouseY - guiTop;
 
         // Draw buttons
-        textureManager.bindTexture(GuiRegistry.DEEP_LEARNER.EXTRAS);
+        textureManager.bindTexture(EXTRAS_TEXTURE);
         drawTexturedModalRect(left + BUTTON_PREV.LEFT, top + BUTTON_PREV.TOP, 75, 0, BUTTON_PREV.WIDTH, BUTTON_PREV.HEIGHT);
         drawTexturedModalRect(left + BUTTON_NEXT.LEFT, top + BUTTON_NEXT.TOP, 99, 0, BUTTON_NEXT.WIDTH, BUTTON_NEXT.HEIGHT);
 
@@ -169,12 +164,12 @@ public class DeepLearnerGui extends GuiContainer {
 
     private void renderDefaultScreen(int left, int top) {
         int leftStart = left + 49;
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_1"), leftStart, top + ROW_SPACING, GuiColors.AQUA);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_2"), leftStart, top + 2 * ROW_SPACING, GuiColors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_3"), leftStart, top + 3 * ROW_SPACING, GuiColors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_4"), leftStart, top + 4 * ROW_SPACING, GuiColors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_5"), leftStart, top + 6 * ROW_SPACING, GuiColors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_6"), leftStart, top + 7 * ROW_SPACING, GuiColors.WHITE);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_1"), leftStart, top + ROW_SPACING, Colors.AQUA);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_2"), leftStart, top + 2 * ROW_SPACING, Colors.WHITE);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_3"), leftStart, top + 3 * ROW_SPACING, Colors.WHITE);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_4"), leftStart, top + 4 * ROW_SPACING, Colors.WHITE);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_5"), leftStart, top + 6 * ROW_SPACING, Colors.WHITE);
+        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_6"), leftStart, top + 7 * ROW_SPACING, Colors.WHITE);
     }
 
     private void renderMetaData(TextureManager textureManager, MobMetadata mobMetaData, int left, int top, ItemStack stack) {
@@ -195,39 +190,39 @@ public class DeepLearnerGui extends GuiContainer {
                 I18n.format("deepmoblearning.deep_learner.heading_name"),
                 leftStart,
                 topStart + ROW_SPACING,
-                GuiColors.AQUA);
+                Colors.AQUA);
 
         drawString(fontRenderer,
                 mobName,
                 leftStart,
                 topStart + (2 * ROW_SPACING),
-                GuiColors.WHITE);
+                Colors.WHITE);
 
         drawString(fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.heading_information"),
                 leftStart,
                 topStart + (3 * ROW_SPACING),
-                GuiColors.AQUA);
+                Colors.AQUA);
 
         for (int i = 0; i < mobTrivia.length; i++) {
             drawString(fontRenderer,
                     mobTrivia[i],
                     leftStart,
                     topStart + (3 * ROW_SPACING) + ((i + 1) * 12),
-                    GuiColors.WHITE);
+                    Colors.WHITE);
         }
 
         drawString(fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.model_tier", dataModelTier),
                 leftStart,
                 topStart + (8 * ROW_SPACING),
-                GuiColors.WHITE);
+                Colors.WHITE);
 
         drawString(fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.defeated", mobPluralName, totalKills),
                 leftStart,
                 topStart + (9 * ROW_SPACING),
-                GuiColors.WHITE);
+                Colors.WHITE);
 
         drawString(fontRenderer,
                 DataModelHelper.isAtMaxTier(stack) ?
@@ -235,17 +230,17 @@ public class DeepLearnerGui extends GuiContainer {
                         I18n.format("deepmoblearning.deep_learner.required", killsToNextTier, nextTier),
                 leftStart,
                 topStart + (10 * ROW_SPACING),
-                GuiColors.WHITE);
+                Colors.WHITE);
 
         // Draw heart
-        textureManager.bindTexture(GuiRegistry.DEEP_LEARNER.BASE);
+        textureManager.bindTexture(BASE_TEXTURE);
         drawTexturedModalRect(left + 228, topStart + (2 * ROW_SPACING) - 2, 0, 140, 9, 9);
 
         drawString(fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.health_points"),
                 left + 228,
                 topStart + ROW_SPACING,
-                GuiColors.AQUA);
+                Colors.AQUA);
 
         // Obfuscate if hearts == 0 (for models with multiple mobs, e.g. Twilight Forest)
         drawString(fontRenderer,
@@ -254,12 +249,12 @@ public class DeepLearnerGui extends GuiContainer {
                         Integer.toString(numHearts),
                 left + 239,
                 topStart + (2 * ROW_SPACING) - 1,
-                GuiColors.WHITE
+                Colors.WHITE
                 );
     }
 
     private void renderMobDisplayBox(TextureManager textureManager, int left, int top) {
-        textureManager.bindTexture(GuiRegistry.DEEP_LEARNER.EXTRAS);
+        textureManager.bindTexture(EXTRAS_TEXTURE);
         drawTexturedModalRect(left - 41, top, 0, 0, 75, 101);
     }
 

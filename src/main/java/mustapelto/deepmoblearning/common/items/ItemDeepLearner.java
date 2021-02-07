@@ -48,9 +48,8 @@ public class ItemDeepLearner extends ItemBase {
             else
                 inventorySlot = -999; // probably offhand activation with non-empty main hand -> don't open GUI
 
-            DMLRelearned.logger.info("Deep Learner Slot: {}", inventorySlot);
             if (inventorySlot != -999)
-                playerIn.openGui(DMLRelearned.instance, DMLConstants.GuiIDs.DEEP_LEARNER, worldIn, 0, 0, 0);
+                playerIn.openGui(DMLRelearned.instance, DMLConstants.Gui.IDs.DEEP_LEARNER, worldIn, 0, 0, 0);
         }
 
         return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

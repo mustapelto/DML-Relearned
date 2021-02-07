@@ -60,6 +60,9 @@ deepmoblearning.deep_learner.no_model.line_4=when they are placed in the Deep Le
 deepmoblearning.deep_learner.no_model.line_5=In order to collect data, you must
 deepmoblearning.deep_learner.no_model.line_6=deliver the killing blow.
 
+# Data HUD Overlay
+deepmoblearning.data_overlay.kills_needed=%s kills needed
+
 # Creative Model Learner
 deepmoblearning.creative_model_learner.description=A creative item that can change levels of data models inside a Deep Learner.
 deepmoblearning.creative_model_learner.increase_tier=%s to increase tier.

@@ -1,8 +1,9 @@
 package mustapelto.deepmoblearning.client.gui;
 
+import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
-import mustapelto.deepmoblearning.DMLConstants.GuiColors;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.client.Minecraft;
@@ -10,18 +11,23 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+
 @EventBusSubscriber(Side.CLIENT)
 public class DataOverlay extends GuiScreen {
-    private static final int BAR_SPACING = 12;
+    public static final ResourceLocation EXP_BAR = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/experience_gui.png");
+
     private static final int COMPONENT_HEIGHT = 26;
     private static final int DATA_MODEL_WIDTH = 18;
     private static final int EXP_BAR_MAX_WIDTH = 89;
@@ -109,21 +115,21 @@ public class DataOverlay extends GuiScreen {
     }
 
     private void drawExperienceBar(int x, int y, int index, ItemStack dataModel) {
-        drawItemStack(x, y - 2 + BAR_SPACING + (index * COMPONENT_HEIGHT), dataModel);
-        drawString(fontRenderer, dataModel.getDisplayName(), x + 4, y + (index * COMPONENT_HEIGHT) + 2, GuiColors.WHITE);
+        drawItemStack(x, y - 2 + ROW_SPACING + (index * COMPONENT_HEIGHT), dataModel);
+        drawString(fontRenderer, dataModel.getDisplayName(), x + 4, y + (index * COMPONENT_HEIGHT) + 2, Colors.WHITE);
 
-        mc.getTextureManager().bindTexture(GuiRegistry.DATA_OVERLAY.EXP_BAR);
-        drawTexturedModalRect(x + DATA_MODEL_WIDTH, y + BAR_SPACING + (index * COMPONENT_HEIGHT), 0, 0, EXP_BAR_MAX_WIDTH, EXP_BAR_OUTER_HEIGHT);
+        mc.getTextureManager().bindTexture(EXP_BAR);
+        drawTexturedModalRect(x + DATA_MODEL_WIDTH, y + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, 0, EXP_BAR_MAX_WIDTH, EXP_BAR_OUTER_HEIGHT);
 
         if (DataModelHelper.isAtMaxTier(dataModel)) {
-            drawTexturedModalRect(x + DATA_MODEL_WIDTH + 1, y + 1 + BAR_SPACING + (index * COMPONENT_HEIGHT), 0, EXP_BAR_OUTER_HEIGHT, EXP_BAR_MAX_WIDTH, EXP_BAR_INNER_HEIGHT);
+            drawTexturedModalRect(x + DATA_MODEL_WIDTH + 1, y + 1 + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, EXP_BAR_OUTER_HEIGHT, EXP_BAR_MAX_WIDTH, EXP_BAR_INNER_HEIGHT);
         } else {
             int dataCurrent = DataModelHelper.getCurrentTierDataCount(dataModel);
             int dataRequired = DataModelHelper.getTierRequiredData(dataModel);
             int killsRequired = DataModelHelper.getKillsToNextTier(dataModel);
             int barWidth = (int) (((float) dataCurrent / dataRequired) * EXP_BAR_MAX_WIDTH);
-            drawTexturedModalRect(x + DATA_MODEL_WIDTH + 1, y + 1 + BAR_SPACING + (index * COMPONENT_HEIGHT), 0, EXP_BAR_OUTER_HEIGHT, barWidth, EXP_BAR_INNER_HEIGHT);
-            drawString(fontRenderer, killsRequired + " kills needed", x + DATA_MODEL_WIDTH + 3, y + 2 + BAR_SPACING + (index * COMPONENT_HEIGHT), GuiColors.WHITE);
+            drawTexturedModalRect(x + DATA_MODEL_WIDTH + 1, y + 1 + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, EXP_BAR_OUTER_HEIGHT, barWidth, EXP_BAR_INNER_HEIGHT);
+            drawString(fontRenderer, I18n.format("deepmoblearning.data_overlay.kills_needed", killsRequired), x + DATA_MODEL_WIDTH + 3, y + 2 + ROW_SPACING + (index * COMPONENT_HEIGHT), Colors.WHITE);
         }
     }
 

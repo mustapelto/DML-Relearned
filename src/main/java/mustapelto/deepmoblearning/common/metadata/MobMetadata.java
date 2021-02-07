@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.metadata;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
@@ -15,7 +16,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
@@ -54,6 +54,9 @@ public class MobMetadata {
 
     private final String modelName; // Name of data model item = "data_model_" + itemID
     private final String pristineName; // Name of pristine matter item = "pristine_matter_" + itemID
+
+    private final ImmutableList<ItemStack> lootItemList; // List of configured loot items for this mob (built once at init)
+    private final ImmutableList<ItemStack> trialRewardItemList; // List of configured trial reward items for this mob (built once at init)
 
     private MobMetadata(String modID, JsonObject data) {
         if (!data.has("itemID")) {
@@ -95,6 +98,9 @@ public class MobMetadata {
         displayExtraEntityIsChild = getOrDefault(displaySettings, "extraEntityIsChild", false);
         displayExtraEntityOffsetX = getOrDefault(displaySettings, "extraEntityOffsetX", 0, -200, 200);
         displayExtraEntityOffsetY = getOrDefault(displaySettings, "extraEntityOffsetY", 0, -200, 200);
+
+        lootItemList = buildItemListFromStringArray(lootItems);
+        trialRewardItemList = buildItemListFromStringArray(trialRewards);
     }
 
     public static MobMetadata deserialize(String modID, JsonObject data) {
@@ -240,25 +246,39 @@ public class MobMetadata {
         return Arrays.asList(associatedMobs).contains(name);
     }
 
-    public NonNullList<ItemStack> getLootItems() {
-        return getItemListFromStringArray(lootItems);
+    public ImmutableList<ItemStack> getLootItemList() {
+        return lootItemList;
     }
 
-    public NonNullList<ItemStack> getTrialRewards() {
-        return getItemListFromStringArray(trialRewards);
+    public ItemStack getLootItem(int index) {
+        if (index >= 0 && index < lootItemList.size())
+            return lootItemList.get(index).copy();
+
+        return ItemStack.EMPTY;
     }
 
-    private static NonNullList<ItemStack> getItemListFromStringArray(String[] inputList) {
-        NonNullList<ItemStack> outputList = NonNullList.create();
+    public ImmutableList<ItemStack> getTrialRewardItemList() {
+        return trialRewardItemList;
+    }
+
+    public ItemStack getTrialRewardItem(int index) {
+        if (index >= 0 && index < trialRewardItemList.size())
+            return trialRewardItemList.get(index).copy();
+
+        return ItemStack.EMPTY;
+    }
+
+    private static ImmutableList<ItemStack> buildItemListFromStringArray(String[] inputList) {
+        ImmutableList.Builder<ItemStack> builder = ImmutableList.builder();
 
         for (String entry : inputList) {
             ItemStack entryStack = getStackFromString(entry);
             if (!entryStack.isEmpty()) {
-                outputList.add(entryStack);
+                builder.add(entryStack);
             }
         }
 
-        return outputList;
+        return builder.build();
     }
 
     /**

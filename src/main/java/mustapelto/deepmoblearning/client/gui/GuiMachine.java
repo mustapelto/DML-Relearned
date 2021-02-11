@@ -1,22 +1,36 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
+import mustapelto.deepmoblearning.client.gui.buttons.ButtonRedstoneMode;
+import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
+import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import mustapelto.deepmoblearning.common.util.Point;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-import java.io.IOException;
-
 public abstract class GuiMachine extends GuiContainerBase {
     protected final TileEntityMachine tileEntity;
+    private final Point redstoneModeButtonLocation;
+    private ButtonRedstoneMode redstoneModeButton;
 
-    public GuiMachine(TileEntityMachine tileEntity, EntityPlayer player, World world, int width, int height) {
+    //
+    // INIT
+    //
+
+    public GuiMachine(TileEntityMachine tileEntity, EntityPlayer player, World world, int width, int height, Point redstoneModeButtonLocation) {
         super(player, world, tileEntity.getContainer(player.inventory), width, height);
         this.tileEntity = tileEntity;
         this.tileEntity.setGuiOpen(true);
+        this.redstoneModeButtonLocation = redstoneModeButtonLocation;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        initButtons();
+        rebuildButtonList();
     }
 
     @Override
@@ -25,24 +39,31 @@ public abstract class GuiMachine extends GuiContainerBase {
         super.onGuiClosed();
     }
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        for (GuiButton button : buttonList) {
-            if (button instanceof ButtonBase && button.mousePressed(Minecraft.getMinecraft(), mouseX, mouseY)) {
-                ((ButtonBase) button).handleClick(mouseButton);
-                return;
-            }
-        }
+    //
+    // BUTTONS
+    //
 
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+    @Override
+    protected void initButtons() {
+        redstoneModeButton = new ButtonRedstoneMode(0, guiLeft + redstoneModeButtonLocation.X, guiTop + redstoneModeButtonLocation.Y, tileEntity.getRedstoneMode());
     }
 
-    protected void drawButtonTooltip(int mouseX, int mouseY) {
-        for (GuiButton button : buttonList) {
-            if (button instanceof ButtonBase && button.isMouseOver()) {
-                ImmutableList<String> tooltip = ((ButtonBase) button).getTooltip();
-                drawHoveringText(tooltip, mouseX, mouseY);
-            }
+    @Override
+    protected void rebuildButtonList() {
+        super.rebuildButtonList();
+        buttonList.add(redstoneModeButton);
+    }
+
+    @Override
+    protected void handleButtonPress(ButtonBase button, int mouseButton) {
+        if (button instanceof ButtonRedstoneMode) {
+            ButtonRedstoneMode redstoneModeButton = (ButtonRedstoneMode) button;
+            if (mouseButton == 0)
+                redstoneModeButton.setRedstoneMode(redstoneModeButton.getRedstoneMode().next());
+            else if (mouseButton == 1)
+                redstoneModeButton.setRedstoneMode(redstoneModeButton.getRedstoneMode().prev());
+
+            DMLPacketHandler.sendToServer(new MessageRedstoneModeToServer(tileEntity, redstoneModeButton.getRedstoneMode()));
         }
     }
 }

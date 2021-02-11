@@ -61,7 +61,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
     @Override
     protected boolean canStartCrafting() {
-        return super.canStartCrafting() && hasPristineMatter() && hasRoomForOutput();
+        return super.canStartCrafting() && hasPristineMatter() && hasRoomForOutput() && isValidOutputItem();
     }
 
     @Override
@@ -86,16 +86,15 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
 
+    public MobMetadata getMobMetadata() {
+        return inputPristineMatter.getPristineType();
+    }
+
     private ItemStack getOutputItem() {
         if (outputItemIndex == -1)
             return ItemStack.EMPTY;
 
-        ItemStack pristineMatter = getPristineMatter();
-        if (pristineMatter.isEmpty())
-            return ItemStack.EMPTY;
-
-        MobMetadata mobMetadata = ItemPristineMatter.getMobMetadata(pristineMatter);
-
+        MobMetadata mobMetadata = getMobMetadata();
         if (mobMetadata == null)
             return ItemStack.EMPTY;
 
@@ -128,11 +127,27 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         return output.hasRoomForItem(getOutputItem());
     }
 
-    private void checkIsValidOutput() {
-        if (getOutputItem().isEmpty()) {
+    public void setOutputItemIndex(int index) {
+        if (outputItemIndex == index)
+            return; // Index didn't change -> do nothing
+
+        outputItemIndex = index;
+        if (isInvalidOutputItemIndex())
             outputItemIndex = -1;
-            resetCrafting();
-        }
+
+        resetCrafting(); // resetCrafting takes care of updating output index to client
+    }
+
+    public int getOutputItemIndex() {
+        return outputItemIndex;
+    }
+
+    private boolean isInvalidOutputItemIndex() {
+        return outputItemIndex != -1 && !isValidOutputItem();
+    }
+
+    private boolean isValidOutputItem() {
+        return !getOutputItem().isEmpty();
     }
 
     //
@@ -179,7 +194,6 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         super.handleUpdateData(buf);
 
         outputItemIndex = buf.readInt();
-        checkIsValidOutput();
     }
 
     //
@@ -211,8 +225,8 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             output.deserializeNBT(compound.getCompoundTag(OUTPUT));
 
             // Old system stores ItemStack, too much hassle to read from that so we set to "nothing".
-            // I.e. players will have to re-set all their loot fab outputs once after switching.
-            outputItemIndex = -1;
+            // I.e. players will have to restart all their loot fabricators once after switching.
+            onPristineTypeChanged();
         } else {
             // DML:Relearned tag -> use new (nested) tag names
             NBTTagCompound inventory = compound.getCompoundTag(INVENTORY);
@@ -220,7 +234,9 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             output.deserializeNBT(inventory.getCompoundTag(OUTPUT));
 
             outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(CRAFTING), OUTPUT_ITEM_INDEX, -1);
-            checkIsValidOutput();
+
+            if (isInvalidOutputItemIndex()) // Invalid index, e.g. config changed between world loads, or something else went wrong
+                onPristineTypeChanged();
         }
     }
 

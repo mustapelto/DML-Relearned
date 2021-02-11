@@ -11,7 +11,7 @@ import net.minecraftforge.common.config.Config.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dmlRelearned", category = "")
+@Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dml_relearned", category = "")
 @EventBusSubscriber
 public class DMLConfig {
     @Name("General Settings")

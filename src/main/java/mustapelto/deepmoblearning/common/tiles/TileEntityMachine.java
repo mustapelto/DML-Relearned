@@ -4,8 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.client.gui.GuiMachine;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
-import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,10 +34,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     // UI
     private boolean guiOpen = false;
 
-    public TileEntityMachine() {
-        energyStorage = new DMLEnergyStorage(0, 0);
-    }
-
     public TileEntityMachine(int energyCapacity, int energyMaxReceive) {
         energyStorage = new DMLEnergyStorage(energyCapacity, energyMaxReceive);
     }
@@ -54,7 +48,8 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     @Override
     public void update() {
         if (world.isRemote && guiOpen) {
-            requestUpdatePacketFromServer(); // check if progress has changed on the server (other changes are sent anyway)
+            // check if progress or energy state has changed on the server
+            requestUpdatePacketFromServer();
             return;
         }
 
@@ -65,10 +60,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         if (crafting && canContinueCrafting()) {
             energyStorage.voidEnergy(getCraftingEnergyCost());
             advanceCraftingProgress();
-        }
-
-        if (energyStorage.getNeedsUpdate()) {
-            sendUpdatePacketToClient();
         }
     }
 
@@ -154,9 +145,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     public void setRedstoneMode(RedstoneMode mode) {
         redstoneMode = mode;
-        if (world.isRemote) {
-            DMLPacketHandler.sendToServer(new MessageRedstoneModeToServer(this));
-        }
+        sendUpdatePacketToClient();
     }
 
     public boolean isRedstoneActive() {
@@ -200,7 +189,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     @Override
     public boolean clientNeedsUpdate() {
-        return progressChanged;
+        return progressChanged || energyStorage.getNeedsUpdate();
     }
 
     @Override

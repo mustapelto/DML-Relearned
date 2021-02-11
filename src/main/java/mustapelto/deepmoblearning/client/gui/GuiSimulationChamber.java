@@ -2,12 +2,9 @@ package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
-import mustapelto.deepmoblearning.client.gui.buttons.ButtonRedstoneMode;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import mustapelto.deepmoblearning.common.util.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,20 +15,19 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.DEFAULT_TEXTURE;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 public class GuiSimulationChamber extends GuiMachine {
     // GUI TEXTURES
-    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber_base.png");
+    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber.png");
 
     // GUI DIMENSIONS
     public static final int WIDTH = 232;
     public static final int HEIGHT = 230;
 
     // XP / ENERGY BAR LOCATIONS
-    private static final Rect DATA_BAR = new Rect(13, 47, 8,87);
-    private static final Rect ENERGY_BAR = new Rect(211, 47, 8, 87);
+    private static final Rect DATA_BAR = new Rect(13, 47, 7,87);
+    private static final Rect ENERGY_BAR = new Rect(211, 47, 7, 87);
 
     // ITEM SLOT LOCATIONS
     public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
@@ -40,7 +36,7 @@ public class GuiSimulationChamber extends GuiMachine {
     public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
 
     // BUTTON LOCATIONS
-    public static final Rect REDSTONE_BUTTON = new Rect(-14, 24, 18, 18);
+    public static final Point REDSTONE_BUTTON = new Point(-14, 24);
 
     // ANIMATORS (for animated strings)
     private final StringAnimator progressAnimator = new StringAnimator(); // Used to display simulation progress
@@ -48,6 +44,7 @@ public class GuiSimulationChamber extends GuiMachine {
     private final StringAnimator dataModelErrorAnimator = new StringAnimator(); // Used to display error messages relating to data model
     private final StringAnimator simulationErrorAnimator= new StringAnimator(); // Used to display other errors (no polymer/energy, output full)
 
+    // STATE VARIABLES
     private final TileEntitySimulationChamber simulationChamber;
     private ItemStack dataModel; // Data Model currently inside Simulation Chamber
 
@@ -60,8 +57,12 @@ public class GuiSimulationChamber extends GuiMachine {
     private int currentTick = 0; // Ticks since GUI was opened
     private float lastPartial = 0; // Time when GUI was last drawn (ticks + partial tick)
 
+    //
+    // INIT
+    //
+
     public GuiSimulationChamber(TileEntitySimulationChamber tileEntity, EntityPlayer player, World world) {
-        super(tileEntity, player, world, WIDTH, HEIGHT);
+        super(tileEntity, player, world, WIDTH, HEIGHT, REDSTONE_BUTTON);
 
         simulationChamber = tileEntity;
 
@@ -69,12 +70,9 @@ public class GuiSimulationChamber extends GuiMachine {
         prepareStringAnimators();
     }
 
-    @Override
-    public void initGui() {
-        super.initGui();
-
-        buttonList.add(new ButtonRedstoneMode(0, guiLeft + REDSTONE_BUTTON.LEFT, guiTop + REDSTONE_BUTTON.TOP, tileEntity));
-    }
+    //
+    // UPDATE
+    //
 
     @Override
     public void updateScreen() {
@@ -176,8 +174,14 @@ public class GuiSimulationChamber extends GuiMachine {
         progressAnimator.reset();
     }
 
+    //
+    // DRAWING
+    //
+
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
         final int x = mouseX - guiLeft;
         final int y = mouseY - guiTop;
 
@@ -199,7 +203,7 @@ public class GuiSimulationChamber extends GuiMachine {
             } else {
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.model_missing"));
             }
-            drawHoveringText(tooltip, x + 2, y + 2);
+            drawHoveringText(tooltip, x, y);
         } else if (ENERGY_BAR.isInside(x, y)) {
             // Draw Energy Bar Tooltip
             String currentEnergy = String.valueOf(tileEntity.getEnergy());
@@ -209,16 +213,12 @@ public class GuiSimulationChamber extends GuiMachine {
                 int energyDrain = tileEntity.getCraftingEnergyCost();
                 tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.sim_cost", energyDrain));
             }
-            drawHoveringText(tooltip, x - 90, y - 16);
+            drawHoveringText(tooltip, x, y);
         }
-
-        drawButtonTooltip(mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-
         textureManager.bindTexture(BASE_TEXTURE);
         GlStateManager.color(1f, 1f, 1f, 1f);
 
@@ -239,17 +239,16 @@ public class GuiSimulationChamber extends GuiMachine {
                 dataBarHeight = (int) (((float) currentData / tierMaxData) * DATA_BAR.HEIGHT);
             }
             int dataBarOffset = DATA_BAR.HEIGHT - dataBarHeight;
-            drawTexturedModalRect(guiLeft + 14, guiTop + DATA_BAR.TOP + dataBarOffset, 18, 141, 7, dataBarHeight);
+            drawTexturedModalRect(guiLeft + 14, guiTop + DATA_BAR.TOP + dataBarOffset, 18, 141, DATA_BAR.WIDTH, dataBarHeight);
         }
 
         // Energy Bar
         int energyBarHeight = (int)(((float) tileEntity.getEnergy() / tileEntity.getMaxEnergy()) * ENERGY_BAR.HEIGHT);
         int energyBarOffset = ENERGY_BAR.HEIGHT - energyBarHeight;
-        drawTexturedModalRect(guiLeft + ENERGY_BAR.LEFT, guiTop + ENERGY_BAR.TOP + energyBarOffset, 25, 141, 7, energyBarHeight);
+        drawTexturedModalRect(guiLeft + ENERGY_BAR.LEFT, guiTop + ENERGY_BAR.TOP + energyBarOffset, 25, 141, ENERGY_BAR.WIDTH, energyBarHeight);
 
         // Player inventory
-        textureManager.bindTexture(DEFAULT_TEXTURE);
-        drawTexturedModalRect(guiLeft + 28, guiTop + 145, 0, 0, 176, 90);
+        drawPlayerInventory(guiLeft + 28, guiTop + 145);
 
         // Calculate delta time since last redraw (used to advance string animations)
         float currentPartial = currentTick + partialTicks;
@@ -307,6 +306,10 @@ public class GuiSimulationChamber extends GuiMachine {
             drawString(fontRenderer, strings.get(i), left, top + i * ROW_SPACING, Colors.WHITE);
         }
     }
+
+    //
+    // STRING ANIMATORS
+    //
 
     private void prepareStringAnimators() {
         String blinkingCursor = " _"; // Space so this looks like it's blinking

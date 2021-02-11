@@ -1,8 +1,7 @@
 package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
-import mustapelto.deepmoblearning.common.tiles.RedstoneMode;
-import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
+import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -10,45 +9,45 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageRedstoneModeToServer implements IMessage {
+public class MessageLootFabOutputItemToServer implements IMessage {
     private BlockPos pos;
     private int dimension;
-    private RedstoneMode redstoneMode;
+    private int outputItemIndex;
 
-    public MessageRedstoneModeToServer() {}
+    public MessageLootFabOutputItemToServer() {}
 
-    public MessageRedstoneModeToServer(BlockPos pos, int dimension, RedstoneMode redstoneMode) {
+    public MessageLootFabOutputItemToServer(BlockPos pos, int dimension, int outputItemIndex) {
         this.pos = pos;
         this.dimension = dimension;
-        this.redstoneMode = redstoneMode;
+        this.outputItemIndex = outputItemIndex;
     }
 
-    public MessageRedstoneModeToServer(TileEntityMachine target, RedstoneMode redstoneMode) {
-        this(target.getPos(), target.getWorld().provider.getDimension(), redstoneMode);
+    public MessageLootFabOutputItemToServer(TileEntityLootFabricator target, int outputItemIndex) {
+        this(target.getPos(), target.getWorld().provider.getDimension(), outputItemIndex);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeLong(pos.toLong());
         buf.writeInt(dimension);
-        buf.writeInt(redstoneMode.getIndex());
+        buf.writeInt(outputItemIndex);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         pos = BlockPos.fromLong(buf.readLong());
         dimension = buf.readInt();
-        redstoneMode = RedstoneMode.byIndex(buf.readInt());
+        outputItemIndex = buf.readInt();
     }
 
-    public static class Handler implements IMessageHandler<MessageRedstoneModeToServer, IMessage> {
+    public static class Handler implements IMessageHandler<MessageLootFabOutputItemToServer, IMessage> {
         @Override
-        public IMessage onMessage(MessageRedstoneModeToServer message, MessageContext ctx) {
+        public IMessage onMessage(MessageLootFabOutputItemToServer message, MessageContext ctx) {
             WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             world.addScheduledTask(() -> {
-                TileEntityMachine te = (TileEntityMachine) world.getTileEntity(message.pos);
+                TileEntityLootFabricator te = (TileEntityLootFabricator) world.getTileEntity(message.pos);
                 if (te != null) {
-                    te.setRedstoneMode(message.redstoneMode);
+                    te.setOutputItemIndex(message.outputItemIndex);
                 }
             });
             return null;

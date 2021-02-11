@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 
 public abstract class ButtonBase extends GuiButton {
     protected final ResourceLocation texture;
-    protected ImmutableList<String> tooltip;
 
     public ButtonBase(int buttonId, int x, int y, int width, int height, @Nullable ResourceLocation texture) {
         super(buttonId, x, y, width, height, "");
@@ -19,12 +18,7 @@ public abstract class ButtonBase extends GuiButton {
     }
 
     protected boolean isHovered(int mouseX, int mouseY) {
-        return (mouseX >= x && mouseX < x + width && mouseY >= y && mouseY <= y + width);
-    }
-
-    @Override
-    protected int getHoverState(boolean mouseOver) {
-        return hovered ? 1 : 0;
+        return (mouseX >= x && mouseX < x + width && mouseY >= y && mouseY <= y + height);
     }
 
     protected int getState() {
@@ -36,21 +30,13 @@ public abstract class ButtonBase extends GuiButton {
         this.hovered = isHovered(mouseX, mouseY);
         int hoverState = getHoverState(hovered);
 
-        if (visible && texture != null) {
+        if (visible && (texture != null)) {
             mc.getTextureManager().bindTexture(texture);
             GlStateManager.color(1f, 1f, 1f, 1f);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             drawTexturedModalRect(x, y, getState() * width, hoverState * height, width, height);
         }
     }
 
-    public ImmutableList<String> getTooltip() {
-        return tooltip;
-    }
-
-    protected abstract void buildTooltip();
-
-    public abstract void handleClick(int mouseButton);
+    @Nonnull
+    public abstract ImmutableList<String> getTooltip();
 }

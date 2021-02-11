@@ -1,0 +1,7 @@
+Row = Hover state
+0 = Disabled
+1 = Enabled, not hovered
+2 = Enabled, hovered
+
+
+Column = State (button-specific)

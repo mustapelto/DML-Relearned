@@ -19,6 +19,7 @@ item.deepmoblearning.glitch_infused_sword.name=Glitch Infused Sword
 tile.deepmoblearning.infused_ingot_block.name=Glitch Infused Block
 tile.deepmoblearning.machine_casing.name=Soot-covered Machine Casing
 tile.deepmoblearning.simulation_chamber.name=Simulation Chamber
+tile.deepmoblearning.extraction_chamber.name=Loot Fabricator
 
 # General
 deepmoblearning.general.more_info=- hold %s for more info
@@ -135,11 +136,25 @@ deepmoblearning.simulation_chamber.tooltip.model_missing=Machine is missing a da
 deepmoblearning.simulation_chamber.tooltip.model_cannot_simulate=Cannot run simulation at current data model tier
 deepmoblearning.simulation_chamber.tooltip.sim_cost=Simulation with current data model uses %d RF/t
 
+# Loot Fabricator
+deepmoblearning.loot_fabricator.tooltip.crafting_cost=Operational cost: %d RF/t
+deepmoblearning.loot_fabricator.tooltip.deselect=Click to deselect output item
+
+deepmoblearning.loot_fabricator.error.no_energy=Not enough energy for crafting
+deepmoblearning.loot_fabricator.error.redstone=Machine disabled by redstone signal
+deepmoblearning.loot_fabricator.error.no_pristine=No Pristine Matter in input buffer
+deepmoblearning.loot_fabricator.error.no_output_selected=No output item selected
+deepmoblearning.loot_fabricator.error.output_full=Output buffer full
+
 # Redstone Mode Button
 deepmoblearning.redstone_mode.always_on=Always on
 deepmoblearning.redstone_mode.high_on=On with redstone signal
 deepmoblearning.redstone_mode.high_off=Off with redstone signal
 deepmoblearning.redstone_mode.always_off=Always off
+
+# Page select button
+deepmoblearning.button_page_select.next=Next page
+deepmoblearning.button_page_select.prev=Previous page
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned

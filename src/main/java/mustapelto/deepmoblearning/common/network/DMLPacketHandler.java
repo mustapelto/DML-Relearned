@@ -20,6 +20,7 @@ public class DMLPacketHandler {
         network.registerMessage(MessageUpdateTileEntity.Handler.class, MessageUpdateTileEntity.class, id++, Side.CLIENT);
         network.registerMessage(MessageRequestUpdateTileEntity.Handler.class, MessageRequestUpdateTileEntity.class, id++, Side.SERVER);
         network.registerMessage(MessageRedstoneModeToServer.Handler.class, MessageRedstoneModeToServer.class, id++, Side.SERVER);
+        network.registerMessage(MessageLootFabOutputItemToServer.Handler.class, MessageLootFabOutputItemToServer.class, id++, Side.SERVER);
     }
 
     public static void sendToClient(IMessage message, World world, BlockPos pos) {

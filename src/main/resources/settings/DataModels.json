@@ -9,7 +9,8 @@
         "minecraft:blaze"
       ],
       "lootItems": [
-        ""
+        "minecraft:blaze_rod,22,0",
+        "thermalfoundation:material,32,771"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -34,7 +35,8 @@
         "minecraft:creeper"
       ],
       "lootItems": [
-        ""
+        "minecraft:gunpowder,64,0",
+        "minecraft:skull,6,4"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -57,7 +59,10 @@
         "minecraft:ender_dragon"
       ],
       "lootItems": [
-        ""
+        "minecraft:dragon_breath,32,0",
+        "minecraft:dragon_egg,1,0",
+        "draconicevolution:dragon_heart,1,0",
+        "draconicevolution:draconium_dust,64,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 100,
@@ -82,7 +87,9 @@
         "minecraft:endermite"
       ],
       "lootItems": [
-        ""
+        "minecraft:ender_pearl,6,0",
+        "minecraft:end_crystal,1,0",
+        "enderio:block_enderman_skull,2,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 20,
@@ -105,7 +112,7 @@
         "minecraft:ghast"
       ],
       "lootItems": [
-        ""
+        "minecraft:ghast_tear,8,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -129,7 +136,9 @@
         "minecraft:elder_guardian"
       ],
       "lootItems": [
-        ""
+        "minecraft:prismarine_shard,32,0",
+        "minecraft:prismarine_crystals,32,0",
+        "minecraft:fish,64,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 15,
@@ -153,7 +162,8 @@
         "minecraft:shulker"
       ],
       "lootItems": [
-        ""
+        "minecraft:shulker_shell,18,0",
+        "minecraft:diamond,2,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 15,
@@ -178,7 +188,9 @@
         "twilightforest:skeleton_druid"
       ],
       "lootItems": [
-        ""
+        "minecraft:bone,64,0",
+        "minecraft:arrow,64,0",
+        "minecraft:skull,6,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -204,7 +216,7 @@
         "minecraft:magma_cube"
       ],
       "lootItems": [
-        ""
+        "minecraft:slime_ball,32,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 8,
@@ -231,7 +243,9 @@
         "twilightforest:king_spider"
       ],
       "lootItems": [
-        ""
+        "minecraft:spider_eye,16,0",
+        "minecraft:string,64,0",
+        "minecraft:web,8,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 8,
@@ -259,7 +273,9 @@
         "minecraft:witch"
       ],
       "lootItems": [
-        ""
+        "minecraft:redstone,32,0",
+        "minecraft:glowstone_dust,32,0",
+        "minecraft:sugar,64,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 13,
@@ -284,7 +300,7 @@
         "minecraft:wither"
       ],
       "lootItems": [
-        ""
+        "minecraft:nether_star,3,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 150,
@@ -308,7 +324,8 @@
         "minecraft:wither_skeleton"
       ],
       "lootItems": [
-        ""
+        "minecraft:skull,18,1",
+        "minecraft:coal,64,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -335,7 +352,10 @@
         "minecraft:zombie_pigman"
       ],
       "lootItems": [
-        ""
+        "minecraft:rotten_flesh,64,0",
+        "minecraft:iron_ingot,16,0",
+        "minecraft:carrot,32,0",
+        "minecraft:potato,32,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -367,7 +387,12 @@
         "thermalfoundation:basalz"
       ],
       "lootItems": [
-        ""
+        "thermalfoundation:material,16,772",
+        "thermalfoundation:material,16,770",
+        "minecraft:snowball,16,0",
+        "thermalfoundation:material,8,2050",
+        "thermalfoundation:material,8,2052",
+        "thermalfoundation:material,8,2048"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,
@@ -398,7 +423,11 @@
         "twilightforest:swarm_spider"
       ],
       "lootItems": [
-        ""
+        "twilightforest:naga_scale,16,0",
+        "twilightforest:charm_of_life_1,2,0",
+        "twilightforest:charm_of_keeping_1,2,0",
+        "minecraft:paper,64,0",
+        "minecraft:book,32,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 0,
@@ -428,7 +457,13 @@
         "twilightforest:hydra"
       ],
       "lootItems": [
-        ""
+        "twilightforest:steeleaf_ingot,16,0",
+        "twilightforest:ironwood_raw,8,0",
+        "twilightforest:fiery_ingot,5,0",
+        "twilightforest:hydra_chop,16,0",
+        "minecraft:gold_ingot,22,0",
+        "minecraft:red_mushroom,32,0",
+        "minecraft:slime_ball,16,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 0,
@@ -461,7 +496,12 @@
         "twilightforest:snow_queen"
       ],
       "lootItems": [
-        ""
+        "twilightforest:arctic_fur,16,0",
+        "twilightforest:alpha_fur,8,0",
+        "minecraft:packed_ice,16,0",
+        "minecraft:feather,32,0",
+        "twilightforest:charm_of_life_2,1,0",
+        "twilightforest:charm_of_keeping_2,1,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 0,
@@ -498,7 +538,11 @@
         "twilightforest:ur_ghast"
       ],
       "lootItems": [
-        ""
+        "twilightforest:armor_shard_cluster,5,0",
+        "twilightforest:carminite,16,0",
+        "minecraft:diamond_ore,3,0",
+        "minecraft:emerald_ore,2,0",
+        "minecraft:fish,32,0"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 0,
@@ -524,7 +568,12 @@
         "tconstruct:blue_slime"
       ],
       "lootItems": [
-        ""
+        "tconstruct:edible,18,1",
+        "tconstruct:edible,18,2",
+        "tconstruct:edible,18,4",
+        "tconstruct:slime_sapling,4,0",
+        "tconstruct:slime_sapling,4,1",
+        "tconstruct:slime_sapling,4,2"
       ],
       "deepLearnerDisplay": {
         "numberOfHearts": 10,

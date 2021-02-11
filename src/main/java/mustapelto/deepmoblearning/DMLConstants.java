@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
 public class DMLConstants {
@@ -43,7 +42,6 @@ public class DMLConstants {
     }
 
     public static final class Gui {
-        public static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/default_gui.png");
         public static final int ROW_SPACING = 12;
 
         public static final class IDs {

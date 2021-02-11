@@ -22,15 +22,29 @@ public class GuiSimulationChamber extends GuiMachine {
     public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber.png");
 
     // GUI DIMENSIONS
-    public static final int WIDTH = 232;
-    public static final int HEIGHT = 230;
+    private static final int WIDTH = 232;
+    private static final int HEIGHT = 230;
+    private static final Rect MAIN_GUI = new Rect(8, 0, 216, 141);
+    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
+
+    // PLAYER INVENTORY
+    private static final Point PLAYER_INVENTORY = new Point(28, 145);
+
+    // STATUS DISPLAY
+    private static final Point INFO_BOX = new Point(18, 9);
+    private static final Point CONSOLE = new Point(29, 51);
+    private static final int REDSTONE_DEACTIVATED_LINE_LENGTH = 28;
+    private static final int BLINKING_CURSOR_SPEED = 16;
 
     // XP / ENERGY BAR LOCATIONS
-    private static final Rect DATA_BAR = new Rect(13, 47, 7,87);
+    private static final Rect DATA_BAR = new Rect(14, 47, 7,87);
+    private static final Point DATA_BAR_TEXTURE_LOCATION = new Point(18, 141);
     private static final Rect ENERGY_BAR = new Rect(211, 47, 7, 87);
+    private static final Point ENERGY_BAR_TEXTURE_LOCATION = new Point(25, 141);
 
     // ITEM SLOT LOCATIONS
     public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
+    public static final Point DATA_MODEL_SLOT_TEXTURE_LOCATION = new Point(0, 141);
     public static final Point POLYMER_SLOT = new Point(192, 7);
     public static final Point LIVING_MATTER_SLOT = new Point(182, 27);
     public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
@@ -62,7 +76,12 @@ public class GuiSimulationChamber extends GuiMachine {
     //
 
     public GuiSimulationChamber(TileEntitySimulationChamber tileEntity, EntityPlayer player, World world) {
-        super(tileEntity, player, world, WIDTH, HEIGHT, REDSTONE_BUTTON);
+        super(tileEntity,
+                player,
+                world,
+                WIDTH,
+                HEIGHT,
+                REDSTONE_BUTTON);
 
         simulationChamber = tileEntity;
 
@@ -223,10 +242,24 @@ public class GuiSimulationChamber extends GuiMachine {
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         // Main GUI
-        drawTexturedModalRect(guiLeft + 8, guiTop, 0, 0, 216, 141);
+        drawTexturedModalRect(
+                guiLeft + MAIN_GUI.LEFT,
+                guiTop + MAIN_GUI.TOP,
+                MAIN_GUI_TEXTURE_LOCATION.X,
+                MAIN_GUI_TEXTURE_LOCATION.Y,
+                MAIN_GUI.WIDTH,
+                MAIN_GUI.HEIGHT
+        );
 
         // Data Model Slot
-        drawTexturedModalRect(guiLeft + DATA_MODEL_SLOT.LEFT, guiTop + DATA_MODEL_SLOT.TOP, 0, 141, DATA_MODEL_SLOT.WIDTH, DATA_MODEL_SLOT.HEIGHT);
+        drawTexturedModalRect(
+                guiLeft + DATA_MODEL_SLOT.LEFT,
+                guiTop + DATA_MODEL_SLOT.TOP,
+                DATA_MODEL_SLOT_TEXTURE_LOCATION.X,
+                DATA_MODEL_SLOT_TEXTURE_LOCATION.Y,
+                DATA_MODEL_SLOT.WIDTH,
+                DATA_MODEL_SLOT.HEIGHT
+        );
 
         // Data Model Experience Bar
         if (dataModelError == DataModelError.NONE) {
@@ -239,24 +272,27 @@ public class GuiSimulationChamber extends GuiMachine {
                 dataBarHeight = (int) (((float) currentData / tierMaxData) * DATA_BAR.HEIGHT);
             }
             int dataBarOffset = DATA_BAR.HEIGHT - dataBarHeight;
-            drawTexturedModalRect(guiLeft + 14, guiTop + DATA_BAR.TOP + dataBarOffset, 18, 141, DATA_BAR.WIDTH, dataBarHeight);
+            drawTexturedModalRect(
+                    guiLeft + DATA_BAR.LEFT,
+                    guiTop + DATA_BAR.TOP + dataBarOffset,
+                    DATA_BAR_TEXTURE_LOCATION.X,
+                    DATA_BAR_TEXTURE_LOCATION.Y,
+                    DATA_BAR.WIDTH,
+                    dataBarHeight
+            );
         }
 
-        // Energy Bar
-        int energyBarHeight = (int)(((float) tileEntity.getEnergy() / tileEntity.getMaxEnergy()) * ENERGY_BAR.HEIGHT);
-        int energyBarOffset = ENERGY_BAR.HEIGHT - energyBarHeight;
-        drawTexturedModalRect(guiLeft + ENERGY_BAR.LEFT, guiTop + ENERGY_BAR.TOP + energyBarOffset, 25, 141, ENERGY_BAR.WIDTH, energyBarHeight);
+        drawEnergyBar(ENERGY_BAR, ENERGY_BAR_TEXTURE_LOCATION);
 
-        // Player inventory
-        drawPlayerInventory(guiLeft + 28, guiTop + 145);
+        drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
 
         // Calculate delta time since last redraw (used to advance string animations)
         float currentPartial = currentTick + partialTicks;
         float advanceAmount = currentPartial - lastPartial;
         lastPartial = currentPartial;
 
-        drawInfoboxText(advanceAmount, guiLeft + 18, guiTop + 9);
-        drawConsoleText(advanceAmount, guiLeft + 29, guiTop + 51);
+        drawInfoboxText(advanceAmount, guiLeft + INFO_BOX.X, guiTop + INFO_BOX.Y);
+        drawConsoleText(advanceAmount, guiLeft + CONSOLE.X, guiTop + CONSOLE.Y);
     }
 
     private void drawInfoboxText(float advanceAmount, int left, int top) {
@@ -285,10 +321,10 @@ public class GuiSimulationChamber extends GuiMachine {
             strings = emptyDisplayAnimator.getCurrentStrings();
         } else if (redstoneDeactivated) {
             strings = new ArrayList<>();
-            strings.add(TextFormatting.RED + TextHelper.getDashedLine(28) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_1"), 28) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_2"), 28) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.getDashedLine(28) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_1"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_2"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + TextHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
         } else if (simulationError != SimulationError.NONE) {
             simulationErrorAnimator.advance(advanceAmount);
             strings = simulationErrorAnimator.getCurrentStrings();
@@ -313,7 +349,7 @@ public class GuiSimulationChamber extends GuiMachine {
 
     private void prepareStringAnimators() {
         String blinkingCursor = " _"; // Space so this looks like it's blinking
-        float cursorSpeed = 16;
+
         String simulationLaunching = I18n.format("deepmoblearning.simulation_chamber.simulation_text.launching");
         String simulationLoading = I18n.format("deepmoblearning.simulation_chamber.simulation_text.loading");
         String simulationAssessing = I18n.format("deepmoblearning.simulation_chamber.simulation_text.assessing");
@@ -329,7 +365,7 @@ public class GuiSimulationChamber extends GuiMachine {
         progressAnimator.addString(AnimatedString.SIMULATION_PRISTINE, ""); // gets set in update method
         progressAnimator.addString(AnimatedString.SIMULATION_PROCESSING, simulationProcessing);
 
-        emptyDisplayAnimator.addString(AnimatedString.UNDERLINE, blinkingCursor, cursorSpeed, true);
+        emptyDisplayAnimator.addString(AnimatedString.UNDERLINE, blinkingCursor, BLINKING_CURSOR_SPEED, true);
 
         dataModelErrorAnimator.addString(AnimatedString.ERROR_DATA_MODEL_HEADING, error);
         dataModelErrorAnimator.addString(AnimatedString.ERROR_DATA_MODEL_TEXT_1, ""); // gets set in update method
@@ -337,7 +373,7 @@ public class GuiSimulationChamber extends GuiMachine {
 
         simulationErrorAnimator.addString(AnimatedString.ERROR_SIMULATION_HEADING, error);
         simulationErrorAnimator.addString(AnimatedString.ERROR_SIMULATION_TEXT, ""); // gets set in update method
-        simulationErrorAnimator.addString(AnimatedString.UNDERLINE, blinkingCursor, cursorSpeed, true);
+        simulationErrorAnimator.addString(AnimatedString.UNDERLINE, blinkingCursor, BLINKING_CURSOR_SPEED, true);
     }
 
     public enum AnimatedString {

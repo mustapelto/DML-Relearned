@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityLootFabricator extends TileEntityMachine {
+    // TODO: Fix null pointer exception on world load (in onPristineTypeChanged())
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
         protected void onPristineTypeChanged() {

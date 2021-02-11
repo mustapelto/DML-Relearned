@@ -61,6 +61,9 @@ deepmoblearning.deep_learner.no_model.line_4=when they are placed in the Deep Le
 deepmoblearning.deep_learner.no_model.line_5=In order to collect data, you must
 deepmoblearning.deep_learner.no_model.line_6=deliver the killing blow.
 
+deepmoblearning.deep_learner.button_next=Next data model
+deepmoblearning.deep_learner.button_prev=Previous data model
+
 # Data HUD Overlay
 deepmoblearning.data_overlay.kills_needed=%s kills needed
 

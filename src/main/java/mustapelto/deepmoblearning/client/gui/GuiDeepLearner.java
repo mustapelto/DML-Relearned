@@ -1,17 +1,19 @@
 package mustapelto.deepmoblearning.client.gui;
 
+import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
+import mustapelto.deepmoblearning.client.gui.buttons.ButtonDeepLearnerSelect;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.Point;
 import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,27 +22,55 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
-import java.io.IOException;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 public class GuiDeepLearner extends GuiContainerBase {
-    // TODO: Implement buttons as GuiButtons
-    // GUI Textures
-    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_base.png");
-    public static final ResourceLocation EXTRAS_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_extras.png");
+    // TODO: Fix: positioning, mob display (wtf???)
+    // GUI TEXTURES
+    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner.png");
 
-    // GUI Size
-    public static final int WIDTH = 338;
-    public static final int HEIGHT = 235;
+    // GUI DIMENSIONS
+    private static final int WIDTH = 338;
+    private static final int HEIGHT = 235;
+    private static final Rect MAIN_GUI = new Rect(41, 0, 256, 140);
+    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
 
+    // PLAYER INVENTORY
+    private static final Point PLAYER_INVENTORY = new Point(81, 145);
+
+    // MOB DISPLAY
+    private static final Rect MOB_DISPLAY = new Rect(-41, 0, 75, 101);
+    private static final Point MOB_DISPLAY_TEXTURE_LOCATION = new Point(0, 140);
+    private static final Point MOB_DISPLAY_ENTITY = new Point(0, 80);
+
+    // MAIN DISPLAY
+    private static final Point TEXT_START = new Point(90, 8);
+    private static final Rect HEART_ICON = new Rect(228, 2 * ROW_SPACING - 6, 9, 9);
+    private static final Point HEART_ICON_TEXTURE_LOCATION = new Point(75, 140);
+    private static final Point HEALTH_POINTS_HEADER_LOCATION = new Point(228, ROW_SPACING - 4);
+    private static final Point HEALTH_POINTS_TEXT_LOCATION = new Point(239, 2 * ROW_SPACING - 4);
+
+    // BUTTONS
+    private static final Point PREV_MODEL_BUTTON = new Point(-27, 105);
+    private static final Point NEXT_MODEL_BUTTON = new Point(-1, 105);
+
+    // STATE VARIABLES
     private final ItemStack deepLearner; // Deep Learner that opened this GUI
     private NonNullList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
+    private MobMetadata currentModelMetadata;
+    private ItemStack currentModelStack;
 
-    private static final Rect BUTTON_PREV = new Rect(-27, 105, 24, 24);
-    private static final Rect BUTTON_NEXT = new Rect(-1, 105, 24, 24);
+    private ImmutableList<ImmutablePair<String, Integer>> defaultStringList;
+
+    private ButtonDeepLearnerSelect prevModelButton;
+    private ButtonDeepLearnerSelect nextModelButton;
+
+    //
+    // INIT
+    //
 
     public GuiDeepLearner(EntityPlayer player, World world) {
         super(player, world, new ContainerDeepLearner(player), WIDTH, HEIGHT);
@@ -53,219 +83,241 @@ public class GuiDeepLearner extends GuiContainerBase {
             this.deepLearner = offHand;
         else
             throw new IllegalStateException("Tried to open Deep Learner GUI without Deep Learner equipped");
+
+        initDefaultStringList();
     }
 
-    private int nextItemIndex() {
-        return currentModelIndex == dataModels.size() - 1 ? 0 : currentModelIndex + 1;
+    private void initDefaultStringList() {
+        ImmutableList.Builder<ImmutablePair<String, Integer>> builder = ImmutableList.builder();
+
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_1"), Colors.AQUA));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_2"), Colors.WHITE));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_3"), Colors.WHITE));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_4"), Colors.WHITE));
+        builder.add(ImmutablePair.of("", 0));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_5"), Colors.WHITE));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.no_model.line_6"), Colors.WHITE));
+
+        defaultStringList = builder.build();
     }
 
-    private int prevItemIndex() {
-        return currentModelIndex == 0 ? dataModels.size() - 1 : currentModelIndex - 1;
-    }
+    //
+    // UPDATE
+    //
+
 
     @Override
-    protected void initButtons() {
-
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        int x = mouseX - guiLeft;
-        int y = mouseY - guiTop;
-
-        if (dataModels.size() > 1) {
-            if (BUTTON_PREV.isInside(x, y)) {
-                currentModelIndex = prevItemIndex();
-            } else if (BUTTON_NEXT.isInside(x, y)) {
-                currentModelIndex = nextItemIndex();
-            }
-        }
-
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    protected void handleButtonPress(ButtonBase button, int mouseButton) {
-
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        final int left = guiLeft;
-        final int top = guiTop;
-
-        final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-
-        // Draw main GUI
-        textureManager.bindTexture(BASE_TEXTURE);
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        drawTexturedModalRect(left + 41, top, 0, 0, 256, 140);
-
-        // Draw player inventory
-        drawPlayerInventory(guiLeft + 81, guiTop + 145);
+    public void updateScreen() {
+        super.updateScreen();
 
         // Get list of contained Data Models
         NonNullList<ItemStack> deepLearnerStackList = ItemDeepLearner.getContainedItems(deepLearner);
         dataModels = DataModelHelper.getDataModelStacksFromList(deepLearnerStackList);
 
-        // Render model cycle buttons if >1 model inserted
-        if (dataModels.size() > 1) {
-            renderCycleButtons(textureManager, left, top, mouseX, mouseY);
+        if (dataModels.isEmpty()) {
+            currentModelIndex = -1;
+            currentModelMetadata = null;
+            currentModelStack = ItemStack.EMPTY;
+            setModelSelectButtonsEnabled(false);
+            setModelSelectButtonsVisible(false);
+            return;
         }
 
         // Invalid Model Index -> reset to 0
-        if (currentModelIndex >= dataModels.size()) {
+        if (currentModelIndex < 0 || currentModelIndex >= dataModels.size()) {
             currentModelIndex = 0;
         }
 
-        // At least 1 data model -> display metadata
-        if (dataModels.size() > 0) {
-            ItemStack currentModelStack = dataModels.get(currentModelIndex);
-            MobMetadata mobMetaData = DataModelHelper.getMobMetadata(currentModelStack);
+        currentModelStack = dataModels.get(currentModelIndex);
+        currentModelMetadata = DataModelHelper.getMobMetadata(currentModelStack);
 
-            if (mobMetaData == null) {
-                return;
+        setModelSelectButtonsVisible(true);
+        setModelSelectButtonsEnabled(dataModels.size() > 1);
+    }
+
+    //
+    // BUTTONS
+    //
+    @Override
+    protected void initButtons() {
+        prevModelButton = new ButtonDeepLearnerSelect(0, guiLeft + PREV_MODEL_BUTTON.X, guiTop + PREV_MODEL_BUTTON.Y, ButtonDeepLearnerSelect.Direction.PREV);
+        nextModelButton = new ButtonDeepLearnerSelect(0, guiLeft + NEXT_MODEL_BUTTON.X, guiTop + NEXT_MODEL_BUTTON.Y, ButtonDeepLearnerSelect.Direction.NEXT);
+    }
+
+    @Override
+    protected void rebuildButtonList() {
+        super.rebuildButtonList();
+
+        buttonList.add(prevModelButton);
+        buttonList.add(nextModelButton);
+    }
+
+    @Override
+    protected void handleButtonPress(ButtonBase button, int mouseButton) {
+        if (mouseButton == 0 && button instanceof ButtonDeepLearnerSelect) {
+            ButtonDeepLearnerSelect modelSelectButton = (ButtonDeepLearnerSelect) button;
+            if (modelSelectButton.getDirection() == ButtonDeepLearnerSelect.Direction.PREV) {
+                currentModelIndex--;
+                if (currentModelIndex < 0)
+                    currentModelIndex = dataModels.size() - 1;
+            } else {
+                currentModelIndex++;
+                if (currentModelIndex >= dataModels.size())
+                    currentModelIndex = 0;
             }
+        }
+    }
 
-            renderMetaData(textureManager, mobMetaData, left, top, currentModelStack);
-            renderMobDisplayBox(textureManager, left, top);
+    private void setModelSelectButtonsVisible(boolean visible) {
+        prevModelButton.visible = visible;
+        nextModelButton.visible = visible;
+    }
 
-            // Get and render main entity
-            Entity mainEntity = mobMetaData.getEntity(world);
-            if (mainEntity != null) {
-                renderEntity(mainEntity,
-                        mobMetaData.getDisplayEntityScale(),
-                        left + mobMetaData.getDisplayEntityOffsetX(),
-                        top + 80 + mobMetaData.getDisplayEntityOffsetY(),
-                        partialTicks);
-            }
+    private void setModelSelectButtonsEnabled(boolean enabled) {
+        prevModelButton.enabled = enabled;
+        nextModelButton.enabled = enabled;
+    }
 
-            // Get and render extra entity
-            Entity extraEntity = mobMetaData.getExtraEntity(world);
-            if (extraEntity != null) {
-                renderEntity(extraEntity,
-                        mobMetaData.getDisplayEntityScale(),
-                        left + mobMetaData.getDisplayExtraEntityOffsetX(),
-                        top + 80 + mobMetaData.getDisplayExtraEntityOffsetY(),
-                        partialTicks);
-            }
-        } else {
+    //
+    // DRAWING
+    //
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        // Draw main GUI
+        textureManager.bindTexture(BASE_TEXTURE);
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        drawTexturedModalRect(
+                guiLeft + MAIN_GUI.LEFT,
+                guiTop + MAIN_GUI.TOP,
+                MAIN_GUI_TEXTURE_LOCATION.X,
+                MAIN_GUI_TEXTURE_LOCATION.Y,
+                MAIN_GUI.WIDTH,
+                MAIN_GUI.HEIGHT
+        );
+
+        // Draw player inventory
+        drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
+
+        if (currentModelMetadata == null) {
             // No Data Models in Learner
-            renderDefaultScreen(left, top);
+            renderDisplayStrings(defaultStringList);
+            return;
         }
-    }
 
-    private void renderCycleButtons(TextureManager textureManager, int left, int top, int mouseX, int mouseY) {
-        int x = mouseX - guiLeft;
-        int y = mouseY - guiTop;
+        // At least 1 data model -> display metadata
+        // Draw mob display box
+        drawTexturedModalRect(
+                guiLeft + MOB_DISPLAY.LEFT,
+                guiTop + MOB_DISPLAY.TOP,
+                MOB_DISPLAY_TEXTURE_LOCATION.X,
+                MOB_DISPLAY_TEXTURE_LOCATION.Y,
+                MOB_DISPLAY.WIDTH,
+                MOB_DISPLAY.HEIGHT
+        );
 
-        // Draw buttons
-        textureManager.bindTexture(EXTRAS_TEXTURE);
-        drawTexturedModalRect(left + BUTTON_PREV.LEFT, top + BUTTON_PREV.TOP, 75, 0, BUTTON_PREV.WIDTH, BUTTON_PREV.HEIGHT);
-        drawTexturedModalRect(left + BUTTON_NEXT.LEFT, top + BUTTON_NEXT.TOP, 99, 0, BUTTON_NEXT.WIDTH, BUTTON_NEXT.HEIGHT);
-
-        // Hover states
-        if (BUTTON_PREV.isInside(x, y)) {
-            drawTexturedModalRect(left + BUTTON_PREV.LEFT, top + BUTTON_PREV.TOP, 75, 24, BUTTON_PREV.WIDTH, BUTTON_PREV.HEIGHT);
-        } else if (BUTTON_NEXT.isInside(x, y)) {
-            drawTexturedModalRect(left + BUTTON_NEXT.LEFT, top + BUTTON_NEXT.TOP, 99, 24, BUTTON_NEXT.WIDTH, BUTTON_NEXT.HEIGHT);
+        // Get and render main entity
+        Entity mainEntity = currentModelMetadata.getEntity(world);
+        if (mainEntity != null) {
+            renderEntity(
+                    mainEntity,
+                    currentModelMetadata.getDisplayEntityScale(),
+                    guiLeft + MOB_DISPLAY_ENTITY.X + currentModelMetadata.getDisplayEntityOffsetX(),
+                    guiTop + MOB_DISPLAY_ENTITY.Y + currentModelMetadata.getDisplayEntityOffsetY(),
+                    partialTicks
+            );
         }
+
+        // Get and render extra entity
+        Entity extraEntity = currentModelMetadata.getExtraEntity(world);
+        if (extraEntity != null) {
+            renderEntity(
+                    extraEntity,
+                    currentModelMetadata.getDisplayEntityScale(),
+                    guiLeft + MOB_DISPLAY_ENTITY.X + currentModelMetadata.getDisplayExtraEntityOffsetX(),
+                    guiTop + MOB_DISPLAY_ENTITY.Y + currentModelMetadata.getDisplayExtraEntityOffsetY(),
+                    partialTicks
+            );
+        }
+
+        // Draw metadata text
+        renderMetaData(currentModelMetadata, currentModelStack);
     }
 
-    private void renderDefaultScreen(int left, int top) {
-        int leftStart = left + 49;
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_1"), leftStart, top + ROW_SPACING, Colors.AQUA);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_2"), leftStart, top + 2 * ROW_SPACING, Colors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_3"), leftStart, top + 3 * ROW_SPACING, Colors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_4"), leftStart, top + 4 * ROW_SPACING, Colors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_5"), leftStart, top + 6 * ROW_SPACING, Colors.WHITE);
-        drawString(fontRenderer, I18n.format("deepmoblearning.deep_learner.no_model.line_6"), leftStart, top + 7 * ROW_SPACING, Colors.WHITE);
-    }
-
-    private void renderMetaData(TextureManager textureManager, MobMetadata mobMetaData, int left, int top, ItemStack stack) {
-        int leftStart = left + 49;
-        int topStart = top - 4;
-
+    private void renderMetaData(MobMetadata mobMetaData, ItemStack stack) {
         // Get data from Data Model ItemStack
         String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(stack);
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(stack);
         String mobName = mobMetaData.getDisplayName();
         String mobPluralName = mobMetaData.getDisplayNamePlural();
         String[] mobTrivia = mobMetaData.getMobTrivia();
+
         int totalKills = DataModelHelper.getTotalKillCount(stack);
         int killsToNextTier = DataModelHelper.getKillsToNextTier(stack);
+        String tierString = DataModelHelper.isAtMaxTier(stack) ?
+                I18n.format("deepmoblearning.deep_learner.maximum") :
+                I18n.format("deepmoblearning.deep_learner.required", killsToNextTier, nextTier);
+
         int numHearts = mobMetaData.getNumberOfHearts();
 
-        drawString(fontRenderer,
-                I18n.format("deepmoblearning.deep_learner.heading_name"),
-                leftStart,
-                topStart + ROW_SPACING,
-                Colors.AQUA);
+        ImmutableList.Builder<ImmutablePair<String, Integer>> builder = ImmutableList.builder();
 
-        drawString(fontRenderer,
-                mobName,
-                leftStart,
-                topStart + (2 * ROW_SPACING),
-                Colors.WHITE);
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.heading_name"), Colors.AQUA));
+        builder.add(ImmutablePair.of(mobName, Colors.WHITE));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.heading_information"), Colors.AQUA));
+        for (String triviaLine : mobTrivia)
+            builder.add(ImmutablePair.of(triviaLine, Colors.WHITE));
+        for (int i = 0; i < 7 - (3 + mobTrivia.length); i++)
+            builder.add(ImmutablePair.of("", 0));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.model_tier", dataModelTier), Colors.WHITE));
+        builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.defeated", mobPluralName, totalKills), Colors.WHITE));
+        builder.add(ImmutablePair.of(tierString, Colors.WHITE));
 
-        drawString(fontRenderer,
-                I18n.format("deepmoblearning.deep_learner.heading_information"),
-                leftStart,
-                topStart + (3 * ROW_SPACING),
-                Colors.AQUA);
-
-        for (int i = 0; i < mobTrivia.length; i++) {
-            drawString(fontRenderer,
-                    mobTrivia[i],
-                    leftStart,
-                    topStart + (3 * ROW_SPACING) + ((i + 1) * 12),
-                    Colors.WHITE);
-        }
-
-        drawString(fontRenderer,
-                I18n.format("deepmoblearning.deep_learner.model_tier", dataModelTier),
-                leftStart,
-                topStart + (8 * ROW_SPACING),
-                Colors.WHITE);
-
-        drawString(fontRenderer,
-                I18n.format("deepmoblearning.deep_learner.defeated", mobPluralName, totalKills),
-                leftStart,
-                topStart + (9 * ROW_SPACING),
-                Colors.WHITE);
-
-        drawString(fontRenderer,
-                DataModelHelper.isAtMaxTier(stack) ?
-                        I18n.format("deepmoblearning.deep_learner.maximum") :
-                        I18n.format("deepmoblearning.deep_learner.required", killsToNextTier, nextTier),
-                leftStart,
-                topStart + (10 * ROW_SPACING),
-                Colors.WHITE);
+        renderDisplayStrings(builder.build());
 
         // Draw heart
-        textureManager.bindTexture(BASE_TEXTURE);
-        drawTexturedModalRect(left + 228, topStart + (2 * ROW_SPACING) - 2, 0, 140, 9, 9);
+        textureManager.bindTexture(BASE_TEXTURE); // rebind after string drawing
+        drawTexturedModalRect(
+                guiLeft + HEART_ICON.LEFT,
+                guiTop + HEART_ICON.TOP,
+                HEART_ICON_TEXTURE_LOCATION.X,
+                HEART_ICON_TEXTURE_LOCATION.Y,
+                HEART_ICON.WIDTH,
+                HEART_ICON.HEIGHT
+        );
 
-        drawString(fontRenderer,
+        drawString(
+                fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.health_points"),
-                left + 228,
-                topStart + ROW_SPACING,
-                Colors.AQUA);
+                guiLeft + HEALTH_POINTS_HEADER_LOCATION.X,
+                guiTop + HEALTH_POINTS_HEADER_LOCATION.Y,
+                Colors.AQUA
+        );
 
         // Obfuscate if hearts == 0 (for models with multiple mobs, e.g. Twilight Forest)
-        drawString(fontRenderer,
+        drawString(
+                fontRenderer,
                 numHearts == 0 ?
                         TextFormatting.OBFUSCATED + "10" + TextFormatting.RESET :
                         Integer.toString(numHearts),
-                left + 239,
-                topStart + (2 * ROW_SPACING) - 1,
+                guiLeft + HEALTH_POINTS_TEXT_LOCATION.X,
+                guiTop + HEALTH_POINTS_TEXT_LOCATION.Y,
                 Colors.WHITE
-                );
+        );
     }
 
-    private void renderMobDisplayBox(TextureManager textureManager, int left, int top) {
-        textureManager.bindTexture(EXTRAS_TEXTURE);
-        drawTexturedModalRect(left - 41, top, 0, 0, 75, 101);
+    private void renderDisplayStrings(ImmutableList<ImmutablePair<String, Integer>> stringList) {
+        for (int i = 0; i < stringList.size(); i++) {
+            String string = stringList.get(i).left;
+            if (!string.isEmpty())
+                drawString(
+                        fontRenderer,
+                        string,
+                        guiLeft + TEXT_START.X,
+                        guiTop + TEXT_START.Y + i * ROW_SPACING,
+                        stringList.get(i).right
+                );
+        }
     }
 
     private void renderEntity(Entity entity, int scale, int x, int y, float partialTicks) {

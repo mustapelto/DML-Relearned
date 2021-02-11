@@ -6,6 +6,7 @@ import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import mustapelto.deepmoblearning.common.util.Point;
+import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -18,19 +19,16 @@ public abstract class GuiMachine extends GuiContainerBase {
     // INIT
     //
 
-    public GuiMachine(TileEntityMachine tileEntity, EntityPlayer player, World world, int width, int height, Point redstoneModeButtonLocation) {
+    public GuiMachine(TileEntityMachine tileEntity,
+                      EntityPlayer player,
+                      World world,
+                      int width,
+                      int height,
+                      Point redstoneModeButtonLocation) {
         super(player, world, tileEntity.getContainer(player.inventory), width, height);
         this.tileEntity = tileEntity;
         this.tileEntity.setGuiOpen(true);
         this.redstoneModeButtonLocation = redstoneModeButtonLocation;
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-
-        initButtons();
-        rebuildButtonList();
     }
 
     @Override
@@ -65,5 +63,18 @@ public abstract class GuiMachine extends GuiContainerBase {
 
             DMLPacketHandler.sendToServer(new MessageRedstoneModeToServer(tileEntity, redstoneModeButton.getRedstoneMode()));
         }
+    }
+
+    protected void drawEnergyBar(Rect energyBar, Point energyBarTextureLocation) {
+        int energyBarHeight = (int)(((float) tileEntity.getEnergy() / tileEntity.getMaxEnergy()) * energyBar.HEIGHT);
+        int energyBarOffset = energyBar.HEIGHT - energyBarHeight;
+        drawTexturedModalRect(
+                guiLeft + energyBar.LEFT,
+                guiTop + energyBar.TOP + energyBarOffset,
+                energyBarTextureLocation.X,
+                energyBarTextureLocation.Y,
+                energyBar.WIDTH,
+                energyBarHeight
+        );
     }
 }

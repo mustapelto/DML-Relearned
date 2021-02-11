@@ -48,6 +48,14 @@ public abstract class GuiContainerBase extends GuiContainer {
         ySize = height;
     }
 
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        initButtons();
+        rebuildButtonList();
+    }
+
     //
     // UPDATE
     //
@@ -67,8 +75,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     /**
      * Initialize buttons. Called once when GUI is opened.
      */
-    protected abstract void initButtons();
-
+    protected void initButtons() {}
 
     /**
      * Rebuild list of buttons. Should be called whenever buttons are added/removed while GUI is open.
@@ -93,7 +100,7 @@ public abstract class GuiContainerBase extends GuiContainer {
      * @param button GUI button that was pressed.
      * @param mouseButton Mouse button that was pressed.
      */
-    protected abstract void handleButtonPress(ButtonBase button, int mouseButton);
+    protected void handleButtonPress(ButtonBase button, int mouseButton) {}
 
     //
     // DRAWING

@@ -12,7 +12,7 @@ public class ButtonDeepLearnerSelect extends ButtonBase {
     private final Direction direction;
 
     public ButtonDeepLearnerSelect(int buttonId, int x, int y, Direction direction) {
-        super(buttonId, x, y, 31, 12, TEXTURE);
+        super(buttonId, x, y, 24, 24, TEXTURE);
         this.direction = direction;
     }
 

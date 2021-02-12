@@ -11,7 +11,6 @@ import mustapelto.deepmoblearning.common.metadata.MobMetadata;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Point;
 import mustapelto.deepmoblearning.common.util.Rect;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 public class GuiDeepLearner extends GuiContainerBase {
-    // TODO: Fix: positioning, mob display (wtf???)
     // GUI TEXTURES
     public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner.png");
 
@@ -46,7 +44,7 @@ public class GuiDeepLearner extends GuiContainerBase {
     private static final Point MOB_DISPLAY_ENTITY = new Point(0, 80);
 
     // MAIN DISPLAY
-    private static final Point TEXT_START = new Point(90, 8);
+    private static final Point TEXT_START = new Point(49, 8);
     private static final Rect HEART_ICON = new Rect(228, 2 * ROW_SPACING - 6, 9, 9);
     private static final Point HEART_ICON_TEXTURE_LOCATION = new Point(75, 140);
     private static final Point HEALTH_POINTS_HEADER_LOCATION = new Point(228, ROW_SPACING - 4);
@@ -119,7 +117,6 @@ public class GuiDeepLearner extends GuiContainerBase {
             currentModelMetadata = null;
             currentModelStack = ItemStack.EMPTY;
             setModelSelectButtonsEnabled(false);
-            setModelSelectButtonsVisible(false);
             return;
         }
 
@@ -131,7 +128,6 @@ public class GuiDeepLearner extends GuiContainerBase {
         currentModelStack = dataModels.get(currentModelIndex);
         currentModelMetadata = DataModelHelper.getMobMetadata(currentModelStack);
 
-        setModelSelectButtonsVisible(true);
         setModelSelectButtonsEnabled(dataModels.size() > 1);
     }
 
@@ -168,11 +164,6 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
     }
 
-    private void setModelSelectButtonsVisible(boolean visible) {
-        prevModelButton.visible = visible;
-        nextModelButton.visible = visible;
-    }
-
     private void setModelSelectButtonsEnabled(boolean enabled) {
         prevModelButton.enabled = enabled;
         nextModelButton.enabled = enabled;
@@ -185,8 +176,8 @@ public class GuiDeepLearner extends GuiContainerBase {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         // Draw main GUI
-        textureManager.bindTexture(BASE_TEXTURE);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        textureManager.bindTexture(BASE_TEXTURE);
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
@@ -199,14 +190,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         // Draw player inventory
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
 
-        if (currentModelMetadata == null) {
-            // No Data Models in Learner
-            renderDisplayStrings(defaultStringList);
-            return;
-        }
-
-        // At least 1 data model -> display metadata
         // Draw mob display box
+        textureManager.bindTexture(BASE_TEXTURE);
         drawTexturedModalRect(
                 guiLeft + MOB_DISPLAY.LEFT,
                 guiTop + MOB_DISPLAY.TOP,
@@ -216,6 +201,13 @@ public class GuiDeepLearner extends GuiContainerBase {
                 MOB_DISPLAY.HEIGHT
         );
 
+        if (currentModelMetadata == null) {
+            // No Data Models in Learner
+            renderDisplayStrings(defaultStringList);
+            return;
+        }
+
+        // At least 1 data model -> display metadata
         // Get and render main entity
         Entity mainEntity = currentModelMetadata.getEntity(world);
         if (mainEntity != null) {
@@ -321,7 +313,7 @@ public class GuiDeepLearner extends GuiContainerBase {
     }
 
     private void renderEntity(Entity entity, int scale, int x, int y, float partialTicks) {
-        EntityRenderer entityRenderer = Minecraft.getMinecraft().entityRenderer;
+        EntityRenderer entityRenderer = mc.entityRenderer;
 
         // Don't need lightmap for GUI rendering
         entityRenderer.disableLightmap();
@@ -343,7 +335,7 @@ public class GuiDeepLearner extends GuiContainerBase {
         GlStateManager.rotate(angle, 0.0f, 1.0f, 0.0f);
 
         // Render entity
-        Minecraft.getMinecraft().getRenderManager().renderEntity(entity, 0.0f, 0.0f, 0.0f, 1.0f, 0, true);
+        mc.getRenderManager().renderEntity(entity, 0.0f, 0.0f, 0.0f, 1.0f, 0, true);
 
         GlStateManager.popMatrix();
 

@@ -379,10 +379,6 @@ public class GuiLootFabricator extends GuiMachine {
         drawEnergyBar(ENERGY_BAR, ENERGY_BAR_TEXTURE_LOCATION);
 
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
-
-        outputSelectButtons.forEach(button -> button.drawButton(mc, mouseX, mouseY, partialTicks));
-        prevPageButton.drawButton(mc, mouseX, mouseY, partialTicks);
-        nextPageButton.drawButton(mc, mouseX, mouseY, partialTicks);
     }
 
     private enum CraftingError {

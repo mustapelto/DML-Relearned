@@ -31,8 +31,8 @@ public abstract class ButtonBase extends GuiButton {
         int hoverState = getHoverState(hovered);
 
         if (visible && (texture != null)) {
-            mc.getTextureManager().bindTexture(texture);
             GlStateManager.color(1f, 1f, 1f, 1f);
+            mc.getTextureManager().bindTexture(texture);
             drawTexturedModalRect(x, y, getState() * width, hoverState * height, width, height);
         }
     }

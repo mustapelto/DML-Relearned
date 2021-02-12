@@ -11,12 +11,14 @@ import javax.annotation.Nonnull;
 public abstract class ContainerBase extends Container {
     private static final int INVENTORY_MARGIN = 9;
     private static final int INVENTORY_SLOT_SIZE = 18;
-    private static final int INVENTORY_HOTBAR_OFFSET = 67;
+    private static final int INVENTORY_HOTBAR_OFFSET = 4;
 
     protected void addInventorySlots(InventoryPlayer inventoryPlayer, int xPosition, int yPosition) {
         // Hotbar
         for (int slot = 0; slot < 9; slot++) {
-            addSlotToContainer(new Slot(inventoryPlayer, slot, xPosition + INVENTORY_SLOT_SIZE * slot, yPosition + INVENTORY_HOTBAR_OFFSET));
+            int x = xPosition + INVENTORY_MARGIN + INVENTORY_SLOT_SIZE * slot;
+            int y = yPosition + INVENTORY_MARGIN + 3 * INVENTORY_SLOT_SIZE + INVENTORY_HOTBAR_OFFSET;
+            addSlotToContainer(new Slot(inventoryPlayer, slot, x, y));
         }
 
         // Main Inventory (starting from bottom)

@@ -11,7 +11,7 @@ public class ItemPristineMatter extends ItemBase {
     private final MobMetadata mobMetadata;
 
     public ItemPristineMatter(MobMetadata mobMetadata) {
-        super("pristine_matter_" + mobMetadata.getItemID(), 64, mobMetadata.isModLoaded());
+        super(mobMetadata.getPristineMatterName(), 64, mobMetadata.isModLoaded());
         this.mobMetadata = mobMetadata;
     }
 

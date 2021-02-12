@@ -21,7 +21,7 @@ public class ItemDataModel extends ItemBase {
     private final MobMetadata metadata;
 
     public ItemDataModel(MobMetadata metadata) {
-        super("data_model_" + metadata.getItemID(), 1, metadata.isModLoaded());
+        super(metadata.getDataModelName(), 1, metadata.isModLoaded());
         this.metadata = metadata;
     }
 

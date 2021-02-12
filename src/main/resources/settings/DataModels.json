@@ -5,6 +5,9 @@
       "displayName": "Blaze",
       "livingMatter": "hellish",
       "simulationRFCost": 256,
+      "craftingIngredients": [
+        { "item": "minecraft:blaze_powder" }
+      ],
       "associatedMobs": [
         "minecraft:blaze"
       ],

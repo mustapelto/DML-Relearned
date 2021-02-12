@@ -17,26 +17,10 @@ public class DataModelTierDataManager {
 
     public static void init() {
         configFile = new File(FileHelper.configDML, FILE_NAME);
-
-        if (!configFile.exists()) {
-            readDefaultFile();
-            writeConfigFile();
-            return;
-        }
+        if (!configFile.exists())
+            FileHelper.copyFromJar("/settings/" + FILE_NAME, configFile.toPath());
 
         readConfigFile();
-    }
-
-    private static void readDefaultFile() {
-        JsonArray dataArray;
-        try {
-            dataArray = FileHelper.readArray("/settings/" + FILE_NAME);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not read default Data Model Tier config file! This will cause the mod to malfunction.");
-            return;
-        }
-
-        populateDataStore(dataArray);
     }
 
     private static void readConfigFile() {
@@ -57,20 +41,6 @@ public class DataModelTierDataManager {
             DataModelTierData dataModelTierData = DataModelTierData.deserialize(i, element);
             dataStore.put(i, dataModelTierData);
             maxLevel++;
-        }
-    }
-
-    private static void writeConfigFile() {
-        JsonArray data = new JsonArray();
-
-        for (DataModelTierData entry : dataStore.values()) {
-            data.add(entry.serialize());
-        }
-
-        try {
-            FileHelper.writeArray(data, configFile);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not write Data Model Tier config file!");
         }
     }
 

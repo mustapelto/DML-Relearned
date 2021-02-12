@@ -8,13 +8,12 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import mustapelto.deepmoblearning.common.util.FileHelper;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MobMetadataManager {
     private static final LinkedHashMap<String, MobMetadata> dataStore = new LinkedHashMap<>();
@@ -23,25 +22,10 @@ public class MobMetadataManager {
 
     public static void init() {
         configFile = new File(FileHelper.configDML, FILE_NAME);
-        if (!configFile.exists()) {
-            readDefaultFile();
-            writeConfigFile();
-            return;
-        }
+        if (!configFile.exists())
+            FileHelper.copyFromJar("/settings/" + FILE_NAME, configFile.toPath());
 
         readConfigFile();
-    }
-
-    private static void readDefaultFile() {
-        JsonObject dataObject;
-        try {
-            dataObject = FileHelper.readObject("/settings/" + FILE_NAME);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not read default Data Model config file! This will cause the mod to malfunction.");
-            return;
-        }
-
-        populateDataStore(dataObject);
     }
 
     private static void readConfigFile() {
@@ -67,23 +51,6 @@ public class MobMetadataManager {
                 if (mobData != null)
                     dataStore.put(mobData.getItemID(), mobData);
             }
-        }
-    }
-
-    private static void writeConfigFile() {
-        JsonObject data = new JsonObject();
-
-        for (MobMetadata entry : dataStore.values()) {
-            String modID = entry.getModID();
-            if (!data.has(modID))
-                data.add(modID, new JsonArray());
-            data.get(modID).getAsJsonArray().add(entry.serialize());
-        }
-
-        try {
-            FileHelper.writeObject(data, configFile);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not write Data Model config file!");
         }
     }
 
@@ -113,5 +80,16 @@ public class MobMetadataManager {
         });
 
         return builder.build();
+    }
+
+    public static IRecipe[] getCraftingRecipes() {
+        List<IRecipe> recipes = new ArrayList<>();
+
+        dataStore.forEach((k, v) -> {
+           if (v.isModLoaded())
+               recipes.add(v.getCraftingRecipe());
+        });
+
+        return recipes.toArray(new IRecipe[0]);
     }
 }

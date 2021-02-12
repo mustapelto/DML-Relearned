@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "DMD",
+    "YCY"
+  ],
+  "key": {
+    "M": { "item": "deepmoblearning:machine_casing", "data": 0 },
+    "G": { "type": "forge:ore_dict", "ore": "ingotGold" },
+    "D": { "type": "forge:ore_dict", "ore": "gemDiamond" },
+    "C": { "item": "minecraft:comparator", "data": 0 },
+    "Y": { "type": "forge:ore_dict", "ore": "dyeYellow" }
+  },
+  "result": {
+    "item": "deepmoblearning:extraction_chamber"
+  }
+}

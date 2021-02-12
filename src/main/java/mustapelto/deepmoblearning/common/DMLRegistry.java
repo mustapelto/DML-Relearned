@@ -3,6 +3,7 @@ package mustapelto.deepmoblearning.common;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.blocks.*;
+import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
 import mustapelto.deepmoblearning.common.metadata.MobMetadataManager;
@@ -13,6 +14,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -52,6 +55,9 @@ public class DMLRegistry {
     public static final ItemGlitchArmor.ItemGlitchLeggings ITEM_GLITCH_LEGGINGS = new ItemGlitchArmor.ItemGlitchLeggings();
     public static final ItemGlitchArmor.ItemGlitchBoots ITEM_GLITCH_BOOTS = new ItemGlitchArmor.ItemGlitchBoots();
     public static final ItemGlitchSword ITEM_GLITCH_SWORD = new ItemGlitchSword();
+
+    // Entity ID
+    private static int entityId = 0;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -109,5 +115,21 @@ public class DMLRegistry {
 
         // Register ItemBlocks
         registeredBlocks.forEach(block -> registry.register(block.getItemBlock()));
+    }
+
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
+        IForgeRegistry<EntityEntry> registry = event.getRegistry();
+
+        final ResourceLocation itemGlitchFragmentRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "item_glitch_fragment");
+
+        EntityEntry itemGlitchFragment = EntityEntryBuilder.create()
+                .entity(EntityItemGlitchFragment.class)
+                .id(itemGlitchFragmentRegistryName, entityId++)
+                .name(itemGlitchFragmentRegistryName.getResourcePath())
+                .tracker(64, 1, true)
+                .build();
+
+        registry.registerAll(itemGlitchFragment);
     }
 }

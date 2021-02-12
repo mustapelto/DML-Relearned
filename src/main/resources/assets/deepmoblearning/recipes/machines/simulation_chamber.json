@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "PMP",
+    "DCD"
+  ],
+  "key": {
+    "M": { "item": "deepmoblearning:machine_casing", "data": 0 },
+    "P": { "type": "forge:ore_dict", "ore": "enderpearl" },
+    "G": { "item": "minecraft:glass_pane", "data": 0 },
+    "C": { "item": "minecraft:comparator", "data": 0 },
+    "D": { "type": "forge:ore_dict", "ore": "gemLapis" }
+  },
+  "result": {
+    "item": "deepmoblearning:simulation_chamber"
+  }
+}

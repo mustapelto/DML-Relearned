@@ -61,21 +61,4 @@ public class DataModelTierData {
     public int getPristineChance() {
         return pristineChance;
     }
-
-    public JsonObject serialize() {
-        JsonObject object = new JsonObject();
-
-        object.addProperty("displayName", displayName);
-        object.addProperty("displayColor", displayColor);
-        if (killMultiplier > 0)
-            object.addProperty("killMultiplier", killMultiplier);
-        if (dataToNext > 0)
-            object.addProperty("dataToNext", dataToNext);
-        if (pristineChance > 0)
-            object.addProperty("pristineChance", pristineChance);
-        if (!canSimulate)
-            object.addProperty("canSimulate", false);
-
-        return object;
-    }
 }

@@ -25,6 +25,10 @@ public class JsonHelper {
         return data.has(key) ? jsonArrayToStringArray(data.get(key).getAsJsonArray()) : defaultValue;
     }
 
+    public static JsonArray getJsonArray(JsonObject data, String key) {
+        return data.has(key) ? data.getAsJsonArray(key) : new JsonArray();
+    }
+
     public static String[] jsonArrayToStringArray(JsonArray input) {
         String[] result = new String[input.size()];
 
@@ -32,14 +36,6 @@ public class JsonHelper {
             result[i] = input.get(i).getAsString();
         }
 
-        return result;
-    }
-
-    public static JsonArray stringArrayToJsonArray(String[] list) {
-        JsonArray result = new JsonArray();
-        for (String item : list) {
-            result.add(item);
-        }
         return result;
     }
 }

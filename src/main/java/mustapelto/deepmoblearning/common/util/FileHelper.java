@@ -4,13 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class FileHelper {
     public static File configRoot;
@@ -25,20 +26,17 @@ public class FileHelper {
         }
     }
 
-    public static JsonObject readObject(File file) throws IOException {
-        try (JsonReader reader = new JsonReader(new FileReader(file))) {
-            JsonParser parser = new JsonParser();
-            reader.setLenient(true);
-            JsonElement element = parser.parse(reader);
-            return element.getAsJsonObject();
+    public static void copyFromJar(String internalPath, Path target) {
+        try (InputStream input = DMLRelearned.class.getResourceAsStream(internalPath)) {
+            Files.copy(input, target, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            DMLRelearned.logger.error("Error extracting default file from mod jar!");
+            DMLRelearned.logger.error(e);
         }
     }
 
-    public static JsonObject readObject(String internalFile) throws IOException {
-        try (
-                InputStream in = DMLRelearned.class.getResourceAsStream(internalFile);
-                JsonReader reader = new JsonReader(new InputStreamReader(in))
-                ){
+    public static JsonObject readObject(File file) throws IOException {
+        try (JsonReader reader = new JsonReader(new FileReader(file))) {
             JsonParser parser = new JsonParser();
             reader.setLenient(true);
             JsonElement element = parser.parse(reader);
@@ -52,34 +50,6 @@ public class FileHelper {
             reader.setLenient(true);
             JsonElement element = parser.parse(reader);
             return element.getAsJsonArray();
-        }
-    }
-
-    public static JsonArray readArray(String internalFile) throws IOException {
-        try (
-                InputStream in = DMLRelearned.class.getResourceAsStream(internalFile);
-                JsonReader reader = new JsonReader(new InputStreamReader(in))
-        ){
-            JsonParser parser = new JsonParser();
-            reader.setLenient(true);
-            JsonElement element = parser.parse(reader);
-            return element.getAsJsonArray();
-        }
-    }
-
-    public static void writeObject(JsonObject object, File file) throws IOException {
-        try (JsonWriter writer = new JsonWriter(new FileWriter(file))) {
-            writer.setIndent("  ");
-            Streams.write(object, writer);
-            writer.flush();
-        }
-    }
-
-    public static void writeArray(JsonArray array, File file) throws IOException {
-        try (JsonWriter writer = new JsonWriter(new FileWriter(file))) {
-            writer.setIndent("  ");
-            Streams.write(array, writer);
-            writer.flush();
         }
     }
 }

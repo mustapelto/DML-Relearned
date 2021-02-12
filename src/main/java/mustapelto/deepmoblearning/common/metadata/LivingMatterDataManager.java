@@ -22,26 +22,10 @@ public class LivingMatterDataManager {
 
     public static void init() {
         configFile = new File(FileHelper.configDML, FILE_NAME);
-
-        if (!configFile.exists()) {
-            readDefaultFile();
-            writeConfigFile();
-            return;
-        }
+        if (!configFile.exists())
+            FileHelper.copyFromJar("/settings/" + FILE_NAME, configFile.toPath());
 
         readConfigFile();
-    }
-
-    private static void readDefaultFile() {
-        JsonObject dataObject;
-        try {
-            dataObject = FileHelper.readObject("/settings/" + FILE_NAME);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not read default Living Matter config file! This will cause the mod to malfunction.");
-            return;
-        }
-
-        populateDataStore(dataObject);
     }
 
     private static void readConfigFile() {
@@ -72,24 +56,6 @@ public class LivingMatterDataManager {
             }
         }
     }
-
-    private static void writeConfigFile() {
-        JsonObject data = new JsonObject();
-
-        for (LivingMatterData entry : dataStore.values()) {
-            String modID = entry.getModID();
-            if (!data.has(modID))
-                data.add(modID, new JsonArray());
-            data.get(modID).getAsJsonArray().add(entry.serialize());
-        }
-
-        try {
-            FileHelper.writeObject(data, configFile);
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not write Living Matter config file!");
-        }
-    }
-
 
     /**
      * @param id id of living matter type

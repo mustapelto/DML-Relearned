@@ -14,6 +14,7 @@ import java.util.Map;
 @Config(modid = DMLConstants.ModInfo.ID, name = "dml_relearned/dml_relearned", category = "")
 @EventBusSubscriber
 public class DMLConfig {
+    // TODO: Sidedness config,
     @Name("General Settings")
     public static GeneralSettings GENERAL_SETTINGS = new GeneralSettings();
 

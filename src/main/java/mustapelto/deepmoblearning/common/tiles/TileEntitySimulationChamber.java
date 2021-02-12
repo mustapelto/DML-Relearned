@@ -39,8 +39,6 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
     private boolean pristineSuccess = false;
 
-    //TODO: sidedness config
-
     public TileEntitySimulationChamber() {
         super(DMLConstants.SimulationChamber.ENERGY_CAPACITY, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
     }

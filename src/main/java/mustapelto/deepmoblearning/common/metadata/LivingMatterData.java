@@ -72,10 +72,6 @@ public class LivingMatterData {
         return getItemStack(1);
     }
 
-    public String getModID() {
-        return modID;
-    }
-
     public String getItemID() {
         return itemID;
     }
@@ -93,16 +89,5 @@ public class LivingMatterData {
 
     public int getXpValue() {
         return xpValue;
-    }
-
-    public JsonObject serialize() {
-        JsonObject object = new JsonObject();
-
-        object.addProperty("itemID", itemID);
-        object.addProperty("displayName", displayName);
-        object.addProperty("displayColor", displayColor);
-        object.addProperty("xpValue", xpValue);
-
-        return object;
     }
 }

@@ -8,7 +8,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 
 public class ItemHandlerPristineMatter extends ItemStackHandler {
-    private MobMetadata pristineType;
+    private MobMetadata mobMetadata;
 
     @Nonnull
     @Override
@@ -17,17 +17,25 @@ public class ItemHandlerPristineMatter extends ItemStackHandler {
     }
 
     @Override
+    protected void onLoad() {
+        mobMetadata = ItemPristineMatter.getMobMetadata(getStackInSlot(0));
+    }
+
+    @Override
     protected void onContentsChanged(int slot) {
-        MobMetadata newPristineType = ItemPristineMatter.getMobMetadata(getStackInSlot(slot));
-        if (newPristineType != pristineType) {
-            pristineType = newPristineType;
+        if (slot != 0)
+            return;
+
+        MobMetadata newMobMetadata = ItemPristineMatter.getMobMetadata(getStackInSlot(0));
+        if (newMobMetadata != mobMetadata) {
+            mobMetadata = newMobMetadata;
             onPristineTypeChanged();
         }
     }
 
     protected void onPristineTypeChanged() {}
 
-    public MobMetadata getPristineType() {
-        return pristineType;
+    public MobMetadata getMobMetadata() {
+        return mobMetadata;
     }
 }

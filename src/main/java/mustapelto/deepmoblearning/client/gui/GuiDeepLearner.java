@@ -36,7 +36,7 @@ public class GuiDeepLearner extends GuiContainerBase {
     private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
 
     // PLAYER INVENTORY
-    private static final Point PLAYER_INVENTORY = new Point(81, 145);
+    public static final Point PLAYER_INVENTORY = new Point(81, 145);
 
     // MOB DISPLAY
     private static final Rect MOB_DISPLAY = new Rect(-41, 0, 75, 101);
@@ -49,6 +49,14 @@ public class GuiDeepLearner extends GuiContainerBase {
     private static final Point HEART_ICON_TEXTURE_LOCATION = new Point(75, 140);
     private static final Point HEALTH_POINTS_HEADER_LOCATION = new Point(228, ROW_SPACING - 4);
     private static final Point HEALTH_POINTS_TEXT_LOCATION = new Point(239, 2 * ROW_SPACING - 4);
+
+    // ITEM SLOTS
+    public static final ImmutableList<Point> DATA_MODEL_SLOTS = ImmutableList.of(
+            new Point(257, 100),
+            new Point(275, 100),
+            new Point(257, 118),
+            new Point(275, 118)
+    );
 
     // BUTTONS
     private static final Point PREV_MODEL_BUTTON = new Point(-27, 105);

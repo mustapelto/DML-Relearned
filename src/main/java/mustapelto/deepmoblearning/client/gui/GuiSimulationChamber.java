@@ -28,7 +28,7 @@ public class GuiSimulationChamber extends GuiMachine {
     private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
 
     // PLAYER INVENTORY
-    private static final Point PLAYER_INVENTORY = new Point(28, 145);
+    public static final Point PLAYER_INVENTORY = new Point(28, 145);
 
     // STATUS DISPLAY
     private static final Point INFO_BOX = new Point(18, 9);

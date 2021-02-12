@@ -8,7 +8,7 @@ import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.*;
 
 public class ContainerSimulationChamber extends ContainerMachine {
     public ContainerSimulationChamber(TileEntitySimulationChamber tileEntity, InventoryPlayer inventoryPlayer) {
-        super(tileEntity, inventoryPlayer, 36, 153);
+        super(tileEntity, inventoryPlayer, PLAYER_INVENTORY.X, PLAYER_INVENTORY.Y);
     }
 
     @Override

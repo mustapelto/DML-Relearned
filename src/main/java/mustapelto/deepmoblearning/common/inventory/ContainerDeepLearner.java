@@ -1,14 +1,18 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.util.Point;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
+import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.DATA_MODEL_SLOTS;
+import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.PLAYER_INVENTORY;
+
 public class ContainerDeepLearner extends ContainerBase {
-    public static final int INTERNAL_SLOTS = 4;
+    public static final int INTERNAL_SLOTS = DATA_MODEL_SLOTS.size();
     private final ItemHandlerDataModel itemHandler;
 
     private final int deepLearnerSlotIndex; // inventory slot to make inaccessible while GUI open
@@ -29,14 +33,14 @@ public class ContainerDeepLearner extends ContainerBase {
         deepLearnerSlotIndex = (dlSlot >= 0) ? dlSlot + INTERNAL_SLOTS : dlSlot;
 
         addDataModelSlots();
-        addInventorySlots(player.inventory, 89, 153);
+        addInventorySlots(player.inventory, PLAYER_INVENTORY.X, PLAYER_INVENTORY.Y);
     }
 
     private void addDataModelSlots() {
-        addSlotToContainer(new SlotDataModel(itemHandler, 0, 257, 100));
-        addSlotToContainer(new SlotDataModel(itemHandler, 1, 275, 100));
-        addSlotToContainer(new SlotDataModel(itemHandler, 2, 257, 118));
-        addSlotToContainer(new SlotDataModel(itemHandler, 3, 275, 118));
+        for (int i = 0; i < INTERNAL_SLOTS; i++) {
+            Point coords = DATA_MODEL_SLOTS.get(i);
+            addSlotToContainer(new SlotDataModel(itemHandler, i, coords.X, coords.Y));
+        }
     }
 
     @Override

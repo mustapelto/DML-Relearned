@@ -119,7 +119,7 @@ public abstract class GuiContainerBase extends GuiContainer {
      */
     protected void drawPlayerInventory(int x, int y) {
         textureManager.bindTexture(PLAYER_INVENTORY_TEXTURE);
-        drawTexturedModalRect(x, y, 0, 0, 176, 90);
+        drawTexturedModalRect(x, y, 0, 0, 177, 91);
     }
 
     @Override

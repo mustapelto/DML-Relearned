@@ -35,7 +35,7 @@ public class GuiLootFabricator extends GuiMachine {
     private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
 
     // PLAYER INVENTORY
-    private static final Point PLAYER_INVENTORY = new Point(0, 88);
+    public static final Point PLAYER_INVENTORY = new Point(0, 88);
 
     // ITEM SLOT LOCATIONS
     public static final Point INPUT_SLOT = new Point(79, 62);
@@ -368,7 +368,7 @@ public class GuiLootFabricator extends GuiMachine {
         if (craftingError != CraftingError.NONE && (ticks % ERROR_BAR_CYCLE < (ERROR_BAR_CYCLE / 2))) {
             drawTexturedModalRect(
                     guiLeft + PROGRESS_BAR.LEFT,
-                    guiTop + PROGRESS_BAR.TOP,
+                    guiTop + PROGRESS_BAR.TOP + 1,
                     ERROR_BAR_TEXTURE_LOCATION.X,
                     ERROR_BAR_TEXTURE_LOCATION.Y,
                     PROGRESS_BAR.WIDTH,

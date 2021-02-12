@@ -9,17 +9,21 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public abstract class ContainerBase extends Container {
+    private static final int INVENTORY_MARGIN = 9;
+    private static final int INVENTORY_SLOT_SIZE = 18;
+    private static final int INVENTORY_HOTBAR_OFFSET = 67;
+
     protected void addInventorySlots(InventoryPlayer inventoryPlayer, int xPosition, int yPosition) {
         // Hotbar
         for (int slot = 0; slot < 9; slot++) {
-            addSlotToContainer(new Slot(inventoryPlayer, slot, xPosition + 18 * slot, yPosition + 58));
+            addSlotToContainer(new Slot(inventoryPlayer, slot, xPosition + INVENTORY_SLOT_SIZE * slot, yPosition + INVENTORY_HOTBAR_OFFSET));
         }
 
         // Main Inventory (starting from bottom)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                int x = xPosition + 18 * col;
-                int y = yPosition + 18 * row;
+                int x = xPosition + INVENTORY_MARGIN + INVENTORY_SLOT_SIZE * col;
+                int y = yPosition + INVENTORY_MARGIN + INVENTORY_SLOT_SIZE * row;
                 int index = col + 9 * row + 9;
                 addSlotToContainer(new Slot(inventoryPlayer, index, x, y));
             }

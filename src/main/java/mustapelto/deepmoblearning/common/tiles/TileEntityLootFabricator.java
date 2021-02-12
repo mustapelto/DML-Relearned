@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityLootFabricator extends TileEntityMachine {
-    // TODO: Fix null pointer exception on world load (in onPristineTypeChanged())
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
         protected void onPristineTypeChanged() {
@@ -88,7 +87,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     }
 
     public MobMetadata getMobMetadata() {
-        return inputPristineMatter.getPristineType();
+        return inputPristineMatter.getMobMetadata();
     }
 
     private ItemStack getOutputItem() {
@@ -110,10 +109,8 @@ public class TileEntityLootFabricator extends TileEntityMachine {
      * (Server only) Reset crafting state on pristine matter change.
      */
     private void onPristineTypeChanged() {
-        if (!world.isRemote) {
-            outputItemIndex = -1;
-            resetCrafting();
-        }
+        outputItemIndex = -1;
+        resetCrafting();
     }
 
     public ItemStack getPristineMatter() {

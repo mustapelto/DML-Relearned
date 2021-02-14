@@ -6,7 +6,7 @@ import mustapelto.deepmoblearning.client.gui.GuiLootFabricator;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -86,19 +86,19 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
 
-    public MobMetadata getMobMetadata() {
-        return inputPristineMatter.getMobMetadata();
+    public MetadataDataModel getDataModelMetadata() {
+        return inputPristineMatter.getDataModelMetadata();
     }
 
     private ItemStack getOutputItem() {
         if (outputItemIndex == -1)
             return ItemStack.EMPTY;
 
-        MobMetadata mobMetadata = getMobMetadata();
-        if (mobMetadata == null)
+        MetadataDataModel metadata = getDataModelMetadata();
+        if (metadata.isInvalid())
             return ItemStack.EMPTY;
 
-        return mobMetadata.getLootItem(outputItemIndex);
+        return metadata.getLootItem(outputItemIndex);
     }
 
     //

@@ -1,7 +1,5 @@
 package mustapelto.deepmoblearning;
 
-import net.minecraftforge.fml.common.Loader;
-
 public class DMLConstants {
     public static final class ModInfo {
         public static final String ID = "deepmoblearning";
@@ -15,9 +13,6 @@ public class DMLConstants {
         public static final String PATCHOULI = "patchouli";
         public static final String CRAFT_TWEAKER = "crafttweaker";
         public static final String DEP_STRING = ""; //"";after:" + PATCHOULI + ";after:" + CRAFT_TWEAKER;
-        public static boolean isLoaded(String modName) {
-            return Loader.isModLoaded(modName);
-        }
     }
 
     public static final class Crafting {

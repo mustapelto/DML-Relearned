@@ -4,7 +4,7 @@ import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLevelUpModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
-import mustapelto.deepmoblearning.common.util.TextHelper;
+import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -53,9 +53,9 @@ public class ItemCreativeModelLearner extends ItemBase {
             String sprintName = Minecraft.getMinecraft().gameSettings.keyBindSprint.getDisplayName();
             String useName = Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName();
 
-            String increaseTier = TextHelper.getFormattedString(TextFormatting.ITALIC, sneakName + " + " + useName, TextFormatting.GRAY);
-            String decreaseTier = TextHelper.getFormattedString(TextFormatting.ITALIC, sprintName + " + " + useName, TextFormatting.GRAY);
-            String increaseKills = TextHelper.getFormattedString(TextFormatting.ITALIC, useName, TextFormatting.GRAY);
+            String increaseTier = StringHelper.getFormattedString(TextFormatting.ITALIC, sneakName + " + " + useName, TextFormatting.GRAY);
+            String decreaseTier = StringHelper.getFormattedString(TextFormatting.ITALIC, sprintName + " + " + useName, TextFormatting.GRAY);
+            String increaseKills = StringHelper.getFormattedString(TextFormatting.ITALIC, useName, TextFormatting.GRAY);
             tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_tier", increaseTier));
             tooltip.add(I18n.format("deepmoblearning.creative_model_learner.decrease_tier", decreaseTier));
             tooltip.add(I18n.format("deepmoblearning.creative_model_learner.increase_kills", increaseKills));

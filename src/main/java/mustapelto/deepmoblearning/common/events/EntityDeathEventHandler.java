@@ -4,7 +4,7 @@ import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +39,7 @@ public class EntityDeathEventHandler {
     }
 
     private static void handlePlayerDeath(LivingDeathEvent event) {
-
+        // TODO: implement
     }
 
     private static void handleMobDeath(LivingDeathEvent event) {
@@ -89,7 +89,7 @@ public class EntityDeathEventHandler {
         // Chance to drop pristine matter from the model that gained data
         if (ItemGlitchArmor.isSetEquipped(player)) {
             // TODO: Don't run if player in trial
-            ItemGlitchArmor.dropPristineMatter(event.getEntityLiving().world, event.getEntityLiving().getPosition(), updatedModels.get(0), player);
+            ItemGlitchArmor.dropPristineMatter(event.getEntityLiving().world, event.getEntityLiving().getPosition(), updatedModels.get(0));
         }
 
         if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword) {
@@ -113,12 +113,12 @@ public class EntityDeathEventHandler {
             if (!(stack.getItem() instanceof ItemDataModel))
                 return;
 
-            MobMetadata mobMetaData = DataModelHelper.getMobMetadata(stack);
+            MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(stack);
 
-            if (mobMetaData == null)
+            if (dataModelMetadata.isInvalid())
                 return;
 
-            if (mobMetaData.isAssociatedMob(event.getEntityLiving())) {
+            if (dataModelMetadata.isAssociatedMob(event.getEntityLiving())) {
                 DataModelHelper.addKill(stack, player);
                 updatedModels.add(stack);
             }

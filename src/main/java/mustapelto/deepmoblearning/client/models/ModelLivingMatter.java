@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.models;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -85,7 +85,7 @@ public class ModelLivingMatter implements IModel {
 
         private void initTextureCache() {
             textureCache.clear();
-            textureCache.putAll(LivingMatterDataManager.getLivingMatterTextures());
+            textureCache.putAll(MetadataManagerLivingMatter.INSTANCE.getLivingMatterTextures());
             modelCache.clear();
         }
     }

@@ -3,9 +3,9 @@ package mustapelto.deepmoblearning.common.util;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
-import mustapelto.deepmoblearning.common.metadata.DataModelTierData;
-import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 
@@ -39,8 +40,8 @@ public class DataModelHelper {
             NBTHelper.removeKey(stack, "simulationCount");
             NBTHelper.removeKey(stack, "killCount");
 
-            DataModelTierData tierData = getTierData(stack);
-            if (tierData == null)
+            MetadataDataModelTier tierData = getTierData(stack);
+            if (tierData.isInvalid())
                 return 0;
 
             NBTHelper.setInteger(stack, "dataCount", currentSimulations + currentKills * tierData.getKillMultiplier());
@@ -78,56 +79,56 @@ public class DataModelHelper {
         return stackItem instanceof ItemDataModel ? (ItemDataModel) stackItem : null;
     }
 
-    @Nullable
-    public static MobMetadata getMobMetadata(ItemStack stack) {
+    @Nonnull
+    public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
         ItemDataModel stackItem = getDataModelItem(stack);
-        return stackItem != null ? stackItem.getMobMetadata() : null;
+        return stackItem != null ? stackItem.getDataModelMetadata() : MetadataDataModel.INVALID;
     }
 
-    @Nullable
-    private static DataModelTierData getTierData(ItemStack stack) {
-        return DataModelTierDataManager.getByLevel(getTierLevel(stack));
+    @Nonnull
+    private static MetadataDataModelTier getTierData(ItemStack stack) {
+        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(getTierLevel(stack));
     }
 
-    @Nullable
-    private static DataModelTierData getNextTierData(ItemStack stack) {
-        return DataModelTierDataManager.getByLevel(getTierLevel(stack) + 1);
+    @Nonnull
+    private static MetadataDataModelTier getNextTierData(ItemStack stack) {
+        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(getTierLevel(stack) + 1);
     }
 
     public static boolean isAtMaxTier(ItemStack stack) {
         // also true if "over max" (in case config has been changed on a running world to include fewer tiers)
-        return getTierLevel(stack) >= DataModelTierDataManager.getMaxLevel();
+        return getTierLevel(stack) >= MetadataManagerDataModelTiers.INSTANCE.getMaxLevel();
     }
 
     public static boolean canSimulate(ItemStack stack) {
         // Can this model be run in a simulation chamber?
-        DataModelTierData data = getTierData(stack);
-        return data != null && data.getCanSimulate();
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() && data.getCanSimulate();
     }
 
     public static String getTierDisplayNameFormatted(ItemStack stack) {
-        DataModelTierData data = getTierData(stack);
-        return (data != null) ? data.getDisplayNameFormatted() : "";
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() ? data.getDisplayNameFormatted() : "";
     }
 
     public static String getTierDisplayNameFormatted(ItemStack stack, String template) {
-        DataModelTierData data = getTierData(stack);
-        return (data != null) ? data.getDisplayNameFormatted(template) : "";
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() ? data.getDisplayNameFormatted(template) : "";
     }
 
     public static String getNextTierDisplayNameFormatted(ItemStack stack) {
-        DataModelTierData data = getNextTierData(stack);
-        return (data != null) ? data.getDisplayNameFormatted() : "";
+        MetadataDataModelTier data = getNextTierData(stack);
+        return !data.isInvalid() ? data.getDisplayNameFormatted() : "";
     }
 
     public static int getTierRequiredData(ItemStack stack) {
-        DataModelTierData data = getTierData(stack);
-        return (data != null) ? data.getDataToNext() : 0;
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() ? data.getDataToNext() : 0;
     }
 
     public static int getTierKillMultiplier(ItemStack stack) {
-        DataModelTierData data = getTierData(stack);
-        return (data != null) ? data.getKillMultiplier() : 0;
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() ? data.getKillMultiplier() : 0;
     }
 
     public static int getKillsToNextTier(ItemStack stack) {
@@ -138,13 +139,13 @@ public class DataModelHelper {
     }
 
     public static int getSimulationEnergy(ItemStack stack) {
-        MobMetadata data = getMobMetadata(stack);
-        return (data != null) ? data.getSimulationRFCost() : 0;
+        MetadataDataModel data = getDataModelMetadata(stack);
+        return !data.isInvalid() ? data.getSimulationRFCost() : 0;
     }
 
     public static int getPristineChance(ItemStack stack) {
-        DataModelTierData data = getTierData(stack);
-        return (data != null) ? data.getPristineChance() : 0;
+        MetadataDataModelTier data = getTierData(stack);
+        return !data.isInvalid() ? data.getPristineChance() : 0;
     }
 
     /**
@@ -153,10 +154,10 @@ public class DataModelHelper {
      * @return true if Data Model's associated Living Matter matches Living Matter stack
      */
     public static boolean getDataModelMatchesLivingMatter(ItemStack dataModel, ItemStack livingMatter) {
-        MobMetadata data = getMobMetadata(dataModel);
-        if (data == null)
+        MetadataDataModel data = getDataModelMetadata(dataModel);
+        if (data.isInvalid())
             return false;
-        return data.getLivingMatterData().getItemStack().isItemEqual(livingMatter);
+        return data.getLivingMatter().isItemEqual(livingMatter);
     }
 
     /**
@@ -165,8 +166,8 @@ public class DataModelHelper {
      * @return true if Data Model's associated Pristine Matter matches Pristine Matter stack
      */
     public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
-        MobMetadata data = getMobMetadata(dataModel);
-        if (data == null)
+        MetadataDataModel data = getDataModelMetadata(dataModel);
+        if (data.isInvalid())
             return false;
         return data.getPristineMatter().isItemEqual(pristineMatter);
     }
@@ -198,8 +199,8 @@ public class DataModelHelper {
     }
 
     public static void addKill(ItemStack stack, EntityPlayerMP player) {
-        DataModelTierData tierData = getTierData(stack);
-        if (tierData == null)
+        MetadataDataModelTier tierData = getTierData(stack);
+        if (tierData.isInvalid())
             return;
 
         int increase = tierData.getKillMultiplier();

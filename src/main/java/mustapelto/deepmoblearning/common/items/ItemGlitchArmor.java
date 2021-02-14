@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.common.items;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -68,12 +68,12 @@ public abstract class ItemGlitchArmor extends ItemArmor {
                 player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() instanceof ItemGlitchArmor;
     }
 
-    public static void dropPristineMatter(World world, BlockPos position, ItemStack dataModel, EntityPlayer player) {
+    public static void dropPristineMatter(World world, BlockPos position, ItemStack dataModel) {
         if (ThreadLocalRandom.current().nextInt(1, 100) <= DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE) {
-            MobMetadata mobMetaData = DataModelHelper.getMobMetadata(dataModel);
-            if (mobMetaData == null)
+            MetadataDataModel metadata = DataModelHelper.getDataModelMetadata(dataModel);
+            if (metadata.isInvalid())
                 return;
-            EntityItem drop = new EntityItem(world, position.getX(), position.getY(), position.getZ(), mobMetaData.getPristineMatter());
+            EntityItem drop = new EntityItem(world, position.getX(), position.getY(), position.getZ(), metadata.getPristineMatter());
             drop.setDefaultPickupDelay();
             world.spawnEntity(drop);
         }

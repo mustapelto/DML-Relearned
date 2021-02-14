@@ -321,10 +321,10 @@ public class GuiSimulationChamber extends GuiMachine {
             strings = emptyDisplayAnimator.getCurrentStrings();
         } else if (redstoneDeactivated) {
             strings = new ArrayList<>();
-            strings.add(TextFormatting.RED + TextHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_1"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_2"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
-            strings.add(TextFormatting.RED + TextHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + StringHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + StringHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_1"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + StringHelper.pad(I18n.format("deepmoblearning.simulation_chamber.redstone_deactivated_2"), REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
+            strings.add(TextFormatting.RED + StringHelper.getDashedLine(REDSTONE_DEACTIVATED_LINE_LENGTH) + TextFormatting.RESET);
         } else if (simulationError != SimulationError.NONE) {
             simulationErrorAnimator.advance(advanceAmount);
             strings = simulationErrorAnimator.getCurrentStrings();

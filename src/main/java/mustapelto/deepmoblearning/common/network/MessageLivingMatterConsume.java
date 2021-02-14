@@ -47,7 +47,7 @@ public class MessageLivingMatterConsume implements IMessage {
 
         private void consumeMatter(ItemStack matterStack, boolean consumeStack, EntityPlayerMP player) {
             ItemLivingMatter matterItem = (ItemLivingMatter) matterStack.getItem();
-            int xp = matterItem.getData().getXpValue();
+            int xp = matterItem.getLivingMatterData().getXpValue();
 
             if (consumeStack) {
                 int size = matterStack.getCount();

@@ -1,35 +1,37 @@
-[
-  {
-    "displayName": "Faulty",
-    "displayColor": "dark_gray",
-    "killMultiplier": 1,
-    "dataToNext": 6,
-    "canSimulate": false
-  },
-  {
-    "displayName": "Basic",
-    "displayColor": "green",
-    "killMultiplier": 4,
-    "dataToNext": 48,
-    "pristineChance": 5
-  },
-  {
-    "displayName": "Advanced",
-    "displayColor": "blue",
-    "killMultiplier": 10,
-    "dataToNext": 300,
-    "pristineChance": 11
-  },
-  {
-    "displayName": "Superior",
-    "displayColor": "light_purple",
-    "killMultiplier": 18,
-    "dataToNext": 900,
-    "pristineChance": 24
-  },
-  {
-    "displayName": "Self-Aware",
-    "displayColor": "gold",
-    "pristineChance": 42
+{
+  "tiers": {
+    "0": {
+      "displayName": "Faulty",
+      "displayColor": "dark_gray",
+      "killMultiplier": 1,
+      "dataToNext": 6,
+      "canSimulate": false
+    },
+    "1": {
+      "displayName": "Basic",
+      "displayColor": "green",
+      "killMultiplier": 4,
+      "dataToNext": 48,
+      "pristineChance": 5
+    },
+    "2": {
+      "displayName": "Advanced",
+      "displayColor": "blue",
+      "killMultiplier": 10,
+      "dataToNext": 300,
+      "pristineChance": 11
+    },
+    "3": {
+      "displayName": "Superior",
+      "displayColor": "light_purple",
+      "killMultiplier": 18,
+      "dataToNext": 900,
+      "pristineChance": 24
+    },
+    "4": {
+      "displayName": "Self-Aware",
+      "displayColor": "gold",
+      "pristineChance": 42
+    }
   }
-]
+}

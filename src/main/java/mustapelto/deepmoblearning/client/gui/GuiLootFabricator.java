@@ -6,7 +6,7 @@ import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonPageSelect;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
@@ -71,7 +71,7 @@ public class GuiLootFabricator extends GuiMachine {
     // STATE VARIABLES
     private final TileEntityLootFabricator lootFabricator;
 
-    private MobMetadata currentMobMetadata;
+    private MetadataDataModel currentDataModelMetadata;
     private ImmutableList<ItemStack> lootItemList;
     private int currentOutputItemPage = -1;
     private int totalOutputItemPages = 0;
@@ -101,7 +101,7 @@ public class GuiLootFabricator extends GuiMachine {
         currentOutputItemIndex = lootFabricator.getOutputItemIndex();
         currentOutputItemPage = currentOutputItemIndex / ITEMS_PER_PAGE;
 
-        resetOutputData(lootFabricator.getMobMetadata(), true);
+        resetOutputData(lootFabricator.getDataModelMetadata(), true);
     }
 
     //
@@ -115,8 +115,8 @@ public class GuiLootFabricator extends GuiMachine {
         ticks++;
 
         // Rebuild output selection if Pristine Matter type changed
-        MobMetadata lootFabMetadata = lootFabricator.getMobMetadata();
-        if (currentMobMetadata != lootFabMetadata)
+        MetadataDataModel lootFabMetadata = lootFabricator.getDataModelMetadata();
+        if (currentDataModelMetadata != lootFabMetadata)
             resetOutputData(lootFabMetadata, false);
 
         if (!lootFabricator.isRedstoneActive())
@@ -133,15 +133,15 @@ public class GuiLootFabricator extends GuiMachine {
             craftingError = CraftingError.NONE;
     }
 
-    private void resetOutputData(MobMetadata newData, boolean preselectedOutput) {
-        currentMobMetadata = newData;
+    private void resetOutputData(MetadataDataModel newData, boolean preselectedOutput) {
+        currentDataModelMetadata = newData;
 
-        if (currentMobMetadata == null) {
+        if (currentDataModelMetadata.isInvalid()) {
             setInputEmpty();
             return;
         }
 
-        lootItemList = currentMobMetadata.getLootItemList();
+        lootItemList = currentDataModelMetadata.getLootItems();
 
         if (lootItemList.isEmpty()) {
             setInputEmpty();

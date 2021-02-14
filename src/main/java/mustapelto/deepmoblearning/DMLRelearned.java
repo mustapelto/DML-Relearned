@@ -3,9 +3,9 @@ package mustapelto.deepmoblearning;
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.ServerProxy;
-import mustapelto.deepmoblearning.common.metadata.DataModelTierDataManager;
-import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetadataManager;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,11 +40,10 @@ public class DMLRelearned
         logger = event.getModLog();
         FileHelper.init(event);
 
-        // Init Data Managers (for reading/writing config json files)
-        // LivingMatterData has to be initialized before MobMetaData because Mob metadata needs to access Living Matter data
-        LivingMatterDataManager.init();
-        MobMetadataManager.init();
-        DataModelTierDataManager.init();
+        // Initialize Data Managers (copy/read config files and deserialize JSON)
+        MetadataManagerDataModels.INSTANCE.loadData();
+        MetadataManagerDataModelTiers.INSTANCE.loadData();
+        MetadataManagerLivingMatter.INSTANCE.loadData();
 
         // Network Stuff
         DMLPacketHandler.registerPackets();

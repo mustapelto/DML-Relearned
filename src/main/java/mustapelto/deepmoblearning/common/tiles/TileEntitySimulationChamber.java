@@ -7,7 +7,7 @@ import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,16 +83,19 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     protected void finishCrafting() {
         super.finishCrafting();
 
-        MobMetadata mobMetaData = DataModelHelper.getMobMetadata(getDataModel());
-        if (mobMetaData == null)
+        ItemStack dataModel = getDataModel();
+
+        MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(dataModel);
+        if (dataModelMetadata.isInvalid())
             return;
-        DataModelHelper.addSimulation(getDataModel());
+
+        DataModelHelper.addSimulation(dataModel);
 
         ItemStack oldLivingMatterOutput = outputLiving.getStackInSlot(0);
         if (!oldLivingMatterOutput.isEmpty()) {
             oldLivingMatterOutput.grow(1);
         } else {
-            ItemStack newLivingMatterOutput = mobMetaData.getLivingMatterData().getItemStack(oldLivingMatterOutput.getCount() + 1);
+            ItemStack newLivingMatterOutput = dataModelMetadata.getLivingMatter(oldLivingMatterOutput.getCount() + 1);
             outputLiving.setStackInSlot(0, newLivingMatterOutput);
         }
 
@@ -101,7 +104,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
             if (!oldPristineMatterOutput.isEmpty()) {
                 oldPristineMatterOutput.grow(1);
             } else {
-                ItemStack newPristineMatterOutput = mobMetaData.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
+                ItemStack newPristineMatterOutput = dataModelMetadata.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
                 outputPristine.setStackInSlot(0, newPristineMatterOutput);
             }
         }

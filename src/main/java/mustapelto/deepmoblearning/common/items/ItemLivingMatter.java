@@ -1,10 +1,10 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.metadata.LivingMatterData;
+import mustapelto.deepmoblearning.common.metadata.MetadataLivingMatter;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
 import mustapelto.deepmoblearning.common.util.KeyboardHelper;
-import mustapelto.deepmoblearning.common.util.TextHelper;
+import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -21,24 +21,24 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemLivingMatter extends ItemBase {
-    private final LivingMatterData data;
+    private final MetadataLivingMatter metadata;
 
-    public ItemLivingMatter(LivingMatterData data) {
-        super("living_matter_" + data.getItemID(), 64, data.isModLoaded());
-        this.data = data;
+    public ItemLivingMatter(MetadataLivingMatter metadata) {
+        super(metadata.getLivingMatterRegistryName().getResourcePath(), 64, metadata.isModLoaded());
+        this.metadata = metadata;
     }
 
-    public LivingMatterData getData() {
-        return data;
+    public MetadataLivingMatter getLivingMatterData() {
+        return metadata;
     }
 
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        String useString = TextHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName(), TextFormatting.GRAY);
-        String sneakString = TextHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
+        String useString = StringHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName(), TextFormatting.GRAY);
+        String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", useString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", sneakString));
-        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", data.getXpValue()));
+        tooltip.add(I18n.format("deepmoblearning.living_matter.xp", metadata.getXpValue()));
     }
 
     @Override
@@ -58,6 +58,6 @@ public class ItemLivingMatter extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return data.getDisplayNameFormatted() + " Matter";
+        return metadata.getDisplayNameFormatted() + " Matter";
     }
 }

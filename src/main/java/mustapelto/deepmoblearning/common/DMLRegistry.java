@@ -1,14 +1,16 @@
 package mustapelto.deepmoblearning.common;
 
+import com.google.common.collect.ImmutableMap;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.blocks.*;
 import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import mustapelto.deepmoblearning.common.items.*;
-import mustapelto.deepmoblearning.common.metadata.LivingMatterDataManager;
-import mustapelto.deepmoblearning.common.metadata.MobMetadataManager;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -19,18 +21,15 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @EventBusSubscriber
 public class DMLRegistry {
     public static final NonNullList<Item> registeredItems = NonNullList.create();
     public static final NonNullList<BlockBase> registeredBlocks = NonNullList.create();
 
     // Dynamic items, referenced by ID
-    public static final Map<String, ItemLivingMatter> registeredLivingMatter = new HashMap<>();
-    public static final Map<String, ItemDataModel> registeredDataModels = new HashMap<>();
-    public static final Map<String, ItemPristineMatter> registeredPristineMatter = new HashMap<>();
+    private static ImmutableMap<String, ItemLivingMatter> registeredLivingMatter;
+    private static ImmutableMap<String, ItemDataModel> registeredDataModels;
+    private static ImmutableMap<String, ItemPristineMatter> registeredPristineMatter;
 
     // Blocks
     public static final BlockInfusedIngot BLOCK_INFUSED_INGOT = new BlockInfusedIngot();
@@ -97,18 +96,22 @@ public class DMLRegistry {
         registeredItems.add(ITEM_GLITCH_SWORD);
 
         DMLRelearned.logger.info("Registering Living Matter...");
-        LivingMatterDataManager.getDataStore().forEach((key, value) -> registeredLivingMatter.put(key, new ItemLivingMatter(value)));
+        ImmutableMap.Builder<String, ItemLivingMatter> livingMatterBuilder = ImmutableMap.builder();
+        MetadataManagerLivingMatter.INSTANCE.getDataStore().forEach((key, value) -> livingMatterBuilder.put(key, new ItemLivingMatter(value)));
+        registeredLivingMatter = livingMatterBuilder.build();
         registeredItems.addAll(registeredLivingMatter.values());
 
         DMLRelearned.logger.info("Registering Data Models and Pristine Matter...");
-        MobMetadataManager.getDataStore().forEach((key, value) -> {
-            registeredDataModels.put(key, new ItemDataModel(value));
-            registeredPristineMatter.put(key, new ItemPristineMatter(value));
+        ImmutableMap.Builder<String, ItemDataModel> dataModelBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, ItemPristineMatter> pristineMatterBuilder = ImmutableMap.builder();
+        MetadataManagerDataModels.INSTANCE.getDataStore().forEach((key, value) -> {
+            dataModelBuilder.put(key, new ItemDataModel(value));
+            pristineMatterBuilder.put(key, new ItemPristineMatter(value));
         });
-
+        registeredDataModels = dataModelBuilder.build();
         registeredItems.addAll(registeredDataModels.values());
+        registeredPristineMatter = pristineMatterBuilder.build();
         registeredItems.addAll(registeredPristineMatter.values());
-
 
         IForgeRegistry<Item> registry = event.getRegistry();
         registeredItems.forEach(registry::register);
@@ -131,5 +134,25 @@ public class DMLRegistry {
                 .build();
 
         registry.registerAll(itemGlitchFragment);
+    }
+
+    public static ItemStack getLivingMatter(String id) {
+        if (registeredLivingMatter.containsKey(id))
+            return new ItemStack(registeredLivingMatter.get(id));
+        if (registeredLivingMatter.size() > 0)
+            return new ItemStack(registeredLivingMatter.values().asList().get(0));
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack getPristineMatter(String id) {
+        if (registeredPristineMatter.containsKey(id))
+            return new ItemStack(registeredPristineMatter.get(id));
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack getDataModel(String id) {
+        if (registeredDataModels.containsKey(id))
+            return new ItemStack(registeredDataModels.get(id));
+        return ItemStack.EMPTY;
     }
 }

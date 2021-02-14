@@ -1,6 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,11 +8,11 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public class ItemPristineMatter extends ItemBase {
-    private final MobMetadata mobMetadata;
+    private final MetadataDataModel metadata;
 
-    public ItemPristineMatter(MobMetadata mobMetadata) {
-        super(mobMetadata.getPristineMatterName(), 64, mobMetadata.isModLoaded());
-        this.mobMetadata = mobMetadata;
+    public ItemPristineMatter(MetadataDataModel metadata) {
+        super(metadata.getPristineMatterRegistryName().getResourcePath(), 64, metadata.isModLoaded());
+        this.metadata = metadata;
     }
 
     @Override
@@ -23,18 +23,18 @@ public class ItemPristineMatter extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return I18n.format("deepmoblearning.pristine_matter.display_name", mobMetadata.getDisplayName());
+        return I18n.format("deepmoblearning.pristine_matter.display_name", metadata.getDisplayName());
     }
 
-    private MobMetadata getMobMetadata() {
-        return mobMetadata;
+    private MetadataDataModel getDataModelMetadata() {
+        return metadata;
     }
 
-    public static MobMetadata getMobMetadata(ItemStack stack) {
+    public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
         Item stackItem = stack.getItem();
         if (!(stackItem instanceof ItemPristineMatter))
-            return null;
+            return MetadataDataModel.INVALID;
 
-        return ((ItemPristineMatter) stackItem).getMobMetadata();
+        return ((ItemPristineMatter) stackItem).getDataModelMetadata();
     }
 }

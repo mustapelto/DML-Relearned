@@ -7,7 +7,7 @@ import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonDeepLearnerSelect;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.metadata.MobMetadata;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.Point;
 import mustapelto.deepmoblearning.common.util.Rect;
@@ -66,8 +66,9 @@ public class GuiDeepLearner extends GuiContainerBase {
     private final ItemStack deepLearner; // Deep Learner that opened this GUI
     private NonNullList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
-    private MobMetadata currentModelMetadata;
     private ItemStack currentModelStack;
+    private MetadataDataModel currentModelMetadata;
+    private MetadataDataModel.DeepLearnerDisplayData currentDisplayData;
 
     private ImmutableList<ImmutablePair<String, Integer>> defaultStringList;
 
@@ -122,8 +123,9 @@ public class GuiDeepLearner extends GuiContainerBase {
 
         if (dataModels.isEmpty()) {
             currentModelIndex = -1;
-            currentModelMetadata = null;
             currentModelStack = ItemStack.EMPTY;
+            currentModelMetadata = MetadataDataModel.INVALID;
+            currentDisplayData = MetadataDataModel.DeepLearnerDisplayData.INVALID;
             setModelSelectButtonsEnabled(false);
             return;
         }
@@ -134,7 +136,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
 
         currentModelStack = dataModels.get(currentModelIndex);
-        currentModelMetadata = DataModelHelper.getMobMetadata(currentModelStack);
+        currentModelMetadata = DataModelHelper.getDataModelMetadata(currentModelStack);
+        currentDisplayData = currentModelMetadata.getDeepLearnerDisplayData();
 
         setModelSelectButtonsEnabled(dataModels.size() > 1);
     }
@@ -209,7 +212,7 @@ public class GuiDeepLearner extends GuiContainerBase {
                 MOB_DISPLAY.HEIGHT
         );
 
-        if (currentModelMetadata == null) {
+        if (currentModelStack.isEmpty()) {
             // No Data Models in Learner
             renderDisplayStrings(defaultStringList);
             return;
@@ -217,48 +220,48 @@ public class GuiDeepLearner extends GuiContainerBase {
 
         // At least 1 data model -> display metadata
         // Get and render main entity
-        Entity mainEntity = currentModelMetadata.getEntity(world);
+        Entity mainEntity = currentDisplayData.getEntity(world);
         if (mainEntity != null) {
             renderEntity(
                     mainEntity,
-                    currentModelMetadata.getDisplayEntityScale(),
-                    guiLeft + MOB_DISPLAY_ENTITY.X + currentModelMetadata.getDisplayEntityOffsetX(),
-                    guiTop + MOB_DISPLAY_ENTITY.Y + currentModelMetadata.getDisplayEntityOffsetY(),
+                    currentDisplayData.getEntityScale(),
+                    guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getEntityOffsetX(),
+                    guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getEntityOffsetY(),
                     partialTicks
             );
         }
 
         // Get and render extra entity
-        Entity extraEntity = currentModelMetadata.getExtraEntity(world);
+        Entity extraEntity = currentDisplayData.getExtraEntity(world);
         if (extraEntity != null) {
             renderEntity(
                     extraEntity,
-                    currentModelMetadata.getDisplayEntityScale(),
-                    guiLeft + MOB_DISPLAY_ENTITY.X + currentModelMetadata.getDisplayExtraEntityOffsetX(),
-                    guiTop + MOB_DISPLAY_ENTITY.Y + currentModelMetadata.getDisplayExtraEntityOffsetY(),
+                    currentDisplayData.getEntityScale(),
+                    guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getExtraEntityOffsetX(),
+                    guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getExtraEntityOffsetY(),
                     partialTicks
             );
         }
 
         // Draw metadata text
-        renderMetaData(currentModelMetadata, currentModelStack);
+        renderMetaData();
     }
 
-    private void renderMetaData(MobMetadata mobMetaData, ItemStack stack) {
+    private void renderMetaData() {
         // Get data from Data Model ItemStack
-        String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(stack);
-        String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(stack);
-        String mobName = mobMetaData.getDisplayName();
-        String mobPluralName = mobMetaData.getDisplayNamePlural();
-        ImmutableList<String> mobTrivia = mobMetaData.getMobTrivia();
+        String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(currentModelStack);
+        String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(currentModelStack);
+        String mobName = currentModelMetadata.getDisplayName();
+        String mobPluralName = currentModelMetadata.getDisplayNamePlural();
+        ImmutableList<String> mobTrivia = currentDisplayData.getMobTrivia();
 
-        int totalKills = DataModelHelper.getTotalKillCount(stack);
-        int killsToNextTier = DataModelHelper.getKillsToNextTier(stack);
-        String tierString = DataModelHelper.isAtMaxTier(stack) ?
+        int totalKills = DataModelHelper.getTotalKillCount(currentModelStack);
+        int killsToNextTier = DataModelHelper.getKillsToNextTier(currentModelStack);
+        String tierString = DataModelHelper.isAtMaxTier(currentModelStack) ?
                 I18n.format("deepmoblearning.deep_learner.maximum") :
                 I18n.format("deepmoblearning.deep_learner.required", killsToNextTier, nextTier);
 
-        int numHearts = mobMetaData.getNumberOfHearts();
+        int numHearts = currentDisplayData.getHearts();
 
         ImmutableList.Builder<ImmutablePair<String, Integer>> builder = ImmutableList.builder();
 

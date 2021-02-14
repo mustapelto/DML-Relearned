@@ -250,7 +250,7 @@ public class GuiDeepLearner extends GuiContainerBase {
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(stack);
         String mobName = mobMetaData.getDisplayName();
         String mobPluralName = mobMetaData.getDisplayNamePlural();
-        String[] mobTrivia = mobMetaData.getMobTrivia();
+        ImmutableList<String> mobTrivia = mobMetaData.getMobTrivia();
 
         int totalKills = DataModelHelper.getTotalKillCount(stack);
         int killsToNextTier = DataModelHelper.getKillsToNextTier(stack);
@@ -267,7 +267,7 @@ public class GuiDeepLearner extends GuiContainerBase {
         builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.heading_information"), Colors.AQUA));
         for (String triviaLine : mobTrivia)
             builder.add(ImmutablePair.of(triviaLine, Colors.WHITE));
-        for (int i = 0; i < 7 - (3 + mobTrivia.length); i++)
+        for (int i = 0; i < 7 - (3 + mobTrivia.size()); i++)
             builder.add(ImmutablePair.of("", 0));
         builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.model_tier", dataModelTier), Colors.WHITE));
         builder.add(ImmutablePair.of(I18n.format("deepmoblearning.deep_learner.defeated", mobPluralName, totalKills), Colors.WHITE));

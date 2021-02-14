@@ -1,7 +1,10 @@
 package mustapelto.deepmoblearning.common.util;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import mustapelto.deepmoblearning.DMLRelearned;
 
 public class JsonHelper {
     public static String getOrDefault(JsonObject data, String key, String defaultValue) {
@@ -21,21 +24,27 @@ public class JsonHelper {
         return data.has(key) ? data.get(key).getAsBoolean() : defaultValue;
     }
 
-    public static String[] getOrDefault(JsonObject data, String key, String[] defaultValue) {
-        return data.has(key) ? jsonArrayToStringArray(data.get(key).getAsJsonArray()) : defaultValue;
+    public static ImmutableList<String> getJsonArrayAsStringList(JsonObject data, String key) {
+        return (data.has(key)) ?
+                jsonArrayToStringList(data.getAsJsonArray(key)) :
+                ImmutableList.of();
     }
 
-    public static JsonArray getJsonArray(JsonObject data, String key) {
-        return data.has(key) ? data.getAsJsonArray(key) : new JsonArray();
+    public static ImmutableList<String> getJsonArrayAsStringList(JsonObject data, String key, String defaultValue) {
+        return (data.has(key)) ?
+                jsonArrayToStringList(data.getAsJsonArray(key)) :
+                ImmutableList.of(defaultValue);
     }
 
-    public static String[] jsonArrayToStringArray(JsonArray input) {
-        String[] result = new String[input.size()];
-
-        for (int i = 0; i < input.size(); i++) {
-            result[i] = input.get(i).getAsString();
+    private static ImmutableList<String> jsonArrayToStringList(JsonArray array) {
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        for (JsonElement element : array) {
+            try {
+                builder.add(element.getAsString());
+            } catch (UnsupportedOperationException e) {
+                DMLRelearned.logger.warn("Invalid entry in JSON string array");
+            }
         }
-
-        return result;
+        return builder.build();
     }
 }

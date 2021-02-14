@@ -1,0 +1,10 @@
+------------------------------
+|  GUIDE TO CUSTOM SETTINGS  |
+------------------------------
+
+DataModels.json:
+Defines which mobs have an associated Data Model, and all values associated with that Model.
+Models are grouped by mod id (or "minecraft" for vanilla).
+
+Possible values:
+

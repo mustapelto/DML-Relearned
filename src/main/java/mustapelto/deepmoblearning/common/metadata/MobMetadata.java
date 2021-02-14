@@ -1,14 +1,13 @@
 package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.models.ModelDataModel;
 import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import mustapelto.deepmoblearning.common.util.ItemStringBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
@@ -17,15 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -35,10 +30,10 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static mustapelto.deepmoblearning.common.util.JsonHelper.*;
+import static mustapelto.deepmoblearning.common.util.JsonHelper.getJsonArrayAsStringList;
+import static mustapelto.deepmoblearning.common.util.JsonHelper.getOrDefault;
 
 public class MobMetadata {
     private final String modID; // Mod ID the item is related to. "minecraft" for vanilla-related items.
@@ -47,13 +42,13 @@ public class MobMetadata {
     private final String displayNamePlural; // Plural form of display name. Used in Deep Learner GUI. Default: displayName + "s"
     private final LivingMatterData livingMatter; // Associated Living Matter type. Default: first available
     private final int simulationRFCost; // Cost to simulate this mob in RF/t. Default: 256
-    private final JsonArray craftingIngredients; // Ingredients required to craft this Data Model (in addition to Blank Data Model)
+    private final ImmutableList<String> craftingIngredients; // Crafting recipe for this Data Model
     private final String extraTooltip; // Extra tooltip to display on Data Model item. Default: ""
-    private final String[] associatedMobs; // List of mobs that will increase model data. Format: "modid:mobname" (e.g. "minecraft:blaze"). Default: modID:itemID
-    private final ImmutableList<ItemStack> lootItemList; // List of available loot items (produced from Pristine Matter in Loot Fabricator). Format: "modid:itemid" (e.g. "minecraft:stone"). Default: "minecraft:wood"
+    private final ImmutableList<String> associatedMobs; // List of mobs that will increase model data. Format: "modid:mobname" (e.g. "minecraft:blaze"). Default: modID:itemID
+    private final ImmutableList<ItemStack> lootItemList; // List of available loot items (produced from Pristine Matter in Loot Fabricator). Format: "modid:itemid" (e.g. "minecraft:stone").
     private final ImmutableList<ItemStack> trialRewardItemList; // List of configured trial reward items for this mob (built once at init)
     private final int numberOfHearts; // Number of hearts to show in Deep Learner GUI. Default: 10
-    private final String[] mobTrivia; // Trivia text to show in Deep Learner GUI. Default: "Nothing is known about this mob."
+    private final ImmutableList<String> mobTrivia; // Trivia text to show in Deep Learner GUI. Default: "Nothing is known about this mob."
     private final String displayEntityID; // ID of entity to display in Deep Learner GUI. Default: modID:itemID
     private final String displayEntityHeldItem; // Item held by entity in Deep Learner GUI. Default: ""
     private final int displayEntityScale; // Scale of entity in Deep Learner GUI. Default: 40
@@ -72,35 +67,28 @@ public class MobMetadata {
             throw new IllegalArgumentException("Item ID missing on Data Model entry. Cannot create items.");
         }
 
+        // TODO: move some stuff from preinit to init (loot items, recipes etc.) - same for other types of metadata!!!
+
         itemID = data.get("itemID").getAsString();
         modelName = "data_model_" + itemID; // Name of associated data model item
         pristineName = "pristine_matter_" + itemID; // Name of associated pristine matter item
-
         this.modID = modID;
-
         displayName = getOrDefault(data, "displayName", itemID.substring(0, 1).toUpperCase() + itemID.substring(1));
         displayNamePlural = getOrDefault(data, "displayNamePlural", "");
-
         String livingMatterString = getOrDefault(data, "livingMatter", "");
         livingMatter = LivingMatterDataManager.getByID(livingMatterString);
-
         simulationRFCost = getOrDefault(data, "simulationRFCost", 256, 0, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
-
-        craftingIngredients = getJsonArray(data, "craftingIngredients");
-
+        craftingIngredients = getJsonArrayAsStringList(data, "craftingIngredients");
         extraTooltip = getOrDefault(data, "extraTooltip", "");
-
         String defaultEntityString = String.format("%s:%s", modID, itemID); // Used if entry for associatedMobs or deepLearnerDisplay.entityID is empty
+        associatedMobs = getJsonArrayAsStringList(data, "associatedMobs", defaultEntityString);
+        lootItemList = ItemStringBuilder.itemStackListFromStringList(getJsonArrayAsStringList(data, "lootItems"));
+        trialRewardItemList = ItemStringBuilder.itemStackListFromStringList(getJsonArrayAsStringList(data, "trialRewards"));
 
-        associatedMobs = getOrDefault(data, "associatedMobs", new String[]{defaultEntityString});
-        lootItemList = buildItemListFromStringArray(getOrDefault(data, "lootItems", new String[]{"minecraft:wood"}));
-        trialRewardItemList = buildItemListFromStringArray(getOrDefault(data, "trialRewards", new String[0]));
-
-        // Read Deep Learner Display Settings
+        // Deep Learner Display Settings
         JsonObject displaySettings = data.get("deepLearnerDisplay").getAsJsonObject();
-
         numberOfHearts = getOrDefault(displaySettings, "numberOfHearts", 0, 0, Integer.MAX_VALUE);
-        mobTrivia = getOrDefault(displaySettings, "mobTrivia", new String[]{"Nothing is known about this mob."});
+        mobTrivia = getJsonArrayAsStringList(displaySettings, "mobTrivia", "Nothing is known about this mob.");
         displayEntityID = getOrDefault(displaySettings, "entityID", String.format("%s:%s", modID, itemID));
         displayEntityHeldItem = getOrDefault(displaySettings, "entityHeldItem", "");
         displayEntityScale = getOrDefault(displaySettings, "entityScale", 40, 0, 200);
@@ -200,14 +188,16 @@ public class MobMetadata {
         Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL_BLANK));
         ingredientList.add(blankModel);
 
-        JsonContext ctx = new JsonContext(DMLConstants.ModInfo.ID);
         boolean isOreRecipe = false;
-
-        for (JsonElement element : craftingIngredients) {
-            Ingredient ing = CraftingHelper.getIngredient(element, ctx);
-            if (ing instanceof OreIngredient)
+        ImmutableList<Ingredient> customIngredientsList = ItemStringBuilder.ingredientListFromStringList(craftingIngredients);
+        for (Ingredient ingredient : customIngredientsList) {
+            if (ingredient.equals(Ingredient.EMPTY)) {
+                DMLRelearned.logger.warn("Invalid Data Model crafting recipe. Either an entry is invalid or recipe contains items from a mod that is not loaded.");
+                return null;
+            }
+            if (ingredient instanceof OreIngredient)
                 isOreRecipe = true;
-            ingredientList.add(ing);
+            ingredientList.add(ingredient);
         }
 
         ResourceLocation group = new ResourceLocation(DMLConstants.ModInfo.ID, "data_models");
@@ -226,7 +216,6 @@ public class MobMetadata {
         return recipe;
     }
 
-
     public String getExtraTooltip() {
         return extraTooltip;
     }
@@ -235,7 +224,7 @@ public class MobMetadata {
         return numberOfHearts;
     }
 
-    public String[] getMobTrivia() {
+    public ImmutableList<String> getMobTrivia() {
         return mobTrivia;
     }
 
@@ -292,7 +281,7 @@ public class MobMetadata {
             return false;
 
         String name = registryName.toString();
-        return Arrays.asList(associatedMobs).contains(name);
+        return associatedMobs.contains(name);
     }
 
     public ImmutableList<ItemStack> getLootItemList() {
@@ -315,95 +304,5 @@ public class MobMetadata {
             return trialRewardItemList.get(index).copy();
 
         return ItemStack.EMPTY;
-    }
-
-    private static ImmutableList<ItemStack> buildItemListFromStringArray(String[] inputList) {
-        ImmutableList.Builder<ItemStack> builder = ImmutableList.builder();
-
-        for (String entry : inputList) {
-            ItemStack entryStack = getStackFromString(entry);
-            if (!entryStack.isEmpty()) {
-                builder.add(entryStack);
-            }
-        }
-
-        return builder.build();
-    }
-
-    /**
-     * Produce ItemStack from string
-     *
-     * Input format: {@code "modid:itemid,n[,m][,{nbt}]} where
-     * - n: item amount
-     * - m: metadata/damage value (optional)
-     * - nbt: nbt data (optional)
-     *
-     * @param line String array entry representing item
-     * @return An ItemStack according to the string input
-     */
-    private static ItemStack getStackFromString(String line) {
-        String[] values = line.split(",");
-
-        if (values.length < 2) // Invalid entry
-            return ItemStack.EMPTY;
-
-        String itemName = values[0];
-        int amount;
-        int meta = 0;
-        NBTTagCompound nbt = null;
-
-        try {
-            amount = Integer.parseInt(values[1]);
-        } catch (NumberFormatException e) {
-            DMLRelearned.logger.error("Invalid item entry (amount not a valid number");
-            return ItemStack.EMPTY;
-        }
-
-        if (values.length > 2) {
-            boolean couldReadMeta;
-            try {
-                meta = Integer.parseInt(values[2]);
-                couldReadMeta = true;
-            } catch (NumberFormatException e) {
-                couldReadMeta = false;
-            }
-
-            if (!couldReadMeta) {
-                nbt = getNBT(buildNBTString(values, 2));
-            }
-            else if (values.length > 3) {
-                nbt = getNBT(buildNBTString(values, 3));
-            }
-        }
-
-        Item item = Item.getByNameOrId(itemName);
-        if (item == null)
-            return ItemStack.EMPTY;
-
-        ItemStack resultStack = new ItemStack(item, amount, meta);
-
-        if (nbt != null)
-            resultStack.setTagCompound(nbt);
-
-        return resultStack;
-    }
-
-    private static String buildNBTString(String[] values, int startIndex) {
-        StringBuilder nbtString = new StringBuilder();
-        for (int i = startIndex; i < values.length; i++) {
-            nbtString.append(values[i]);
-            if (i < values.length - 1)
-                nbtString.append(",");
-        }
-        return nbtString.toString();
-    }
-
-    private static NBTTagCompound getNBT(String nbtString) {
-        try {
-            return JsonToNBT.getTagFromJson(nbtString);
-        } catch (NBTException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

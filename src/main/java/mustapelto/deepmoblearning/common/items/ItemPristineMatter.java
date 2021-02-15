@@ -40,6 +40,7 @@ public class ItemPristineMatter extends ItemBase {
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         // TODO: show loot items in tooltip
+
     }
 
     private MetadataDataModel getDataModelMetadata() {

@@ -2,18 +2,16 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.client.gui.GuiLootFabricator;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.inventory.*;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -35,20 +33,6 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
     public TileEntityLootFabricator() {
         super(DMLConstants.LootFabricator.ENERGY_CAPACITY, DMLConstants.LootFabricator.ENERGY_IN_MAX);
-    }
-
-    //
-    // GUI
-    //
-
-    @Override
-    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
-        return new ContainerLootFabricator(this, inventoryPlayer);
-    }
-
-    @Override
-    public GuiLootFabricator getGUI(EntityPlayer player, World world) {
-        return new GuiLootFabricator(this, player, world);
     }
 
     //

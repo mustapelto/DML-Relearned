@@ -1,11 +1,10 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.metadata.MetadataLivingMatter;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
-import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,9 +35,10 @@ public class ItemLivingMatter extends ItemBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        String useString = StringHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName(), TextFormatting.GRAY);
-        String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
+        String useString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getUseKeyName(), TextFormatting.GRAY);
+        String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakKeyName(), TextFormatting.GRAY);
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", useString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_stack", sneakString));
         tooltip.add(I18n.format("deepmoblearning.living_matter.xp", metadata.getXpValue()));
@@ -58,6 +61,9 @@ public class ItemLivingMatter extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return metadata.getDisplayNameFormatted() + " Matter";
+        if (FMLCommonHandler.instance().getSide() == Side.SERVER)
+            return super.getItemStackDisplayName(stack); // Can't do localization on server side
+
+        return I18n.format("deepmoblearning.living_matter.display_name", metadata.getDisplayNameFormatted());
     }
 }

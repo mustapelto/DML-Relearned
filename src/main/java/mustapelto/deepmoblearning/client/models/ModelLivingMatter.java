@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class ModelLivingMatter implements IModel {
-    public static final ResourceLocation DEFAULT_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/living_matter_default");
-
     private final ResourceLocation livingMatterLocation;
 
     public ModelLivingMatter(ResourceLocation livingMatterLocation) {
@@ -72,7 +70,7 @@ public class ModelLivingMatter implements IModel {
 
             ModelLivingMatter model;
             if (!modelCache.containsKey(livingMatterId)) {
-                model = new ModelLivingMatter(textureCache.getOrDefault(livingMatterId, DEFAULT_LOCATION));
+                model = new ModelLivingMatter(textureCache.getOrDefault(livingMatterId, DMLConstants.DefaultModels.LIVING_MATTER));
                 modelCache.put(livingMatterId, model);
             }
             return modelCache.get(livingMatterId);

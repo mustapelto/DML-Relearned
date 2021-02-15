@@ -17,6 +17,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,6 +44,7 @@ public class ItemGlitchSword extends ItemSword {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_1"));
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_2"));

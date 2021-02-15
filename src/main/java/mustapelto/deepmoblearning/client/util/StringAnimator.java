@@ -1,6 +1,7 @@
-package mustapelto.deepmoblearning.common.util;
+package mustapelto.deepmoblearning.client.util;
 
 import mustapelto.deepmoblearning.client.gui.GuiSimulationChamber;
+import mustapelto.deepmoblearning.common.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

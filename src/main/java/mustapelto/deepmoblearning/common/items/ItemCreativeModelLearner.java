@@ -1,11 +1,10 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLevelUpModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
-import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,14 +45,15 @@ public class ItemCreativeModelLearner extends ItemBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
+            String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + KeyboardHelper.getSneakKeyName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
-            String sneakName = Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName();
-            String sprintName = Minecraft.getMinecraft().gameSettings.keyBindSprint.getDisplayName();
-            String useName = Minecraft.getMinecraft().gameSettings.keyBindUseItem.getDisplayName();
+            String sneakName = KeyboardHelper.getSneakKeyName();
+            String sprintName = KeyboardHelper.getSprintKeyName();
+            String useName = KeyboardHelper.getUseKeyName();
 
             String increaseTier = StringHelper.getFormattedString(TextFormatting.ITALIC, sneakName + " + " + useName, TextFormatting.GRAY);
             String decreaseTier = StringHelper.getFormattedString(TextFormatting.ITALIC, sprintName + " + " + useName, TextFormatting.GRAY);

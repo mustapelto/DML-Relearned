@@ -45,24 +45,22 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
     }
 
-    public enum SmokeType { SMOKE, MIXED, CYAN }
-
     private void setColorMixed(Particle particle) {
-        boolean isCyan = ThreadLocalRandom.current().nextInt(0, 3) == 0; // p = 1/3
+        boolean spawnCyan = ThreadLocalRandom.current().nextInt(0, 3) == 0; // p = 1/3
 
-        if (isCyan)
+        if (spawnCyan)
             setColorCyan(particle);
         else
             setColorGray(particle);
     }
 
     private void setColorSmoke(Particle particle) {
-        boolean isRed = ThreadLocalRandom.current().nextInt(0, 3) == 0; // p = 1/3
-        boolean isBlack = ThreadLocalRandom.current().nextInt(0, 4) == 0; // p = 1/4
+        boolean spawnRed = ThreadLocalRandom.current().nextInt(0, 3) == 0; // p = 1/3
+        boolean spawnBlack = ThreadLocalRandom.current().nextInt(0, 4) == 0; // p = 1/4
 
-        if (isBlack)
+        if (spawnBlack)
             particle.setRBGColorF(0.02f, 0.02f, 0.02f);
-        else if (isRed)
+        else if (spawnRed)
             particle.setRBGColorF(0.29f, 0.05f, 0.01f);
         else
             setColorGray(particle);

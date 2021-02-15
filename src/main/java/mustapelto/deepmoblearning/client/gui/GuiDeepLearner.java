@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonDeepLearnerSelect;
@@ -9,8 +8,6 @@ import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.Point;
-import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -18,50 +15,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 public class GuiDeepLearner extends GuiContainerBase {
-    // GUI TEXTURES
-    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner.png");
-
-    // GUI DIMENSIONS
-    private static final int WIDTH = 338;
-    private static final int HEIGHT = 235;
-    private static final Rect MAIN_GUI = new Rect(41, 0, 256, 140);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(81, 145);
-
-    // MOB DISPLAY
-    private static final Rect MOB_DISPLAY = new Rect(-41, 0, 75, 101);
-    private static final Point MOB_DISPLAY_TEXTURE_LOCATION = new Point(0, 140);
-    private static final Point MOB_DISPLAY_ENTITY = new Point(0, 80);
-
-    // MAIN DISPLAY
-    private static final Point TEXT_START = new Point(49, 8);
-    private static final Rect HEART_ICON = new Rect(228, 2 * ROW_SPACING - 6, 9, 9);
-    private static final Point HEART_ICON_TEXTURE_LOCATION = new Point(75, 140);
-    private static final Point HEALTH_POINTS_HEADER_LOCATION = new Point(228, ROW_SPACING - 4);
-    private static final Point HEALTH_POINTS_TEXT_LOCATION = new Point(239, 2 * ROW_SPACING - 4);
-
-    // ITEM SLOTS
-    public static final ImmutableList<Point> DATA_MODEL_SLOTS = ImmutableList.of(
-            new Point(257, 100),
-            new Point(275, 100),
-            new Point(257, 118),
-            new Point(275, 118)
-    );
-
-    // BUTTONS
-    private static final Point PREV_MODEL_BUTTON = new Point(-27, 105);
-    private static final Point NEXT_MODEL_BUTTON = new Point(-1, 105);
-
     // STATE VARIABLES
     private final ItemStack deepLearner; // Deep Learner that opened this GUI
     private NonNullList<ItemStack> dataModels; // Contained Data Models
@@ -90,8 +51,13 @@ public class GuiDeepLearner extends GuiContainerBase {
             this.deepLearner = offHand;
         else
             throw new IllegalStateException("Tried to open Deep Learner GUI without Deep Learner equipped");
+    }
 
+    @Override
+    public void initGui() {
+        super.initGui();
         initDefaultStringList();
+        updateDisplayData();
     }
 
     private void initDefaultStringList() {
@@ -116,8 +82,10 @@ public class GuiDeepLearner extends GuiContainerBase {
     @Override
     public void updateScreen() {
         super.updateScreen();
+        updateDisplayData();
+    }
 
-        // Get list of contained Data Models
+    private void updateDisplayData() {
         NonNullList<ItemStack> deepLearnerStackList = ItemDeepLearner.getContainedItems(deepLearner);
         dataModels = DataModelHelper.getDataModelStacksFromList(deepLearnerStackList);
 
@@ -188,7 +156,7 @@ public class GuiDeepLearner extends GuiContainerBase {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         // Draw main GUI
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        textureManager.bindTexture(BASE_TEXTURE);
+        textureManager.bindTexture(TEXTURE);
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
@@ -202,7 +170,7 @@ public class GuiDeepLearner extends GuiContainerBase {
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
 
         // Draw mob display box
-        textureManager.bindTexture(BASE_TEXTURE);
+        textureManager.bindTexture(TEXTURE);
         drawTexturedModalRect(
                 guiLeft + MOB_DISPLAY.LEFT,
                 guiTop + MOB_DISPLAY.TOP,
@@ -279,7 +247,7 @@ public class GuiDeepLearner extends GuiContainerBase {
         renderDisplayStrings(builder.build());
 
         // Draw heart
-        textureManager.bindTexture(BASE_TEXTURE); // rebind after string drawing
+        textureManager.bindTexture(TEXTURE); // rebind after string drawing
         drawTexturedModalRect(
                 guiLeft + HEART_ICON.LEFT,
                 guiTop + HEART_ICON.TOP,

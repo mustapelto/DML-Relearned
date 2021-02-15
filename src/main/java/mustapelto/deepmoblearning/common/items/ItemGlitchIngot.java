@@ -6,6 +6,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,6 +19,7 @@ public class ItemGlitchIngot extends ItemBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         String glitchFragment = new ItemStack(DMLRegistry.ITEM_GLITCH_FRAGMENT).getDisplayName();
         tooltip.add(I18n.format("deepmoblearning.glitch_ingot.tooltip_1", glitchFragment));

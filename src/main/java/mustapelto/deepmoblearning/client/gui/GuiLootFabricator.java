@@ -1,73 +1,30 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonPageSelect;
+import mustapelto.deepmoblearning.common.inventory.ContainerLootFabricator;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.util.MathHelper;
-import mustapelto.deepmoblearning.common.util.Point;
-import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.LootFabricator.*;
+
 public class GuiLootFabricator extends GuiMachine {
-    // GUI TEXTURES
-    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/loot_fabricator.png");
-
-    // GUI DIMENSIONS
-    private static final int WIDTH = 177;
-    private static final int HEIGHT = 230;
-    private static final Rect MAIN_GUI = new Rect(0, 0, 177, 83);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(0, 88);
-
-    // ITEM SLOT LOCATIONS
-    public static final Point INPUT_SLOT = new Point(79, 62);
-    public static final Point OUTPUT_FIRST_SLOT = new Point(101, 7);
-    public static final int OUTPUT_SLOT_SIDE_LENGTH = 18;
-
-    // BUTTONS
-    private static final Point REDSTONE_BUTTON = new Point(-20, 0);
-    private static final Point OUTPUT_SELECT_LIST = new Point(14, 6);
-    private static final int OUTPUT_SELECT_LIST_PADDING = 2;
-    private static final int OUTPUT_SELECT_LIST_GUTTER = 1;
-    private static final int OUTPUT_SELECT_BUTTON_SIZE = 18;
-    private static final Point PREV_PAGE_BUTTON = new Point(13, 66);
-    private static final Point NEXT_PAGE_BUTTON = new Point(44, 66);
-    private static final Point DESELECT_BUTTON = new Point(79, 4);
-
-    private static final int ITEMS_PER_PAGE = 9;
-
-    private static final int PREV_PAGE_BUTTON_ID = 10;
-    private static final int NEXT_PAGE_BUTTON_ID = 11;
-    private static final int DESELECT_BUTTON_ID = 12;
-
-    private static final int ITEM_SELECT_BUTTON_ID_OFFSET = 20;
-
-    // PROGRESS AND ENERGY BAR
-    private static final Rect ENERGY_BAR = new Rect(4, 6, 7, 71);
-    private static final Point ENERGY_BAR_TEXTURE_LOCATION = new Point(0, 83);
-    private static final Rect PROGRESS_BAR = new Rect(84, 22, 6,36);
-    private static final Point PROGRESS_BAR_TEXTURE_LOCATION = new Point(7, 83);
-    private static final Point ERROR_BAR_TEXTURE_LOCATION = new Point(13, 83);
-    private static final long ERROR_BAR_CYCLE = 20; // Duration of one on-off cycle (ticks)
-
     // STATE VARIABLES
     private final TileEntityLootFabricator lootFabricator;
 
@@ -90,7 +47,13 @@ public class GuiLootFabricator extends GuiMachine {
     //
 
     public GuiLootFabricator(TileEntityLootFabricator tileEntity, EntityPlayer player, World world) {
-        super(tileEntity, player, world, WIDTH, HEIGHT, REDSTONE_BUTTON);
+        super(tileEntity,
+                player,
+                world,
+                new ContainerLootFabricator(tileEntity, player.inventory),
+                WIDTH,
+                HEIGHT,
+                REDSTONE_BUTTON);
         lootFabricator = tileEntity;
     }
 
@@ -133,7 +96,7 @@ public class GuiLootFabricator extends GuiMachine {
             craftingError = CraftingError.NONE;
     }
 
-    private void resetOutputData(MetadataDataModel newData, boolean preselectedOutput) {
+    private void resetOutputData(@Nonnull MetadataDataModel newData, boolean preselectedOutput) {
         currentDataModelMetadata = newData;
 
         if (currentDataModelMetadata.isInvalid()) {
@@ -341,7 +304,7 @@ public class GuiLootFabricator extends GuiMachine {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         // Main GUI
-        textureManager.bindTexture(BASE_TEXTURE);
+        textureManager.bindTexture(TEXTURE);
         GlStateManager.color(1f, 1f, 1f, 1f);
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,

@@ -4,7 +4,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.*;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.SimulationChamber.*;
 
 public class ContainerSimulationChamber extends ContainerMachine {
     public ContainerSimulationChamber(TileEntitySimulationChamber tileEntity, InventoryPlayer inventoryPlayer) {

@@ -2,20 +2,19 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.client.gui.GuiSimulationChamber;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.inventory.*;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerDataModel;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
+import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -41,20 +40,6 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
     public TileEntitySimulationChamber() {
         super(DMLConstants.SimulationChamber.ENERGY_CAPACITY, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
-    }
-
-    //
-    // GUI
-    //
-
-    @Override
-    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
-        return new ContainerSimulationChamber(this, inventoryPlayer);
-    }
-
-    @Override
-    public GuiSimulationChamber getGUI(EntityPlayer player, World world) {
-        return new GuiSimulationChamber(this, player, world);
     }
 
     //

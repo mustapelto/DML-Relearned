@@ -1,17 +1,12 @@
 package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
-import mustapelto.deepmoblearning.client.gui.GuiMachine;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
-import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 
@@ -161,9 +156,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     public void setGuiOpen(boolean open) {
         this.guiOpen = open;
     }
-
-    public abstract ContainerMachine getContainer(InventoryPlayer inventoryPlayer);
-    public abstract GuiMachine getGUI(EntityPlayer player, World world);
 
     //
     // Capabilities

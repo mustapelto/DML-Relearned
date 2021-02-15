@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,7 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         String pristineChance = DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE + "%";
         String pristineCount = String.valueOf(DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_COUNT);

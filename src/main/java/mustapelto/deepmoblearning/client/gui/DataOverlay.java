@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
@@ -15,27 +14,17 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DataOverlay.*;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 @EventBusSubscriber(Side.CLIENT)
 public class DataOverlay extends GuiScreen {
-    public static final ResourceLocation EXP_BAR = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/experience_gui.png");
-
-    private static final int COMPONENT_HEIGHT = 26;
-    private static final int DATA_MODEL_WIDTH = 18;
-    private static final int EXP_BAR_MAX_WIDTH = 89;
-    private static final int EXP_BAR_INNER_HEIGHT = 11;
-    private static final int EXP_BAR_OUTER_HEIGHT = 12;
-    private static final int PADDING_BASE_HORIZONTAL = 5;
-    private static final int PADDING_BASE_VERTICAL = 5;
-
     private final Minecraft mc;
     private final FontRenderer fontRenderer;
 
@@ -118,7 +107,7 @@ public class DataOverlay extends GuiScreen {
         drawItemStack(x, y - 2 + ROW_SPACING + (index * COMPONENT_HEIGHT), dataModel);
         drawString(fontRenderer, dataModel.getDisplayName(), x + 4, y + (index * COMPONENT_HEIGHT) + 2, Colors.WHITE);
 
-        mc.getTextureManager().bindTexture(EXP_BAR);
+        mc.getTextureManager().bindTexture(TEXTURE);
         drawTexturedModalRect(x + DATA_MODEL_WIDTH, y + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, 0, EXP_BAR_MAX_WIDTH, EXP_BAR_OUTER_HEIGHT);
 
         if (DataModelHelper.isAtMaxTier(dataModel)) {

@@ -1,8 +1,8 @@
 package mustapelto.deepmoblearning.common.entities;
 
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.ClientProxy;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import mustapelto.deepmoblearning.common.ServerProxy;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -100,7 +100,7 @@ public class EntityItemGlitchFragment extends EntityItem {
                 random.nextDouble(-0.08, 0.08),
                 random.nextDouble(-0.08, 0.22),
                 random.nextDouble(-0.08, 0.08),
-                ClientProxy.SmokeType.CYAN
+                ServerProxy.SmokeType.CYAN
         );
     }
 

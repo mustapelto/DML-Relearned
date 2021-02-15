@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
 import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.util.JsonHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
@@ -20,9 +19,6 @@ import java.io.IOException;
  */
 public class MetadataLivingMatter extends Metadata {
     public static final MetadataLivingMatter INVALID = new MetadataLivingMatter();
-
-    private static final String LIVING_MATTER_PLACEHOLDER_STRING = "livingMatter";
-    private static final ResourceLocation RECIPE_GROUP = new ResourceLocation(DMLConstants.ModInfo.ID, "living_matter");
 
     // Data from JSON
     private final String displayName; // Name shown in tooltips and GUI. Also used as item display name. Default: metadataID
@@ -101,7 +97,7 @@ public class MetadataLivingMatter extends Metadata {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Living Matter texture for {} not found. Using default texture.", getMetadataID());
-            return ModelLivingMatter.DEFAULT_LOCATION;
+            return DMLConstants.DefaultModels.LIVING_MATTER;
         }
     }
 }

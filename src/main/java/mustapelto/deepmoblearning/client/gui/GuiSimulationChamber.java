@@ -1,14 +1,15 @@
 package mustapelto.deepmoblearning.client.gui;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
+import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
-import mustapelto.deepmoblearning.common.util.*;
+import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.client.util.StringAnimator;
+import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -16,42 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.SimulationChamber.*;
 
 public class GuiSimulationChamber extends GuiMachine {
-    // GUI TEXTURES
-    public static final ResourceLocation BASE_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber.png");
-
-    // GUI DIMENSIONS
-    private static final int WIDTH = 232;
-    private static final int HEIGHT = 230;
-    private static final Rect MAIN_GUI = new Rect(8, 0, 216, 141);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(28, 145);
-
-    // STATUS DISPLAY
-    private static final Point INFO_BOX = new Point(18, 9);
-    private static final Point CONSOLE = new Point(29, 51);
-    private static final int REDSTONE_DEACTIVATED_LINE_LENGTH = 28;
-    private static final int BLINKING_CURSOR_SPEED = 16;
-
-    // XP / ENERGY BAR LOCATIONS
-    private static final Rect DATA_BAR = new Rect(14, 47, 7,87);
-    private static final Point DATA_BAR_TEXTURE_LOCATION = new Point(18, 141);
-    private static final Rect ENERGY_BAR = new Rect(211, 47, 7, 87);
-    private static final Point ENERGY_BAR_TEXTURE_LOCATION = new Point(25, 141);
-
-    // ITEM SLOT LOCATIONS
-    public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
-    public static final Point DATA_MODEL_SLOT_TEXTURE_LOCATION = new Point(0, 141);
-    public static final Point POLYMER_SLOT = new Point(192, 7);
-    public static final Point LIVING_MATTER_SLOT = new Point(182, 27);
-    public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
-
-    // BUTTON LOCATIONS
-    public static final Point REDSTONE_BUTTON = new Point(-14, 24);
-
     // ANIMATORS (for animated strings)
     private final StringAnimator progressAnimator = new StringAnimator(); // Used to display simulation progress
     private final StringAnimator emptyDisplayAnimator = new StringAnimator(); // Used to display empty screen ("blinking cursor")
@@ -79,6 +47,7 @@ public class GuiSimulationChamber extends GuiMachine {
         super(tileEntity,
                 player,
                 world,
+                new ContainerSimulationChamber(tileEntity, player.inventory),
                 WIDTH,
                 HEIGHT,
                 REDSTONE_BUTTON);
@@ -238,7 +207,7 @@ public class GuiSimulationChamber extends GuiMachine {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        textureManager.bindTexture(BASE_TEXTURE);
+        textureManager.bindTexture(TEXTURE);
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         // Main GUI

@@ -3,9 +3,8 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelDataModel;
-import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
@@ -41,7 +40,7 @@ public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel
 
         dataStore.forEach((k, v) -> {
             ResourceLocation dataModelTexture = v.getDataModelTexture();
-            if (!dataModelTexture.equals(ModelDataModel.DEFAULT_LOCATION))
+            if (!dataModelTexture.equals(DMLConstants.DefaultModels.DATA_MODEL))
                 builder.put(k, dataModelTexture);
         });
 
@@ -53,7 +52,7 @@ public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel
 
         dataStore.forEach((k, v) -> {
             ResourceLocation pristineMatterTexture = v.getPristineMatterTexture();
-            if (!pristineMatterTexture.equals(ModelPristineMatter.DEFAULT_LOCATION))
+            if (!pristineMatterTexture.equals(DMLConstants.DefaultModels.PRISTINE_MATTER))
                 builder.put(k, pristineMatterTexture);
         });
 

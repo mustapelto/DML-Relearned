@@ -1,10 +1,10 @@
 package mustapelto.deepmoblearning.common.events;
 
-import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.ClientProxy;
+import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import mustapelto.deepmoblearning.common.ServerProxy;
 import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
 import mustapelto.deepmoblearning.common.items.ItemGlitchHeart;
 import net.minecraft.block.Block;
@@ -47,7 +47,7 @@ public class PlayerEventHandler {
                     spawnItemEntity(hitVector, world, DMLRegistry.ITEM_SOOTED_REDSTONE, DMLConstants.Crafting.SOOTED_REDSTONE_PER_REDSTONE);
                     stack.shrink(1); // Reduce size of original redstone stack
                 } else {
-                    createRandomParticles(hitVector, world, ClientProxy.SmokeType.SMOKE);
+                    createRandomParticles(hitVector, world, ServerProxy.SmokeType.SMOKE);
                 }
                 event.setCanceled(true);
             }
@@ -58,7 +58,7 @@ public class PlayerEventHandler {
                 spawnItemEntity(hitVector, world, DMLRegistry.ITEM_GLITCH_FRAGMENT, DMLConstants.Crafting.GLITCH_FRAGMENTS_PER_HEART);
                 stack.shrink(1);
             } else {
-                createRandomParticles(hitVector, world, ClientProxy.SmokeType.CYAN);
+                createRandomParticles(hitVector, world, ServerProxy.SmokeType.CYAN);
             }
             event.setCanceled(true);
         }
@@ -70,7 +70,7 @@ public class PlayerEventHandler {
         world.spawnEntity(item);
     }
 
-    private static void createRandomParticles(Vec3d hitVector, World world, ClientProxy.SmokeType type) {
+    private static void createRandomParticles(Vec3d hitVector, World world, ServerProxy.SmokeType type) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         for (int i = 0; i < 3; i++) {

@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class ModelPristineMatter implements IModel {
-    public static final ResourceLocation DEFAULT_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/pristine_matter_default");
-
     private final ResourceLocation mobLocation;
 
     public ModelPristineMatter(ResourceLocation mobLocation) {
@@ -72,7 +70,7 @@ public class ModelPristineMatter implements IModel {
 
             ModelPristineMatter model;
             if (!modelCache.containsKey(mobId)) {
-                model = new ModelPristineMatter(textureCache.getOrDefault(mobId, DEFAULT_LOCATION));
+                model = new ModelPristineMatter(textureCache.getOrDefault(mobId, DMLConstants.DefaultModels.PRISTINE_MATTER));
                 modelCache.put(mobId, model);
             }
             return modelCache.get(mobId);

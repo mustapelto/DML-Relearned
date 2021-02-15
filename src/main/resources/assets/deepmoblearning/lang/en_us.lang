@@ -25,6 +25,7 @@ tile.deepmoblearning.extraction_chamber.name=Loot Fabricator
 deepmoblearning.general.more_info=- hold %s for more info
 
 # Living Matter
+deepmoblearning.living_matter.display_name=%s Matter
 deepmoblearning.living_matter.consume_for_xp=%s to consume for experience.
 deepmoblearning.living_matter.consume_stack=Hold %s to consume entire stack.
 deepmoblearning.living_matter.xp=Experience per item: %s

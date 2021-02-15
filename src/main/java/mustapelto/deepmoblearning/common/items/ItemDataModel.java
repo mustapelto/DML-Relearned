@@ -1,16 +1,18 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +31,7 @@ public class ItemDataModel extends ItemBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         MetadataDataModel metadata = DataModelHelper.getDataModelMetadata(stack);
 
@@ -41,7 +44,7 @@ public class ItemDataModel extends ItemBase {
         }
 
         if (!KeyboardHelper.isHoldingSneakKey()) {
-            String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName(), TextFormatting.GRAY);
+            String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakKeyName(), TextFormatting.GRAY);
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
             if (!DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME) {
@@ -75,6 +78,9 @@ public class ItemDataModel extends ItemBase {
     @Override
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        if (FMLCommonHandler.instance().getSide() == Side.SERVER)
+            return super.getItemStackDisplayName(stack); // Can't do localization on server side
+
         String name = I18n.format("deepmoblearning.data_model.display_name", metadata.getDisplayName());
         String tier = DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME ? DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") : "";
         return TextFormatting.AQUA + name + tier + TextFormatting.RESET;

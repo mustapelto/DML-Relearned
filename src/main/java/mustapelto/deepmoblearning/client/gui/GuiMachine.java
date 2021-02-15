@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonRedstoneMode;
+import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
@@ -22,10 +23,11 @@ public abstract class GuiMachine extends GuiContainerBase {
     public GuiMachine(TileEntityMachine tileEntity,
                       EntityPlayer player,
                       World world,
+                      ContainerMachine container,
                       int width,
                       int height,
                       Point redstoneModeButtonLocation) {
-        super(player, world, tileEntity.getContainer(player.inventory), width, height);
+        super(player, world, container, width, height);
         this.tileEntity = tileEntity;
         this.tileEntity.setGuiOpen(true);
         this.redstoneModeButtonLocation = redstoneModeButtonLocation;

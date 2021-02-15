@@ -2,8 +2,13 @@ package mustapelto.deepmoblearning.common;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.client.gui.GuiDeepLearner;
+import mustapelto.deepmoblearning.client.gui.GuiLootFabricator;
+import mustapelto.deepmoblearning.client.gui.GuiSimulationChamber;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
-import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
+import mustapelto.deepmoblearning.common.inventory.ContainerLootFabricator;
+import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
+import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
+import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -21,8 +26,10 @@ public class DMLGuiHandler implements IGuiHandler {
                 return new ContainerDeepLearner(player);
             case DMLConstants.Gui.IDs.MACHINE:
                 TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-                if (tileEntity instanceof TileEntityMachine)
-                    return ((TileEntityMachine) tileEntity).getContainer(player.inventory);
+                if (tileEntity instanceof TileEntitySimulationChamber)
+                    return new ContainerSimulationChamber((TileEntitySimulationChamber) tileEntity, player.inventory);
+                else if (tileEntity instanceof TileEntityLootFabricator)
+                    return new ContainerLootFabricator((TileEntityLootFabricator) tileEntity, player.inventory);
             default:
                 return null;
         }
@@ -36,8 +43,10 @@ public class DMLGuiHandler implements IGuiHandler {
                 return new GuiDeepLearner(player, world);
             case DMLConstants.Gui.IDs.MACHINE:
                 TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-                if (tileEntity instanceof TileEntityMachine)
-                    return ((TileEntityMachine) tileEntity).getGUI(player, world);
+                if (tileEntity instanceof TileEntitySimulationChamber)
+                    return new GuiSimulationChamber((TileEntitySimulationChamber) tileEntity, player, world);
+                else if (tileEntity instanceof TileEntityLootFabricator)
+                    return new GuiLootFabricator((TileEntityLootFabricator) tileEntity, player, world);
             default:
                 return null;
         }

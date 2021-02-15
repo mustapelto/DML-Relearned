@@ -6,12 +6,11 @@ import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -215,11 +214,13 @@ public class DataModelHelper {
         setTotalKillCount(stack, getTotalKillCount(stack) + 1);
 
         if (tryIncreaseTier(stack)) {
-            player.sendMessage(new TextComponentString(
-                    I18n.format("deepmoblearning.data_model.reached_tier",
+            player.sendMessage(
+                    new TextComponentTranslation(
+                            "deepmoblearning.data_model.reached_tier",
                             stack.getDisplayName(),
-                            getTierDisplayNameFormatted(stack))
-            ));
+                            getTierDisplayNameFormatted(stack)
+                    )
+            );
         }
     }
 

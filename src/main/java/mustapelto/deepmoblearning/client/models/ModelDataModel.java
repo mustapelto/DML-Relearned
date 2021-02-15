@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class ModelDataModel implements IModel {
-    public static final ResourceLocation DEFAULT_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_default");
     private static final ResourceLocation BASE_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_base");
     private static final ResourceLocation BLANK_LOCATION = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_blank");
 
@@ -68,7 +67,7 @@ public class ModelDataModel implements IModel {
 
             ModelDataModel model;
             if (!modelCache.containsKey(mobId)) {
-                model = new ModelDataModel(textureCache.getOrDefault(mobId, DEFAULT_LOCATION));
+                model = new ModelDataModel(textureCache.getOrDefault(mobId, DMLConstants.DefaultModels.DATA_MODEL));
                 modelCache.put(mobId, model);
             }
             return modelCache.get(mobId);

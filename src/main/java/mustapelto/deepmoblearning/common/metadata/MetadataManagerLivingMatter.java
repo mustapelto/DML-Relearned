@@ -2,8 +2,8 @@ package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelLivingMatter;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -38,7 +38,7 @@ public class MetadataManagerLivingMatter extends MetadataManager<MetadataLivingM
 
         dataStore.forEach((k, v) -> {
             ResourceLocation livingMatterTexture = v.getLivingMatterTexture();
-            if (!livingMatterTexture.equals(ModelLivingMatter.DEFAULT_LOCATION))
+            if (!livingMatterTexture.equals(DMLConstants.DefaultModels.LIVING_MATTER))
                 builder.put(k, livingMatterTexture);
         });
 

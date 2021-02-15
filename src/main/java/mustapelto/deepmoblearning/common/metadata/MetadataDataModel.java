@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.client.models.ModelDataModel;
-import mustapelto.deepmoblearning.client.models.ModelPristineMatter;
 import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.util.ItemStackDefinitionHelper;
 import mustapelto.deepmoblearning.common.util.JsonHelper;
@@ -28,6 +26,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -35,10 +34,6 @@ import java.io.IOException;
  */
 public class MetadataDataModel extends Metadata {
     public static final MetadataDataModel INVALID = new MetadataDataModel();
-
-    private static final String DATA_MODEL_PLACEHOLDER_STRING = "dataModel";
-    private static final String PRISTINE_MATTER_PLACEHOLDER_STRING = "pristineMatter";
-    private static final ResourceLocation RECIPE_GROUP = new ResourceLocation(DMLConstants.ModInfo.ID, "data_models");
 
     // Data from JSON
     private final String displayName; // Used in Data Model and Pristine Matter display name, and Deep Learner GUI. Default: metadataID
@@ -101,17 +96,17 @@ public class MetadataDataModel extends Metadata {
     @Override
     public void finalizeData() {
         // Replace placeholder strings with actual item name and build ItemStack lists
-        ImmutableList<String> replacedLootList = StringHelper.replaceInList(lootItemStrings, DATA_MODEL_PLACEHOLDER_STRING, dataModelRegistryName.toString());
-        replacedLootList = StringHelper.replaceInList(replacedLootList, PRISTINE_MATTER_PLACEHOLDER_STRING, pristineMatterRegistryName.toString());
+        ImmutableList<String> replacedLootList = StringHelper.replaceInList(lootItemStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
+        replacedLootList = StringHelper.replaceInList(replacedLootList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
         lootItems = ItemStackDefinitionHelper.itemStackListFromStringList(replacedLootList);
 
-        ImmutableList<String> replacedTrialList = StringHelper.replaceInList(trialRewardStrings, DATA_MODEL_PLACEHOLDER_STRING, dataModelRegistryName.toString());
-        replacedTrialList = StringHelper.replaceInList(replacedTrialList, PRISTINE_MATTER_PLACEHOLDER_STRING, pristineMatterRegistryName.toString());
+        ImmutableList<String> replacedTrialList = StringHelper.replaceInList(trialRewardStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
+        replacedTrialList = StringHelper.replaceInList(replacedTrialList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
         trialRewards = ItemStackDefinitionHelper.itemStackListFromStringList(replacedTrialList);
 
         // Build crafting recipe
-        ImmutableList<String> replacedIngredientList = StringHelper.replaceInList(craftingIngredientStrings, DATA_MODEL_PLACEHOLDER_STRING, dataModelRegistryName.toString());
-        replacedIngredientList = StringHelper.replaceInList(replacedIngredientList, PRISTINE_MATTER_PLACEHOLDER_STRING, pristineMatterRegistryName.toString());
+        ImmutableList<String> replacedIngredientList = StringHelper.replaceInList(craftingIngredientStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
+        replacedIngredientList = StringHelper.replaceInList(replacedIngredientList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
         buildCraftingRecipe(replacedIngredientList);
 
         // Get associated Living Matter
@@ -142,9 +137,9 @@ public class MetadataDataModel extends Metadata {
         }
 
         if (isOreRecipe)
-            craftingRecipe = new ShapelessOreRecipe(RECIPE_GROUP, output, ingredients);
+            craftingRecipe = new ShapelessOreRecipe(DMLConstants.Recipes.Groups.DATA_MODELS, output, ingredients);
         else
-            craftingRecipe = new ShapelessRecipes(RECIPE_GROUP.toString(), output, ingredients);
+            craftingRecipe = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
 
         craftingRecipe.setRegistryName(dataModelRegistryName);
     }
@@ -211,7 +206,7 @@ public class MetadataDataModel extends Metadata {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Data Model texture for {} not found. Using default texture.", getMetadataID());
-            return ModelDataModel.DEFAULT_LOCATION;
+            return DMLConstants.DefaultModels.DATA_MODEL;
         }
     }
 
@@ -224,7 +219,7 @@ public class MetadataDataModel extends Metadata {
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Pristine Matter texture for {} not found. Using default texture.", getMetadataID());
-            return ModelPristineMatter.DEFAULT_LOCATION;
+            return DMLConstants.DefaultModels.PRISTINE_MATTER;
         }
     }
 
@@ -241,7 +236,10 @@ public class MetadataDataModel extends Metadata {
         return associatedMobs.contains(name);
     }
 
+    @Nonnull
     public ImmutableList<ItemStack> getLootItems() {
+        if (lootItems == null)
+            return ImmutableList.of();
         return lootItems;
     }
 
@@ -253,6 +251,8 @@ public class MetadataDataModel extends Metadata {
     }
 
     public ImmutableList<ItemStack> getTrialRewards() {
+        if (trialRewards == null)
+            return ImmutableList.of();
         return trialRewards;
     }
 

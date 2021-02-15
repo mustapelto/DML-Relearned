@@ -8,8 +8,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.DATA_MODEL_SLOTS;
-import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.PLAYER_INVENTORY;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
 
 public class ContainerDeepLearner extends ContainerBase {
     public static final int INTERNAL_SLOTS = DATA_MODEL_SLOTS.size();

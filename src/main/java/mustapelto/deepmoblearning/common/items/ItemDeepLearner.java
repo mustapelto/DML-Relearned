@@ -2,11 +2,10 @@ package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +19,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,13 +57,14 @@ public class ItemDeepLearner extends ItemBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.deep_learner.hud"));
 
         NonNullList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
         if (containedDataModels.size() > 0) {
             if (!KeyboardHelper.isHoldingSneakKey()) {
-                tooltip.add(I18n.format("deepmoblearning.general.more_info", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()));
+                tooltip.add(I18n.format("deepmoblearning.general.more_info", KeyboardHelper.getSneakKeyName()));
             } else {
                 tooltip.add(I18n.format("deepmoblearning.deep_learner.contains"));
                 containedDataModels.forEach(dataModel ->

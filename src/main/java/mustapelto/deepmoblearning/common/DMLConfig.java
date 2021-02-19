@@ -34,6 +34,10 @@ public class DMLConfig {
         @RangeInt(min = 1, max = 1200)
         public int LOOT_FABRICATOR_PROCESSING_TIME = 51;
 
+        @Name("Legacy Machine Sidedness")
+        @Comment("Use legacy sidedness (insert from top, output to all other sides)?")
+        public boolean LEGACY_MACHINE_SIDEDNESS = false;
+
         @Name("Show Data Model tier in item name?")
         public boolean SHOW_TIER_IN_NAME = true;
 

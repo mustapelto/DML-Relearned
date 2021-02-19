@@ -145,14 +145,23 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing == null)
+            if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
                         new CombinedInvWrapper(inputPristineMatter, output)
                 );
-            else
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
-                        new CombinedInvWrapper(pristineMatterWrapper, output)
-                );
+            } else {
+                if (!DMLConfig.GENERAL_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
+                    return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
+                            new CombinedInvWrapper(pristineMatterWrapper, output)
+                    );
+                } else {
+                    if (facing == EnumFacing.UP) {
+                        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inputPristineMatter);
+                    } else {
+                        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(output);
+                    }
+                }
+            }
         }
 
         return super.getCapability(capability, facing);

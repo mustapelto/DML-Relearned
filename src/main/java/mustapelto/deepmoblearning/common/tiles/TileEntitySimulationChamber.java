@@ -186,14 +186,23 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing == null)
+            if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
                         new CombinedInvWrapper(inputDataModel, inputPolymer, outputLiving, outputPristine)
                 );
-            else
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
-                        new CombinedInvWrapper(dataModelWrapper, polymerWrapper, outputLiving, outputPristine)
-                );
+            } else {
+                if (!DMLConfig.GENERAL_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
+                    return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
+                            new CombinedInvWrapper(dataModelWrapper, polymerWrapper, outputLiving, outputPristine)
+                    );
+                } else {
+                    if (facing == EnumFacing.UP) {
+                        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new CombinedInvWrapper(inputDataModel, inputPolymer));
+                    } else {
+                        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new CombinedInvWrapper(outputPristine, outputLiving));
+                    }
+                }
+            }
         }
 
         return super.getCapability(capability, facing);

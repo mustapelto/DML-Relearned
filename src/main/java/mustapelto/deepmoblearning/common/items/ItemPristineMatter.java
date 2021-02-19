@@ -5,6 +5,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,8 +40,10 @@ public class ItemPristineMatter extends ItemBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        // TODO: show loot items in tooltip
-
+        tooltip.add(TextFormatting.AQUA + I18n.format("deepmoblearning.pristine_matter.loot_items") + TextFormatting.RESET);
+        for (ItemStack lootStack : metadata.getLootItems()) {
+            tooltip.add(lootStack.getDisplayName());
+        }
     }
 
     private MetadataDataModel getDataModelMetadata() {

@@ -32,6 +32,7 @@ deepmoblearning.living_matter.xp=Experience per item: %s
 
 # Pristine Matter
 deepmoblearning.pristine_matter.display_name=Pristine %s Matter
+deepmoblearning.pristine_matter.loot_items=Available loot items:
 
 # Data Model
 deepmoblearning.data_model.display_name=%s Data Model

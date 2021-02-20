@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase {
-    private static final PropertyDirection FACING = BlockHorizontal.FACING;
+public abstract class BlockTileEntity extends BlockBase {
+    protected static final PropertyDirection FACING = BlockHorizontal.FACING;
     private final int GUI_ID;
 
     /**
@@ -50,7 +50,6 @@ public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase {
     @Nullable
     @Override
     public abstract TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state);
-    public abstract Class<TE> getTileEntityClass();
 
     @Override
     public void breakBlock(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {

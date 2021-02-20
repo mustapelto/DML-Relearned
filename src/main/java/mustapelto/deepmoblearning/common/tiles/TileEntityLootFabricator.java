@@ -8,6 +8,7 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -83,6 +84,16 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             return ItemStack.EMPTY;
 
         return metadata.getLootItem(outputItemIndex);
+    }
+
+    @Override
+    protected CraftingState updateCraftingState() {
+        if (!crafting && !hasPristineMatter())
+            return CraftingState.IDLE;
+        else if (!canStartCrafting() || !canContinueCrafting())
+            return CraftingState.ERROR;
+
+        return CraftingState.RUNNING;
     }
 
     //

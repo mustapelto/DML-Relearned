@@ -8,6 +8,8 @@ import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
+import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
+import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -69,8 +71,8 @@ public class DMLRegistry {
         registeredBlocks.forEach(registry::register);
 
         // Register tile entities
-        GameRegistry.registerTileEntity(BLOCK_SIMULATION_CHAMBER.getTileEntityClass(),new ResourceLocation(DMLConstants.ModInfo.ID, "simulation_chamber"));
-        GameRegistry.registerTileEntity(BLOCK_LOOT_FABRICATOR.getTileEntityClass(), new ResourceLocation(DMLConstants.ModInfo.ID, "extraction_chamber"));
+        GameRegistry.registerTileEntity(TileEntitySimulationChamber.class, new ResourceLocation(DMLConstants.ModInfo.ID, "simulation_chamber"));
+        GameRegistry.registerTileEntity(TileEntityLootFabricator.class, new ResourceLocation(DMLConstants.ModInfo.ID, "extraction_chamber"));
     }
 
     @SubscribeEvent

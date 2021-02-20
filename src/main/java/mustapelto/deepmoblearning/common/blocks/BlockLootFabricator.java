@@ -20,9 +20,4 @@ public class BlockLootFabricator extends BlockMachine {
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityLootFabricator();
     }
-
-    @Override
-    public Class<TileEntityLootFabricator> getTileEntityClass() {
-        return TileEntityLootFabricator.class;
-    }
 }

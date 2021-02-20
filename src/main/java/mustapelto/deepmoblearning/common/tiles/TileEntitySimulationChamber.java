@@ -10,6 +10,7 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
@@ -113,6 +114,16 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     @Override
     public int getCraftingEnergyCost() {
         return DataModelHelper.getSimulationEnergy(getDataModel());
+    }
+
+    @Override
+    protected CraftingState updateCraftingState() {
+        if (!hasDataModel())
+            return CraftingState.IDLE;
+        else if (!canStartCrafting() || !canContinueCrafting())
+            return CraftingState.ERROR;
+
+        return CraftingState.RUNNING;
     }
 
     //

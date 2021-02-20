@@ -18,9 +18,4 @@ public class BlockSimulationChamber extends BlockMachine {
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntitySimulationChamber();
     }
-
-    @Override
-    public Class<TileEntitySimulationChamber> getTileEntityClass() {
-        return TileEntitySimulationChamber.class;
-    }
 }

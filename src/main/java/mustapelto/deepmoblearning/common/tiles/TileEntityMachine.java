@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
+import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +25,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     protected RedstoneMode redstoneMode = RedstoneMode.ALWAYS_ON;
 
     // Crafting
+    private CraftingState craftingState = CraftingState.IDLE;
     protected boolean crafting = false;
     protected int craftingProgress = 0;
 
@@ -35,7 +37,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     }
 
     // Client/Server Sync
-    protected boolean progressChanged = false; // if true -> server will respond to client's request with update packet
+    protected boolean progressChanged = false;
 
     //
     // ITickable
@@ -56,6 +58,12 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         if (crafting && canContinueCrafting()) {
             energyStorage.voidEnergy(getCraftingEnergyCost());
             advanceCraftingProgress();
+        }
+
+        CraftingState newCraftingState = updateCraftingState();
+        if (craftingState != newCraftingState) {
+            craftingState = newCraftingState;
+            sendUpdatePacketToClient();
         }
     }
 
@@ -78,7 +86,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     /**
      * @return true if machine is redstone-activated and has enough energy
      */
-    private boolean canContinueCrafting() {
+    protected boolean canContinueCrafting() {
         return isRedstoneActive() && hasEnergyForCrafting();
     }
 
@@ -128,6 +136,12 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     public int getMaxEnergy() {
         return energyStorage.getMaxEnergyStored();
+    }
+
+    protected abstract CraftingState updateCraftingState();
+
+    public CraftingState getCraftingState() {
+        return craftingState;
     }
 
     //
@@ -202,6 +216,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
         buf.writeBoolean(crafting);
         buf.writeInt(craftingProgress);
+        buf.writeInt(craftingState.getIndex());
 
         return buf;
     }
@@ -216,6 +231,9 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
         crafting = buf.readBoolean();
         craftingProgress = buf.readInt();
+        craftingState = CraftingState.byIndex(buf.readInt());
+
+        sendBlockUpdate();
     }
 
     //
@@ -232,13 +250,16 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         redstonePowered = redstoneLevel > 0;
 
         if (redstonePowered != oldRedstonePowerState) {
-            if (!world.isRemote) {
+            if (!world.isRemote)
                 sendUpdatePacketToClient();
-            } else {
-                IBlockState state = world.getBlockState(pos);
-                world.notifyBlockUpdate(pos, state, state, 3);
-            }
+            else
+                sendBlockUpdate();
         }
+    }
+
+    private void sendBlockUpdate() {
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     //

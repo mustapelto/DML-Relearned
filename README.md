@@ -1,10 +1,10 @@
-## This mod is currently in alpha!
+## This mod is currently in beta!
 Some major features from the original mod have not yet been implemented (most importantly Trials, JEI integration and the Guidebook),
 and *there will be bugs!* Do not use this on an important world that you don't have a backup of. **You have been warned!**
 
 # Deep Mob Learning: Relearned
 A rewrite from scratch of [DeepMobLearning](https://github.com/xt9/DeepMobLearning) by xt9/IterationFunk.
-Original textures by xt9.
+Original textures by xt9, most of which have been modified or replaced.
 
 A server-friendly and peaceful-compatible mod for mob loot acquisition, originally inspired by the Soul Shards mod,
 where you could "collect" mob kills to later use them for mob spawners.
@@ -37,7 +37,9 @@ into a Simulation Chamber to start producing Matter!
     * Simulation Chamber allows Data Model and Polymer Clay input from any side, and Living/Pristine Matter output
       to any side
     * Loot Fabricator allows Pristine Matter input from any side, and loot item output to any side
-- Lots of under-the-hood performance improvements
+    * A config setting is available to use original DML sidedness instead
+- Machine blocks show the current state of crafting (idle / running / error)  
+- Several under-the-hood performance improvements
 
 ### Updating from DeepMobLearning
 This mod uses the same item and block IDs as the original mod, so in-place updating *should* be possible.
@@ -49,12 +51,6 @@ Data Models for the following mods are defined in the default config:
 - **Twilight Forest** (four categories of mobs: Forest, Swamp, Darkwood and Glacier)
 - **Tinkers' Construct** (Blue Slime)
 - **Matter Overdrive** (Rogue Android)
-
-### Planned features
-- Config setting to allow reverting to legacy DML input/output side behavior</li>
-- Block textures that show if a machine is currently running
-- Various other small QoL improvements
-- A Simulation Chamber multiblock with higher output rates (mainly meant for factory-building modpacks)
 
 ### Why no 1.15/1.16/whatever version?
 I started this rewrite as a personal project for the [OmniFactory](https://www.curseforge.com/minecraft/modpacks/omnifactory)

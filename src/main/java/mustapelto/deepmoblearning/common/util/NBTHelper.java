@@ -33,6 +33,14 @@ public class NBTHelper {
         return hasTag(stack) ? getInteger(getTag(stack), key, defaultValue) : defaultValue;
     }
 
+    public static void setString(ItemStack stack, String key, String value) {
+        getTag(stack).setString(key, value);
+    }
+
+    public static String getString(ItemStack stack, String key, String defaultValue) {
+        return hasTag(stack) ? getString(getTag(stack), key, defaultValue) : defaultValue;
+    }
+
     public static NBTTagList getCompoundList(ItemStack stack, String key) {
         return hasTag(stack) ? getTag(stack).getTagList(key, Constants.NBT.TAG_COMPOUND) : null;
     }
@@ -54,5 +62,9 @@ public class NBTHelper {
 
     public static boolean getBoolean(NBTTagCompound compound, String key, boolean defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_BYTE) ? compound.getBoolean(key) : defaultValue;
+    }
+
+    public static String getString(NBTTagCompound compound, String key, String defaultValue) {
+        return compound.hasKey(key, Constants.NBT.TAG_STRING) ? compound.getString(key) : defaultValue;
     }
 }

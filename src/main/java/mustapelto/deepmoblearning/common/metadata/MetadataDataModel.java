@@ -5,9 +5,7 @@ import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLRegistry;
-import mustapelto.deepmoblearning.common.util.ItemStackDefinitionHelper;
-import mustapelto.deepmoblearning.common.util.JsonHelper;
-import mustapelto.deepmoblearning.common.util.StringHelper;
+import mustapelto.deepmoblearning.common.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
@@ -44,7 +42,7 @@ public class MetadataDataModel extends Metadata {
     private final ImmutableList<String> craftingIngredientStrings; // Ingredients to craft this model (in addition to a Blank Model). Default: none
     private final ImmutableList<String> associatedMobs; // List of mobs that increase Model data. Default: ["modID:metadataID"]
     private final ImmutableList<String> lootItemStrings; // List of possible loot items from this Model's Pristine Matter. Default: ["minecraft:stone"]
-    private final ImmutableList<String> trialRewardStrings; // List of rewards for a Trial with this mob. Default: []
+    private final TrialData trialData; // Data for Trials attuned to this Model
     private final DeepLearnerDisplayData deepLearnerDisplayData; // Data used in Deep Learner display
 
     // Calculated data
@@ -52,7 +50,6 @@ public class MetadataDataModel extends Metadata {
     private final ResourceLocation pristineMatterRegistryName; // deepmoblearning:pristine_matter_[metadataID]
 
     private ImmutableList<ItemStack> lootItems; // List of actual ItemStacks that can be selected as "loot"
-    private ImmutableList<ItemStack> trialRewards; // List of actual ItemStacks that are received as trial reward
     private IRecipe craftingRecipe; // Recipe to craft this Data Model
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
     private ItemStack pristineMatter; // Pristine Matter associated with this Data Model
@@ -67,7 +64,7 @@ public class MetadataDataModel extends Metadata {
         craftingIngredientStrings = ImmutableList.of();
         associatedMobs = ImmutableList.of();
         lootItemStrings = ImmutableList.of();
-        trialRewardStrings = ImmutableList.of();
+        trialData = TrialData.INVALID;
         deepLearnerDisplayData = DeepLearnerDisplayData.INVALID;
         dataModelRegistryName = new ResourceLocation("");
         pristineMatterRegistryName = new ResourceLocation("");
@@ -84,10 +81,22 @@ public class MetadataDataModel extends Metadata {
         craftingIngredientStrings = JsonHelper.getStringListFromJsonArray(data, "craftingIngredients");
         associatedMobs = JsonHelper.getStringListFromJsonArray(data, "associatedMobs", String.format("%s:%s", categoryID, metadataID));
         lootItemStrings = JsonHelper.getStringListFromJsonArray(data, "lootItems", "minecraft:stone");
-        trialRewardStrings = JsonHelper.getStringListFromJsonArray(data, "trialRewards");
+
+        JsonObject trialDataJSON = JsonHelper.getJsonObject(data, "trial");
+        if (trialDataJSON.size() == 0) {
+            trialData = TrialData.INVALID;
+            DMLRelearned.logger.warn("Invalid Trial JSON object in entry {}:{}", categoryID, metadataID);
+        } else {
+            trialData = new TrialData(trialDataJSON, this);
+        }
 
         JsonObject deepLearnerDisplayJSON = JsonHelper.getJsonObject(data, "deepLearnerDisplay");
-        deepLearnerDisplayData = new DeepLearnerDisplayData(deepLearnerDisplayJSON, categoryID, metadataID);
+        if (deepLearnerDisplayJSON.size() == 0) {
+            deepLearnerDisplayData = DeepLearnerDisplayData.INVALID;
+            DMLRelearned.logger.warn("Invalid Deep Learner display JSON object in entry {}:{}", categoryID, metadataID);
+        } else {
+            deepLearnerDisplayData = new DeepLearnerDisplayData(deepLearnerDisplayJSON, this);
+        }
 
         dataModelRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "data_model_" + metadataID);
         pristineMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "pristine_matter_" + metadataID);
@@ -95,14 +104,10 @@ public class MetadataDataModel extends Metadata {
 
     @Override
     public void finalizeData() {
-        // Replace placeholder strings with actual item name and build ItemStack lists
+        // Replace placeholder strings with actual item name and build ItemStack list
         ImmutableList<String> replacedLootList = StringHelper.replaceInList(lootItemStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
         replacedLootList = StringHelper.replaceInList(replacedLootList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
         lootItems = ItemStackDefinitionHelper.itemStackListFromStringList(replacedLootList);
-
-        ImmutableList<String> replacedTrialList = StringHelper.replaceInList(trialRewardStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
-        replacedTrialList = StringHelper.replaceInList(replacedTrialList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
-        trialRewards = ItemStackDefinitionHelper.itemStackListFromStringList(replacedTrialList);
 
         // Build crafting recipe
         ImmutableList<String> replacedIngredientList = StringHelper.replaceInList(craftingIngredientStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
@@ -112,10 +117,12 @@ public class MetadataDataModel extends Metadata {
         // Get associated Living Matter
         livingMatter = DMLRegistry.getLivingMatter(livingMatterString);
         pristineMatter = DMLRegistry.getPristineMatter(pristineMatterRegistryName.getResourcePath());
+
+        trialData.finalizeData();
     }
 
     private void buildCraftingRecipe(ImmutableList<String> ingredientStringList) {
-        ItemStack output = DMLRegistry.getDataModel(getMetadataID());
+        ItemStack output = DMLRegistry.getDataModel(metadataID);
         if (output.isEmpty())
             return;
 
@@ -185,6 +192,10 @@ public class MetadataDataModel extends Metadata {
         return extraTooltip;
     }
 
+    public TrialData getTrialData() {
+        return trialData;
+    }
+
     public DeepLearnerDisplayData getDeepLearnerDisplayData() {
         return deepLearnerDisplayData;
     }
@@ -205,7 +216,7 @@ public class MetadataDataModel extends Metadata {
             return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + dataModelRegistryName.getResourcePath());
         } catch (IOException e) {
             // File not found -> use default model and output info
-            DMLRelearned.logger.info("Data Model texture for {} not found. Using default texture.", getMetadataID());
+            DMLRelearned.logger.info("Data Model texture not found for entry {}:{}. Using default texture.", categoryID, metadataID);
             return DMLConstants.DefaultModels.DATA_MODEL;
         }
     }
@@ -218,7 +229,7 @@ public class MetadataDataModel extends Metadata {
             return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + pristineMatterRegistryName.getResourcePath());
         } catch (IOException e) {
             // File not found -> use default model and output info
-            DMLRelearned.logger.info("Pristine Matter texture for {} not found. Using default texture.", getMetadataID());
+            DMLRelearned.logger.info("Pristine Matter texture not found for entry {}:{}. Using default texture.", categoryID, metadataID);
             return DMLConstants.DefaultModels.PRISTINE_MATTER;
         }
     }
@@ -250,25 +261,89 @@ public class MetadataDataModel extends Metadata {
         return ItemStack.EMPTY;
     }
 
-    public ImmutableList<ItemStack> getTrialRewards() {
-        if (trialRewards == null)
-            return ImmutableList.of();
-        return trialRewards;
-    }
-
-    public ItemStack getTrialRewardItem(int index) {
-        if (index >= 0 && index < trialRewards.size())
-            return trialRewards.get(index).copy();
-
-        return ItemStack.EMPTY;
-    }
-
     public IRecipe getCraftingRecipe() {
         return craftingRecipe;
     }
 
+    public static class TrialData {
+        public static final TrialData INVALID = new TrialData();
+
+        private final MetadataDataModel container;
+
+        private final ImmutableList<WeightedItem<String>> entityStrings; // Name of entity to spawn for trial (from JSON, final string is built after entities are registered)
+        private final double spawnDelay; // Time between wave spawns. Default: 2
+        private final ImmutableList<String> rewardStrings; // List of rewards for a Trial with this mob. Default: []
+
+        private ImmutableList<WeightedItem<ResourceLocation>> entities; // Entity to spawn for trial (final, validated version)
+        private ImmutableList<ItemStack> rewards; // List of actual ItemStacks that are received as trial reward
+
+
+        private TrialData() {
+            container = null;
+
+            entityStrings = ImmutableList.of();
+            spawnDelay = 2;
+            rewardStrings = ImmutableList.of();
+        }
+
+        public TrialData(JsonObject data, MetadataDataModel container) {
+            this.container = container;
+
+            entityStrings = JsonHelper.getWeightedStringList(data, "entities");
+            spawnDelay = JsonHelper.getDouble(data, "spawnDelay", 2, 0, 20);
+            rewardStrings = JsonHelper.getStringListFromJsonArray(data, "rewards");
+        }
+
+        public void finalizeData() {
+            // Build weighted list of trial entities
+            ImmutableList.Builder<WeightedItem<ResourceLocation>> weightedEntityListBuilder = ImmutableList.builder();
+            for (WeightedItem<String> entry : entityStrings) {
+                ResourceLocation trialEntity = new ResourceLocation(entry.getValue());
+                if (!EntityList.isRegistered(trialEntity)) {
+                    // Try using categoryID:metadataID
+                    trialEntity = new ResourceLocation(container.categoryID, container.metadataID);
+                    if (!EntityList.isRegistered(trialEntity)) {
+                        DMLRelearned.logger.info("No Trial available for Data Model: {}:{}", container.categoryID, container.metadataID);
+                        trialEntity = null;
+                    }
+                }
+                if (trialEntity != null)
+                    weightedEntityListBuilder.add(new WeightedItem<>(trialEntity, entry.getWeight()));
+            }
+            entities = weightedEntityListBuilder.build();
+
+            // Build list of trial rewards
+            ImmutableList<String> replacedTrialList = StringHelper.replaceInList(rewardStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, container.getDataModelRegistryName().toString());
+            replacedTrialList = StringHelper.replaceInList(replacedTrialList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, container.getPristineMatterRegistryName().toString());
+            rewards = ItemStackDefinitionHelper.itemStackListFromStringList(replacedTrialList);
+        }
+
+        public boolean hasEntity() {
+            return entities.size() > 0;
+        }
+
+        public ImmutableList<WeightedItem<ResourceLocation>> getEntities() {
+            return entities;
+        }
+
+        public ImmutableList<ItemStack> getRewards() {
+            if (rewards == null)
+                return ImmutableList.of();
+            return rewards;
+        }
+
+        public ItemStack getRewardItem(int index) {
+            if (index >= 0 && index < rewards.size())
+                return rewards.get(index).copy();
+
+            return ItemStack.EMPTY;
+        }
+    }
+
     public static class DeepLearnerDisplayData {
         public static final DeepLearnerDisplayData INVALID = new DeepLearnerDisplayData();
+
+        private final MetadataDataModel container;
 
         private final int hearts; // Number of hearts. 0 will show as obfuscated text. Default: 10
         private final ImmutableList<String> mobTrivia; // Mob trivia text. Default: "Nothing is known about this mob."
@@ -283,6 +358,7 @@ public class MetadataDataModel extends Metadata {
         private final int extraEntityOffsetY; // Y offset of additional entity. Default: 0
 
         private DeepLearnerDisplayData() {
+            container = null;
             hearts = 0;
             mobTrivia = ImmutableList.of("INVALID");
             entityName = "";
@@ -296,11 +372,13 @@ public class MetadataDataModel extends Metadata {
             extraEntityOffsetY = 0;
         }
 
-        public DeepLearnerDisplayData(JsonObject data, String categoryID, String metadataID) {
+        public DeepLearnerDisplayData(JsonObject data, MetadataDataModel container) {
+            this.container = container;
+
             hearts = JsonHelper.getInt(data, "hearts", 0, 0, Integer.MAX_VALUE);
             mobTrivia = JsonHelper.getStringListFromJsonArray(data, "mobTrivia", "Nothing is known about this mob.");
 
-            String defaultEntityName = String.format("%s:%s", categoryID, metadataID);
+            String defaultEntityName = String.format("%s:%s", this.container.categoryID, this.container.metadataID);
             entityName = JsonHelper.getRegistryName(data, "entity", defaultEntityName);
 
             entityHeldItem = JsonHelper.getRegistryName(data, "entityHeldItem");
@@ -323,7 +401,7 @@ public class MetadataDataModel extends Metadata {
 
         public Entity getEntity(World world) {
             Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(entityName), world);
-            if (!entityHeldItem.isEmpty() && entity instanceof EntityLiving) {
+            if (entity instanceof EntityLiving && !entityHeldItem.isEmpty()) {
                 Item heldItem = Item.getByNameOrId(entityHeldItem);
                 if (heldItem != null)
                     ((EntityLiving) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(heldItem));

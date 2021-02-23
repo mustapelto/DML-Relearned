@@ -111,7 +111,7 @@ public class GuiLootFabricator extends GuiMachine {
             return;
         }
 
-        totalOutputItemPages = MathHelper.DivideAndRoundUp(lootItemList.size(), ITEMS_PER_PAGE);
+        totalOutputItemPages = MathHelper.divideAndRoundUp(lootItemList.size(), ITEMS_PER_PAGE);
         setPageButtonsEnabled(totalOutputItemPages > 1);
 
         if (!preselectedOutput) {

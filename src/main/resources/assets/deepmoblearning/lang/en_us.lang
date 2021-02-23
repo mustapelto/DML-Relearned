@@ -75,6 +75,16 @@ deepmoblearning.creative_model_learner.increase_tier=%s to increase tier.
 deepmoblearning.creative_model_learner.decrease_tier=%s to decrease tier.
 deepmoblearning.creative_model_learner.increase_kills=%s to simulate kills.
 
+# Trial Key
+deepmoblearning.trial_key.attunement_message=%s was attuned to: %s
+deepmoblearning.trial_key.tooltip.attunement=Attuned to:
+deepmoblearning.trial_key.tooltip.tier=Key tier:
+deepmoblearning.trial_key.tooltip.affixes=Affixes:
+deepmoblearning.trial_key.tooltip.no_affixes=Trial has no affixes
+deepmoblearning.trial_key.tooltip.affix_info=Read more about each affix in the Guidebook
+deepmoblearning.trial_key.tooltip.not_attuned=Currently not attuned
+deepmoblearning.trial_key.tooltip.available_attunements=Available attunements:
+
 # Soot-Covered Redstone
 deepmoblearning.soot_covered_redstone.tooltip_1=Crafted by crushing %s against
 deepmoblearning.soot_covered_redstone.tooltip_2=a %s (%s)

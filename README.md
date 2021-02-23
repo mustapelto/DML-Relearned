@@ -1,6 +1,7 @@
 ## This mod is currently in beta!
 This means **there will probably be bugs!** Do not use this on an important world that you don't have a backup of. **You have been warned!**
-
+<br>
+<br>
 # Deep Mob Learning: Relearned
 This mod is a complete rewrite from scratch of [DeepMobLearning](https://www.curseforge.com/minecraft/mc-mods/deep-mob-learning)
 by xt9/IterationFunk. The purpose of this rewrite was to add several new features (see below) that would have been difficult,
@@ -9,6 +10,8 @@ if not impossible to implement as a modification of the original.
 Most of the original textures (also by xt9) have been reused, though mostly modified in some way.
 
 Making this mod would not have been possible without all the work that went into the original!
+
+---
 
 ### What this mod does (adapted from the original mod's description)
 A server-friendly and peaceful-compatible mod for mob loot acquisition. Originally inspired by the Soul Shards mod,
@@ -27,6 +30,8 @@ Expansion itemducts or EnderIO conduits.
 Get started by making a **Deep Learner** and at least one **Data Model**. Insert the Data Model into the Deep Learner
 and go kill some mobs of the required type to level the Model up to at least Basic tier. Then you can insert it
 into a Simulation Chamber to start producing Matter!
+
+---
 
 ### Changes compared to the original Deep Mob Learning
 - Fully JSON configurable Data Model types, tiers, and Living Matter types
@@ -50,6 +55,7 @@ into a Simulation Chamber to start producing Matter!
 The addon is not compatible with this mod. I haven't decided yet whether I'll make a new version of the addon. Unfortunately,
 this means that you won't be able to use this mod for the time being.
 
+---
 
 ### Updating from DeepMobLearning
 This mod uses the same item and block registry names as the original, so in-place updating should be possible as follows:
@@ -62,6 +68,8 @@ This mod uses the same item and block registry names as the original, so in-plac
   because of internal changes in how the setting is stored on disk)
 - Enjoy!
 
+---
+
 ### Current out-of-the-box mod support
 Data Models for the following mods are defined in the default config:
 - **Thermal Foundation** (one combined Data Model for Thermal Elementals, i.e. Blizz, Blitz and Basalz)
@@ -69,10 +77,14 @@ Data Models for the following mods are defined in the default config:
 - **Tinkers' Construct** (Blue Slime)
 - **Matter Overdrive** (Rogue Android)
 
+---
+
 ### Why no 1.15/1.16/whatever version?
 This rewrite was inspired by and originally intended for the [OmniFactory](https://www.curseforge.com/minecraft/modpacks/omnifactory)
 modpack, which uses 1.12.2. Once this version is finished, I'm planning to make a 1.16 version.
 I will *not* make 1.13/1.14/1.15 versions, so please don't ask for those.
+
+---
 
 ## Experiencing issues?
 Please report your issue on [GitHub](https://github.com/mustapelto/DML-Relearned), including

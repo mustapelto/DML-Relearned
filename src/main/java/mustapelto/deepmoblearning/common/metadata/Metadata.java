@@ -7,8 +7,8 @@ import net.minecraftforge.fml.common.Loader;
  * Created by mustapelto on 2021-02-14
  */
 public abstract class Metadata {
-    private final String categoryID;
-    private final String metadataID;
+    protected final String categoryID;
+    protected final String metadataID;
 
     public Metadata(String categoryID, String metadataID) {
         this.categoryID = categoryID;
@@ -16,10 +16,6 @@ public abstract class Metadata {
     }
 
     public abstract void finalizeData();
-
-    public String getCategoryID() {
-        return categoryID;
-    }
 
     public String getMetadataID() {
         return metadataID;

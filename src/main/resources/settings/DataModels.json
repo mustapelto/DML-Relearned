@@ -89,6 +89,11 @@
         "minecraft:end_crystal,1",
         "enderio:block_enderman_skull,2"
       ],
+      "trial": {
+        "entities": "deepmoblearning:trial_enderman",
+        "spawnDelay": 2.6,
+        "rewards": [ "deepmoblearning:glitch_heart,5" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 20,
         "mobTrivia": [
@@ -186,6 +191,13 @@
         "minecraft:arrow,64",
         "minecraft:skull,6"
       ],
+      "trial": {
+        "entities": [
+          [ "minecraft:stray", 33 ],
+          [ "minecraft:skeleton", 67]
+        ],
+        "rewards": [ "deepmoblearning:glitch_heart,3" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 10,
         "mobTrivia": [
@@ -211,6 +223,11 @@
       "lootItems": [
         "minecraft:slime_ball,32"
       ],
+      "trial": {
+        "entities": "deepmoblearning:trial_slime",
+        "spawnDelay": 1.6,
+        "rewards": [ "deepmoblearning:glitch_heart,3" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 8,
         "mobTrivia": [
@@ -239,6 +256,13 @@
         "minecraft:string,64",
         "minecraft:web,8"
       ],
+      "trial": {
+        "entities": [
+          [ "deepmoblearning:trial_spider", 88 ],
+          [ "deepmoblearning:trial_cave_spider", 12 ]
+        ],
+        "rewards": [ "deepmoblearning:glitch_heart,4" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 8,
         "mobTrivia": [
@@ -268,6 +292,10 @@
         "minecraft:glowstone_dust,32",
         "minecraft:sugar,64"
       ],
+      "trial": {
+        "entities": "minecraft:witch",
+        "rewards": [ "deepmoblearning:glitch_heart,6" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 13,
         "mobTrivia": [
@@ -316,6 +344,11 @@
         "minecraft:skull,18,1",
         "minecraft:coal,64"
       ],
+      "trial": {
+        "entities": "minecraft:wither_skeleton",
+        "spawnDelay": 3.2,
+        "rewards": [ "deepmoblearning:glitch_heart,5" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 10,
         "mobTrivia": [
@@ -345,6 +378,14 @@
         "minecraft:carrot,32",
         "minecraft:potato,32"
       ],
+      "trial": {
+        "entities": [
+          [ "minecraft:zombie", 45 ],
+          [ "minecraft:husk", 30 ],
+          [ "minecraft:zombie_villager", 25 ]
+        ],
+        "rewards": [ "deepmoblearning:glitch_heart,3" ]
+      },
       "deepLearnerDisplay": {
         "hearts": 10,
         "mobTrivia": [

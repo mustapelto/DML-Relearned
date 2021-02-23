@@ -10,6 +10,7 @@ import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
+import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,7 @@ public class DMLRegistry {
     public static final BlockMachineCasing BLOCK_MACHINE_CASING = new BlockMachineCasing();
     public static final BlockSimulationChamber BLOCK_SIMULATION_CHAMBER = new BlockSimulationChamber();
     public static final BlockLootFabricator BLOCK_LOOT_FABRICATOR = new BlockLootFabricator();
+    public static final BlockTrialKeystone BLOCK_TRIAL_KEYSTONE = new BlockTrialKeystone();
 
     // Items
     public static final ItemDeepLearner ITEM_DEEP_LEARNER = new ItemDeepLearner();
@@ -62,10 +64,13 @@ public class DMLRegistry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        DMLRelearned.logger.info("Registering Blocks...");
+
         registeredBlocks.add(BLOCK_INFUSED_INGOT);
         registeredBlocks.add(BLOCK_MACHINE_CASING);
         registeredBlocks.add(BLOCK_SIMULATION_CHAMBER);
         registeredBlocks.add(BLOCK_LOOT_FABRICATOR);
+        registeredBlocks.add(BLOCK_TRIAL_KEYSTONE);
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registeredBlocks.forEach(registry::register);
@@ -73,12 +78,14 @@ public class DMLRegistry {
         // Register tile entities
         GameRegistry.registerTileEntity(TileEntitySimulationChamber.class, new ResourceLocation(DMLConstants.ModInfo.ID, "simulation_chamber"));
         GameRegistry.registerTileEntity(TileEntityLootFabricator.class, new ResourceLocation(DMLConstants.ModInfo.ID, "extraction_chamber"));
+        GameRegistry.registerTileEntity(TileEntityTrialKeystone.class, new ResourceLocation(DMLConstants.ModInfo.ID, "trial_keystone"));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         DMLRelearned.logger.info("Registering Items...");
+
         // Misc Items
         registeredItems.add(ITEM_POLYMER_CLAY);
         registeredItems.add(ITEM_DATA_MODEL_BLANK);

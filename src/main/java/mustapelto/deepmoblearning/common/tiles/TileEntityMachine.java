@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class TileEntityMachine extends TileEntityBase implements ITickable {
-    // TODO: Blockstates (running/idle/error)
     // Energy
     protected final DMLEnergyStorage energyStorage;
 

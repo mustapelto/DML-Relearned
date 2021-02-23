@@ -34,7 +34,7 @@ public abstract class TileEntityBase extends TileEntity {
         return buf;
     }
 
-    public abstract void handleUpdateData(ByteBuf buf);
+    public void handleUpdateData(ByteBuf buf) {}
 
 
     /**

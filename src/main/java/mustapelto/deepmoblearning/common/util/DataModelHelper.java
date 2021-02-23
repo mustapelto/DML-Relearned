@@ -134,7 +134,7 @@ public class DataModelHelper {
         int dataRequired = getTierRequiredData(stack);
         int dataCurrent = getCurrentTierDataCount(stack);
         int killMultiplier = getTierKillMultiplier(stack);
-        return isAtMaxTier(stack) ? 0 : MathHelper.DivideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
+        return isAtMaxTier(stack) ? 0 : MathHelper.divideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
     }
 
     public static int getSimulationEnergy(ItemStack stack) {

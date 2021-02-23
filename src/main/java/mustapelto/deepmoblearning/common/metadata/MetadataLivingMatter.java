@@ -58,7 +58,7 @@ public class MetadataLivingMatter extends Metadata {
 
     @Override
     public void finalizeData() {
-        itemStack = DMLRegistry.getLivingMatter(getMetadataID());
+        itemStack = DMLRegistry.getLivingMatter(metadataID);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class MetadataLivingMatter extends Metadata {
             return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + livingMatterRegistryName.getResourcePath());
         } catch (IOException e) {
             // File not found -> use default model and output info
-            DMLRelearned.logger.info("Living Matter texture for {} not found. Using default texture.", getMetadataID());
+            DMLRelearned.logger.info("Living Matter texture not found for entry: {}. Using default texture.", metadataID);
             return DMLConstants.DefaultModels.LIVING_MATTER;
         }
     }

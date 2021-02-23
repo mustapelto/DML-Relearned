@@ -55,6 +55,6 @@ public class DMLEnergyStorage extends EnergyStorage {
     }
 
     private void setEnergy(int energy) {
-        this.energy = MathHelper.Clamp(energy, 0, getMaxEnergyStored());
+        this.energy = MathHelper.clamp(energy, 0, getMaxEnergyStored());
     }
 }

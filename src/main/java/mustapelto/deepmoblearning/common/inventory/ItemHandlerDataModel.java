@@ -1,13 +1,12 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.items.ItemDataModel;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemHandlerDataModel extends ItemStackHandler {
+public class ItemHandlerDataModel extends ItemHandlerBase {
     public ItemHandlerDataModel() {
         super();
     }
@@ -23,6 +22,6 @@ public class ItemHandlerDataModel extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        return stack.getItem() instanceof ItemDataModel ? super.insertItem(slot, stack, simulate) : stack;
+        return ItemStackHelper.isDataModel(stack) ? super.insertItem(slot, stack, simulate) : stack;
     }
 }

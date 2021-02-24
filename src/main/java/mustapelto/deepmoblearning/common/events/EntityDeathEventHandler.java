@@ -1,11 +1,11 @@
 package mustapelto.deepmoblearning.common.events;
 
-import mustapelto.deepmoblearning.common.items.ItemDataModel;
-import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
-import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
+import com.google.common.collect.ImmutableList;
+import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @EventBusSubscriber
 public class EntityDeathEventHandler {
@@ -43,56 +42,52 @@ public class EntityDeathEventHandler {
     }
 
     private static void handleMobDeath(LivingDeathEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
+        Entity source = event.getSource().getTrueSource();
+        EntityLivingBase target = event.getEntityLiving();
 
-        // If blacklist is at cap -> clear list and re-add last killed entity
+        // If blacklist is at cap -> clear list
         if (killedEntityUUIDBlacklist.size() >= entityUUIDBlacklistCap)
             cullEntityUUIDBlacklist();
 
-        if (isEntityUUIDBlacklisted(entity))
+        if (isEntityUUIDBlacklisted(target))
             return;
 
         // TODO: Trial stuff
 
-        if (event.getSource().getTrueSource() instanceof EntityPlayer)
-            handlePlayerKill(event);
+        if (source instanceof EntityPlayer)
+            handlePlayerKill((EntityPlayerMP) source, target);
 
-        killedEntityUUIDBlacklist.add(entity.getUniqueID());
+        killedEntityUUIDBlacklist.add(target.getUniqueID());
     }
 
-    private static void handlePlayerKill(LivingDeathEvent event) {
-        EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
-
-        if (player == null)
-            return;
-
+    private static void handlePlayerKill(EntityPlayerMP player, EntityLivingBase target) {
         NonNullList<ItemStack> inventory = NonNullList.create();
         inventory.addAll(player.inventory.mainInventory);
         inventory.addAll(player.inventory.offHandInventory);
 
         // Find deep learners and trial keys from inventory
-        NonNullList<ItemStack> deepLearners = NonNullList.create();
-        deepLearners.addAll(inventory.stream()
-                .filter(stack -> stack.getItem() instanceof ItemDeepLearner)
-                .collect(Collectors.toList()));
+        ImmutableList<ItemStack> deepLearners = inventory.stream()
+                .filter(ItemStackHelper::isDeepLearner)
+                .collect(ImmutableList.toImmutableList());
 
-        NonNullList<ItemStack> trialKeys = NonNullList.create();
-        /* TODO: add
-        trialKeys.addAll() */
+        ImmutableList<ItemStack> trialKeys = inventory.stream()
+                .filter(ItemStackHelper::isTrialKey)
+                .collect(ImmutableList.toImmutableList());
 
-        NonNullList<ItemStack> updatedModels = NonNullList.create();
-        deepLearners.forEach(stack -> updatedModels.addAll(updateModels(stack, event, player)));
+        ImmutableList<ItemStack> updatedModels = updateModels(deepLearners, player, target);
 
         if (updatedModels.isEmpty())
             return; // No models found -> nothing more to do
 
+        ItemStack highestTierModel = DataModelHelper.getHighestTierDataModelFromList(updatedModels);
+
         // Chance to drop pristine matter from the model that gained data
         if (ItemGlitchArmor.isSetEquipped(player)) {
             // TODO: Don't run if player in trial
-            ItemGlitchArmor.dropPristineMatter(event.getEntityLiving().world, event.getEntityLiving().getPosition(), updatedModels.get(0));
+            ItemGlitchArmor.dropPristineMatter(target.world, target.getPosition(), highestTierModel);
         }
 
-        if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword) {
+        if (ItemStackHelper.isGlitchSword(player.getHeldItemMainhand())) {
             // TODO: Don't run if player in trial
             ItemStack sword = player.getHeldItemMainhand();
             if (ItemGlitchSword.canIncreaseDamage(sword)) {
@@ -100,32 +95,45 @@ public class EntityDeathEventHandler {
             }
         }
 
-        // TODO: Attune trial keys
+        // Attune Trial Keys to updated Model
+        // TODO
     }
 
+    //
     // Helper Functions
+    //
 
-    private static NonNullList<ItemStack> updateModels(ItemStack deepLearner, LivingDeathEvent event, EntityPlayerMP player) {
-        NonNullList<ItemStack> deepLearnerItems = ItemDeepLearner.getContainedItems(deepLearner);
-        NonNullList<ItemStack> updatedModels = NonNullList.create();
+    /** Update all Data Models of the appropriate type
+     *
+     * @param deepLearners List of Deep Learners in player's inventory
+     * @param player Player who made the kill
+     * @param target Entity that was killed
+     * @return List of updated Data Models
+     */
+    private static ImmutableList<ItemStack> updateModels(ImmutableList<ItemStack> deepLearners, EntityPlayerMP player, EntityLivingBase target) {
+        ImmutableList.Builder<ItemStack> updatedModelsBuilder = ImmutableList.builder();
 
-        deepLearnerItems.forEach(stack -> {
-            if (!(stack.getItem() instanceof ItemDataModel))
-                return;
+        deepLearners.forEach(deepLearner -> {
+           NonNullList<ItemStack> containedItems = ItemDeepLearner.getContainedItems(deepLearner);
 
-            MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(stack);
+           containedItems.forEach(stack -> {
+               if (!ItemStackHelper.isDataModel(stack))
+                   return;
 
-            if (dataModelMetadata.isInvalid())
-                return;
+               MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(stack);
+               if (dataModelMetadata.isInvalid())
+                   return;
 
-            if (dataModelMetadata.isAssociatedMob(event.getEntityLiving())) {
-                DataModelHelper.addKill(stack, player);
-                updatedModels.add(stack);
-            }
+               if (dataModelMetadata.isAssociatedMob(target)) {
+                   DataModelHelper.addKill(stack, player);
+                   updatedModelsBuilder.add(stack);
+               }
+           });
+
+            ItemDeepLearner.setContainedItems(deepLearner, containedItems);
         });
-        ItemDeepLearner.setContainedItems(deepLearner, deepLearnerItems);
 
-        return updatedModels;
+        return updatedModelsBuilder.build();
     }
 
     // UUID Blacklist Functions
@@ -139,5 +147,9 @@ public class EntityDeathEventHandler {
     private static boolean isEntityUUIDBlacklisted(EntityLivingBase entityLiving) {
         return killedEntityUUIDBlacklist.stream()
                 .anyMatch(uuid -> uuid.compareTo(entityLiving.getUniqueID()) == 0);
+    }
+
+    private static void attuneTrialKey(ItemStack trialKey, ItemStack dataModel) {
+
     }
 }

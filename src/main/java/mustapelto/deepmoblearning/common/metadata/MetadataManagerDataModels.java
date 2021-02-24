@@ -69,4 +69,15 @@ public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel
 
         return builder.build();
     }
+
+    public ImmutableList<String> getAvailableTrials() {
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+
+        dataStore.forEach((k, v) -> {
+            if (v.getTrialData().hasEntity())
+                builder.add(v.getDisplayName());
+        });
+
+        return builder.build();
+    }
 }

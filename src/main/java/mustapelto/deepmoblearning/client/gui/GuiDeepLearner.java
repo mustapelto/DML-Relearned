@@ -8,6 +8,7 @@ import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -25,7 +26,8 @@ import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 public class GuiDeepLearner extends GuiContainerBase {
     // STATE VARIABLES
     private final ItemStack deepLearner; // Deep Learner that opened this GUI
-    private NonNullList<ItemStack> dataModels; // Contained Data Models
+
+    private ImmutableList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
     private ItemStack currentModelStack;
     private MetadataDataModel currentModelMetadata;
@@ -43,13 +45,8 @@ public class GuiDeepLearner extends GuiContainerBase {
     public GuiDeepLearner(EntityPlayer player, World world) {
         super(player, world, new ContainerDeepLearner(player), WIDTH, HEIGHT);
 
-        ItemStack mainHand = player.getHeldItemMainhand();
-        ItemStack offHand = player.getHeldItemOffhand();
-        if (mainHand.getItem() instanceof ItemDeepLearner)
-            this.deepLearner = mainHand;
-        else if (offHand.getItem() instanceof ItemDeepLearner)
-            this.deepLearner = offHand;
-        else
+        deepLearner = ItemStackHelper.getHeldDeepLearner(player);
+        if (deepLearner.isEmpty())
             throw new IllegalStateException("Tried to open Deep Learner GUI without Deep Learner equipped");
     }
 

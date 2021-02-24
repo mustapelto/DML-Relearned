@@ -1,20 +1,21 @@
 package mustapelto.deepmoblearning.common.util;
 
+import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class DataModelHelper {
     //
@@ -74,8 +75,7 @@ public class DataModelHelper {
 
     @Nullable
     public static ItemDataModel getDataModelItem(ItemStack stack) {
-        Item stackItem = stack.getItem();
-        return stackItem instanceof ItemDataModel ? (ItemDataModel) stackItem : null;
+        return ItemStackHelper.isDataModel(stack) ? (ItemDataModel) stack.getItem() : null;
     }
 
     @Nonnull
@@ -147,7 +147,8 @@ public class DataModelHelper {
         return !data.isInvalid() ? data.getPristineChance() : 0;
     }
 
-    /**
+    /** Test if Data Model type matches Living Matter type
+     *
      * @param dataModel Data Model stack to compare
      * @param livingMatter Living Matter stack to compare
      * @return true if Data Model's associated Living Matter matches Living Matter stack
@@ -159,9 +160,10 @@ public class DataModelHelper {
         return data.getLivingMatter().isItemEqual(livingMatter);
     }
 
-    /**
+    /** Test if Data Model type matches Pristine Matter type
+     *
      * @param dataModel Data Model stack to compare
-     * @param pristineMatter Living Matter stack to compare
+     * @param pristineMatter Pristine Matter stack to compare
      * @return true if Data Model's associated Pristine Matter matches Pristine Matter stack
      */
     public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
@@ -171,21 +173,28 @@ public class DataModelHelper {
         return data.getPristineMatter().isItemEqual(pristineMatter);
     }
 
-    // Filter out non-data model stacks and return filtered list
-    public static NonNullList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
-        NonNullList<ItemStack> result = NonNullList.create();
+    /** Filter out non-data model stacks and return filtered list
+     *
+     * @param stackList List of ItemStacks to filter
+     * @return List of Data Model ItemStacks
+      */
 
-        stackList.forEach(stack -> {
-            if (stack.getItem() instanceof ItemDataModel)
-                result.add(stack);
-        });
+    public static ImmutableList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
+        return stackList.stream()
+                .filter(ItemStackHelper::isDataModel)
+                .collect(ImmutableList.toImmutableList());
+    }
 
-        return result;
+    public static ItemStack getHighestTierDataModelFromList(List<ItemStack> stackList) {
+        return stackList.stream()
+                .max(Comparator.comparingInt(DataModelHelper::getTierLevel))
+                .orElse(ItemStack.EMPTY);
     }
 
     //
     // Data Manipulation
     //
+
     public static void addSimulation(ItemStack stack) {
         increaseDataCount(stack, 1);
         setTotalSimulationCount(stack, getTotalSimulationCount(stack) + 1);
@@ -206,7 +215,7 @@ public class DataModelHelper {
 
         // TODO: Trial stuff
 
-        if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword /* && no trial active */)
+        if (ItemStackHelper.isGlitchSword(player.getHeldItemMainhand()) /* && no trial active */)
             increase *= 2;
         increaseDataCount(stack, increase);
 
@@ -252,10 +261,10 @@ public class DataModelHelper {
     //
     public static void findAndLevelUpModels(NonNullList<ItemStack> inventory, EntityPlayerMP player, CreativeLevelUpAction action) {
         for (ItemStack inventoryStack : inventory) {
-            if (inventoryStack.getItem() instanceof ItemDeepLearner) {
+            if (ItemStackHelper.isDeepLearner(inventoryStack)) {
                 NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(inventoryStack);
                 for (ItemStack modelStack : deepLearnerContents) {
-                    if (modelStack.getItem() instanceof ItemDataModel) {
+                    if (ItemStackHelper.isDataModel(modelStack)) {
                         int tier = getTierLevel(modelStack);
                         switch (action) {
                             case DECREASE_TIER:

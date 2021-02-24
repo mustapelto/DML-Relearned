@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
@@ -270,7 +271,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
 
-        compound.setBoolean(DML_RELEARNED, true); // Used to recognize DML-Relearned NBT tags when reading
+        compound.setString(VERSION, DMLConstants.ModInfo.VERSION); // Used to recognize DML-Relearned NBT tags when reading
 
         energyStorage.writeToNBT(compound);
 
@@ -299,7 +300,8 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         redstonePowered = NBTHelper.getBoolean(redstoneTag, REDSTONE_POWERED, false);
         redstoneMode = RedstoneMode.byIndex(NBTHelper.getInteger(redstoneTag, REDSTONE_MODE, 0));
 
-        if (isOldTagSystem(compound)) {
+        String nbtTagVersion = getNBTTagVersion(compound);
+        if (nbtTagVersion.equals(LEGACY)) {
             // Original DML tag -> use old tag system without nesting and with machine-specific progress tag
             crafting = NBTHelper.getBoolean(compound, IS_CRAFTING, false);
             if (this instanceof TileEntitySimulationChamber)
@@ -314,12 +316,13 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         }
     }
 
-    protected boolean isOldTagSystem(NBTTagCompound compound) {
-        return !compound.hasKey(DML_RELEARNED);
+    protected String getNBTTagVersion(NBTTagCompound compound) {
+        return NBTHelper.getString(compound, VERSION, LEGACY);
     }
 
     // NBT tag names
-    private static final String DML_RELEARNED = "dml-relearned";
+    private static final String VERSION = "version";
+    protected static final String LEGACY = "legacy";
 
     private static final String REDSTONE = "redstone"; // Redstone state subtag
     private static final String REDSTONE_LEVEL = "level";

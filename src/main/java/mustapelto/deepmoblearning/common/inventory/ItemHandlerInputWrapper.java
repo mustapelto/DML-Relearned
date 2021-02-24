@@ -5,7 +5,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemHandlerInputWrapper extends ItemStackHandler {
+public class ItemHandlerInputWrapper extends ItemHandlerBase {
     private final ItemStackHandler internal;
 
     public ItemHandlerInputWrapper(ItemStackHandler internal) {

@@ -51,6 +51,7 @@ public class DMLRegistry {
     public static final ItemGlitchIngot ITEM_GLITCH_INGOT = new ItemGlitchIngot();
     public static final ItemGlitchFragment ITEM_GLITCH_FRAGMENT = new ItemGlitchFragment();
     public static final ItemGlitchHeart ITEM_GLITCH_HEART = new ItemGlitchHeart();
+    public static final ItemTrialKey ITEM_TRIAL_KEY = new ItemTrialKey();
 
     // Armor and Weapons
     public static final ItemGlitchArmor.ItemGlitchHelmet ITEM_GLITCH_HELMET = new ItemGlitchArmor.ItemGlitchHelmet();
@@ -96,6 +97,7 @@ public class DMLRegistry {
         registeredItems.add(ITEM_GLITCH_INGOT);
         registeredItems.add(ITEM_GLITCH_FRAGMENT);
         registeredItems.add(ITEM_GLITCH_HEART);
+        registeredItems.add(ITEM_TRIAL_KEY);
 
         // Glitch Armor and Sword
         registeredItems.add(ITEM_GLITCH_HELMET);

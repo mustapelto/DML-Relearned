@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
+import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.util.KeyboardHelper;
@@ -61,7 +62,7 @@ public class ItemDeepLearner extends ItemBase {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.deep_learner.hud"));
 
-        NonNullList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
+        ImmutableList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
         if (containedDataModels.size() > 0) {
             if (!KeyboardHelper.isHoldingSneakKey()) {
                 tooltip.add(I18n.format("deepmoblearning.general.more_info", KeyboardHelper.getSneakKeyName()));

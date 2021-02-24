@@ -76,6 +76,10 @@ public abstract class MetadataManager<T extends Metadata> {
 
     protected abstract T constructMetadataFromJson(JsonObject data, String categoryName, String entryName);
 
+    public T getByKey(String key) {
+        return dataStore.get(key);
+    }
+
     public ImmutableMap<String, T> getDataStore() {
         return dataStore;
     }

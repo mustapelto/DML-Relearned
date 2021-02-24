@@ -1,10 +1,12 @@
 package mustapelto.deepmoblearning.client.gui;
 
+import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,7 +15,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -50,12 +51,12 @@ public class DataOverlay extends GuiScreen {
             return;
 
         EntityPlayer player = mc.player;
-        ItemStack deepLearner = getHeldDeepLearner(player);
+        ItemStack deepLearner = ItemStackHelper.getHeldDeepLearner(player);
 
-        if (deepLearner == null)
+        if (deepLearner.isEmpty())
             return;
 
-        NonNullList<ItemStack> dataModels = DataModelHelper.getDataModelStacksFromList(ItemDeepLearner.getContainedItems(deepLearner));
+        ImmutableList<ItemStack> dataModels = DataModelHelper.getDataModelStacksFromList(ItemDeepLearner.getContainedItems(deepLearner));
 
         int paddingHorizontal = DMLConfig.GUI_OVERLAY_SETTINGS.PADDING_HORIZONTAL;
         int paddingVertical = DMLConfig.GUI_OVERLAY_SETTINGS.PADDING_VERTICAL;
@@ -89,18 +90,6 @@ public class DataOverlay extends GuiScreen {
             ItemStack dataModel = dataModels.get(i);
             drawExperienceBar(x, y, i, dataModel);
         }
-    }
-
-    private ItemStack getHeldDeepLearner(EntityPlayer player) {
-        ItemStack mainHandStack = player.getHeldItemMainhand();
-        ItemStack offHandStack = player.getHeldItemOffhand();
-
-        if (mainHandStack.getItem() instanceof ItemDeepLearner)
-            return mainHandStack;
-        else if (offHandStack.getItem() instanceof ItemDeepLearner)
-            return offHandStack;
-
-        return null;
     }
 
     private void drawExperienceBar(int x, int y, int index, ItemStack dataModel) {

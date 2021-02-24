@@ -6,9 +6,9 @@ import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
-import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,7 +58,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             return; // Crafting without selected output (shouldn't happen) i.e. something went wrong -> don't do anything
 
         output.addItemToAvailableSlots(outputItem);
-        getPristineMatter().shrink(1);
+        inputPristineMatter.voidItem();
     }
 
     @Override
@@ -108,12 +108,8 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         resetCrafting();
     }
 
-    public ItemStack getPristineMatter() {
-        return inputPristineMatter.getStackInSlot(0);
-    }
-
     public boolean hasPristineMatter() {
-        return getPristineMatter().getItem() instanceof ItemPristineMatter;
+        return ItemStackHelper.isPristineMatter(inputPristineMatter.getStackInSlot(0));
     }
 
     public boolean hasRoomForOutput() {
@@ -221,7 +217,8 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        if (isOldTagSystem(compound)) {
+        String nbtTagVersion = getNBTTagVersion(compound);
+        if (nbtTagVersion.equals(LEGACY)) {
             // Original DML tag -> use old (non-nested) tag names
             inputPristineMatter.deserializeNBT(compound.getCompoundTag(PRISTINE_OLD));
             output.deserializeNBT(compound.getCompoundTag(OUTPUT));

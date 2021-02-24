@@ -1,15 +1,14 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemHandlerPolymerClay extends ItemStackHandler {
+public class ItemHandlerPolymerClay extends ItemHandlerBase {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        return stack.getItem() instanceof ItemPolymerClay ? super.insertItem(slot, stack, simulate) : stack;
+        return ItemStackHelper.isPolymerClay(stack) ? super.insertItem(slot, stack, simulate) : stack;
     }
 }

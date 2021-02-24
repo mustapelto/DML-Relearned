@@ -1,9 +1,9 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -51,10 +51,9 @@ public class ItemPristineMatter extends ItemBase {
     }
 
     public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
-        Item stackItem = stack.getItem();
-        if (!(stackItem instanceof ItemPristineMatter))
+        if (!ItemStackHelper.isPristineMatter(stack))
             return MetadataDataModel.INVALID;
 
-        return ((ItemPristineMatter) stackItem).getDataModelMetadata();
+        return ((ItemPristineMatter) stack.getItem()).getDataModelMetadata();
     }
 }

@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.Point;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
@@ -18,14 +19,10 @@ public class ContainerDeepLearner extends ContainerBase {
     private final ItemStack deepLearner;
 
     public ContainerDeepLearner(EntityPlayer player) {
-        final ItemStack mainHand = player.getHeldItemMainhand();
-        final ItemStack offHand = player.getHeldItemOffhand();
-        if (mainHand.getItem() instanceof ItemDeepLearner)
-            deepLearner = mainHand;
-        else if (offHand.getItem() instanceof ItemDeepLearner)
-            deepLearner = offHand;
-        else
+        deepLearner = ItemStackHelper.getHeldDeepLearner(player);
+        if (deepLearner.isEmpty())
             throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
+
         itemHandler = new ItemHandlerDataModel(ItemDeepLearner.getContainedItems(deepLearner));
         final int dlSlot = ((ItemDeepLearner) deepLearner.getItem()).getInventorySlot();
 

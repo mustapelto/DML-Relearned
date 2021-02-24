@@ -1,10 +1,11 @@
 package mustapelto.deepmoblearning.common.items;
 
-import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
+import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.EntityItem;
@@ -65,10 +66,10 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     // Helper methods
 
     public static boolean isSetEquipped(EntityPlayer player) {
-        return player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemGlitchArmor &&
-                player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemGlitchArmor &&
-                player.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() instanceof ItemGlitchArmor &&
-                player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() instanceof ItemGlitchArmor;
+        return ItemStackHelper.isGlitchArmor(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD)) &&
+                ItemStackHelper.isGlitchArmor(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST)) &&
+                ItemStackHelper.isGlitchArmor(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS)) &&
+                ItemStackHelper.isGlitchArmor(player.getItemStackFromSlot(EntityEquipmentSlot.FEET));
     }
 
     public static void dropPristineMatter(World world, BlockPos position, ItemStack dataModel) {

@@ -1,6 +1,6 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -14,7 +14,7 @@ public class SlotPolymerClay extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return stack.getItem() instanceof ItemPolymerClay;
+        return ItemStackHelper.isPolymerClay(stack);
     }
 
     @Override

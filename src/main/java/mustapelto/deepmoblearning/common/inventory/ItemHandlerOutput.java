@@ -2,11 +2,10 @@ package mustapelto.deepmoblearning.common.inventory;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemHandlerOutput extends ItemStackHandler {
+public class ItemHandlerOutput extends ItemHandlerBase {
     public ItemHandlerOutput() {
         super();
     }
@@ -44,10 +43,8 @@ public class ItemHandlerOutput extends ItemStackHandler {
             if (currentSlotRemainingSpace > 0 &&
                     ItemHandlerHelper.canItemStacksStack(stack, currentSlotStack)) {
                 // Current slot has room left and is same item as input stack
-                int inputStackSize = stack.getCount();
-                int amountToAdd = Math.min(inputStackSize, currentSlotRemainingSpace);
-                currentSlotStack.grow(amountToAdd);
-                stack.shrink(amountToAdd);
+                int remaining = growItem(i, stack.getCount());
+                stack.setCount(remaining);
             }
 
             i++;

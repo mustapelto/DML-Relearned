@@ -7,11 +7,10 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerDataModel;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
-import mustapelto.deepmoblearning.common.items.ItemDataModel;
-import mustapelto.deepmoblearning.common.items.ItemPolymerClay;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,7 +56,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
         pristineSuccess = (random < pristineChance);
 
         // Consume Polymer Clay
-        getPolymerClay().shrink(1);
+        inputPolymer.voidItem();
     }
 
     @Override
@@ -78,21 +77,13 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
         DataModelHelper.addSimulation(dataModel);
 
         ItemStack oldLivingMatterOutput = outputLiving.getStackInSlot(0);
-        if (!oldLivingMatterOutput.isEmpty()) {
-            oldLivingMatterOutput.grow(1);
-        } else {
-            ItemStack newLivingMatterOutput = dataModelMetadata.getLivingMatter(oldLivingMatterOutput.getCount() + 1);
-            outputLiving.setStackInSlot(0, newLivingMatterOutput);
-        }
+        ItemStack newLivingMatterOutput = dataModelMetadata.getLivingMatter(oldLivingMatterOutput.getCount() + 1);
+        outputLiving.setStackInSlot(0, newLivingMatterOutput);
 
         if (pristineSuccess) {
             ItemStack oldPristineMatterOutput = outputPristine.getStackInSlot(0);
-            if (!oldPristineMatterOutput.isEmpty()) {
-                oldPristineMatterOutput.grow(1);
-            } else {
-                ItemStack newPristineMatterOutput = dataModelMetadata.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
-                outputPristine.setStackInSlot(0, newPristineMatterOutput);
-            }
+            ItemStack newPristineMatterOutput = dataModelMetadata.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
+            outputPristine.setStackInSlot(0, newPristineMatterOutput);
         }
     }
 
@@ -144,7 +135,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     }
 
     public boolean hasDataModel() {
-        return getDataModel().getItem() instanceof ItemDataModel;
+        return ItemStackHelper.isDataModel(getDataModel());
     }
 
     public boolean canDataModelSimulate() {
@@ -156,7 +147,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     }
 
     public boolean hasPolymerClay() {
-        return getPolymerClay().getItem() instanceof ItemPolymerClay;
+        return ItemStackHelper.isPolymerClay(getPolymerClay());
     }
 
     public boolean isLivingMatterOutputFull() {
@@ -264,7 +255,8 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        if (isOldTagSystem(compound)) {
+        String nbtTagVersion = getNBTTagVersion(compound);
+        if (nbtTagVersion.equals(LEGACY)) {
             // Original DML tag -> use old (non-nested) tag names
             inputDataModel.deserializeNBT(compound.getCompoundTag(DATA_MODEL_OLD));
             inputPolymer.deserializeNBT(compound.getCompoundTag(POLYMER_OLD));

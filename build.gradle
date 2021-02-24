@@ -57,7 +57,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
-
+    compile 'com.google.guava:guava:30.1-jre'
     // deobfProvided "mezz.jei:jei_1.12.2:4.16.1.301:api"
     // runtime "mezz.jei:jei_1.12.2:4.16.1.301"
 }

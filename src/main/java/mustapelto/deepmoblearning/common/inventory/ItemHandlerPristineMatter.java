@@ -2,18 +2,18 @@ package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemHandlerPristineMatter extends ItemStackHandler {
+public class ItemHandlerPristineMatter extends ItemHandlerBase {
     private MetadataDataModel metadata;
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        return stack.getItem() instanceof ItemPristineMatter ? super.insertItem(slot, stack, simulate) : stack;
+        return ItemStackHelper.isPristineMatter(stack) ? super.insertItem(slot, stack, simulate) : stack;
     }
 
     @Override

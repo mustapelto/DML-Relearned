@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
-import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
@@ -33,11 +33,13 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     private boolean guiOpen = false;
 
     public TileEntityMachine(int energyCapacity, int energyMaxReceive) {
-        energyStorage = new DMLEnergyStorage(energyCapacity, energyMaxReceive);
+        energyStorage = new DMLEnergyStorage(energyCapacity, energyMaxReceive) {
+            @Override
+            protected void onEnergyChanged() {
+                markDirty();
+            }
+        };
     }
-
-    // Client/Server Sync
-    protected boolean progressChanged = false;
 
     //
     // ITickable
@@ -45,9 +47,9 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     @Override
     public void update() {
-        if (world.isRemote && guiOpen) {
-            // check if progress or energy state has changed on the server
-            requestUpdatePacketFromServer();
+        if (world.isRemote) {
+            if (guiOpen)
+                requestUpdatePacketFromServer();
             return;
         }
 
@@ -64,6 +66,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         if (craftingState != newCraftingState) {
             craftingState = newCraftingState;
             sendUpdatePacketToClient();
+            markDirty();
         }
     }
 
@@ -74,6 +77,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     protected void startCrafting() {
         crafting = true;
         sendUpdatePacketToClient();
+        markDirty();
     }
 
     /**
@@ -95,6 +99,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         if (craftingProgress >= getCraftingDuration())
             finishCrafting();
 
+        markDirty();
         // not sending an update packet here
         // as the client doesn't have to know exact crafting progress
         // unless GUI is open (which is handled in update method)
@@ -110,6 +115,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         crafting = false;
         craftingProgress = 0;
         sendUpdatePacketToClient();
+        markDirty();
     }
 
     public float getRelativeCraftingProgress() {
@@ -193,18 +199,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
     // Client / Server Sync
     //
-
-    @Override
-    public boolean clientNeedsUpdate() {
-        return progressChanged || energyStorage.getNeedsUpdate();
-    }
-
-    @Override
-    protected void sendUpdatePacketToClient() {
-        progressChanged = false;
-        super.sendUpdatePacketToClient();
-    }
-
     @Override
     public ByteBuf getUpdateData() {
         ByteBuf buf = super.getUpdateData();
@@ -271,7 +265,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
 
-        compound.setString(VERSION, DMLConstants.ModInfo.VERSION); // Used to recognize DML-Relearned NBT tags when reading
+        NBTHelper.setVersion(compound);
 
         energyStorage.writeToNBT(compound);
 
@@ -300,8 +294,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         redstonePowered = NBTHelper.getBoolean(redstoneTag, REDSTONE_POWERED, false);
         redstoneMode = RedstoneMode.byIndex(NBTHelper.getInteger(redstoneTag, REDSTONE_MODE, 0));
 
-        String nbtTagVersion = getNBTTagVersion(compound);
-        if (nbtTagVersion.equals(LEGACY)) {
+        if (NBTHelper.isLegacyNBT(compound)) {
             // Original DML tag -> use old tag system without nesting and with machine-specific progress tag
             crafting = NBTHelper.getBoolean(compound, IS_CRAFTING, false);
             if (this instanceof TileEntitySimulationChamber)
@@ -315,14 +308,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
             craftingProgress = NBTHelper.getInteger(craftingTag, CRAFTING_PROGRESS, 0);
         }
     }
-
-    protected String getNBTTagVersion(NBTTagCompound compound) {
-        return NBTHelper.getString(compound, VERSION, LEGACY);
-    }
-
-    // NBT tag names
-    private static final String VERSION = "version";
-    protected static final String LEGACY = "legacy";
 
     private static final String REDSTONE = "redstone"; // Redstone state subtag
     private static final String REDSTONE_LEVEL = "level";

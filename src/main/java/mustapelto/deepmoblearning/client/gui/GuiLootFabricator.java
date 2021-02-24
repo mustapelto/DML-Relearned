@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
@@ -64,7 +65,7 @@ public class GuiLootFabricator extends GuiMachine {
         currentOutputItemIndex = lootFabricator.getOutputItemIndex();
         currentOutputItemPage = currentOutputItemIndex / ITEMS_PER_PAGE;
 
-        resetOutputData(lootFabricator.getDataModelMetadata(), true);
+        resetOutputData(lootFabricator.getPristineMatterMetadata(), true);
     }
 
     //
@@ -78,7 +79,7 @@ public class GuiLootFabricator extends GuiMachine {
         ticks++;
 
         // Rebuild output selection if Pristine Matter type changed
-        MetadataDataModel lootFabMetadata = lootFabricator.getDataModelMetadata();
+        MetadataDataModel lootFabMetadata = lootFabricator.getPristineMatterMetadata();
         if (currentDataModelMetadata != lootFabMetadata)
             resetOutputData(lootFabMetadata, false);
 

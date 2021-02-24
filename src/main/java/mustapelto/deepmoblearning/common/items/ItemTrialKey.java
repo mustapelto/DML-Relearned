@@ -82,15 +82,14 @@ public class ItemTrialKey extends ItemBase {
     }
 
     public static boolean isAttuned(@Nonnull ItemStack trialKey) {
-        //if (!NBTHelper.hasKey(trialKey, DML_RELEARNED))
-        return false;
+        return !getAttunement(trialKey).isEmpty();
     }
 
     private static String getAttunement(@Nonnull ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
             return "";
 
-        if (!NBTHelper.hasKey(trialKey, DML_RELEARNED))
+        if (!NBTHelper.hasKey(trialKey, "dmlr_version"))
             return NBTHelper.getString(trialKey, OLD_MOB_KEY, "");
         else
             return NBTHelper.getString(trialKey, ATTUNEMENT, "");
@@ -116,7 +115,6 @@ public class ItemTrialKey extends ItemBase {
 
     private static final String OLD_MOB_KEY = "mobKey";
 
-    private static final String DML_RELEARNED = "dml-relearned";
     private static final String ATTUNEMENT = "attunement";
     private static final String TIER = "tier";
 }

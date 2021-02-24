@@ -9,18 +9,8 @@ import net.minecraftforge.energy.EnergyStorage;
 import javax.annotation.Nonnull;
 
 public class DMLEnergyStorage extends EnergyStorage {
-    private boolean stateChanged = false;
-
     public DMLEnergyStorage(int capacity, int maxReceive) {
         super(capacity, maxReceive, 0);
-    }
-
-    @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        int energyReceived = super.receiveEnergy(maxReceive, simulate);
-        if (energyReceived != 0)
-            stateChanged = true;
-        return energyReceived;
     }
 
     @Override
@@ -28,14 +18,15 @@ public class DMLEnergyStorage extends EnergyStorage {
         return false;
     }
 
-    public void voidEnergy(int energy) {
-        this.energy -= Math.min(this.energy, energy);
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        onEnergyChanged();
+        return super.receiveEnergy(maxReceive, simulate);
     }
 
-    public boolean getNeedsUpdate() {
-        boolean result = stateChanged;
-        stateChanged = false;
-        return result;
+    public void voidEnergy(int energy) {
+        this.energy -= Math.min(this.energy, energy);
+        onEnergyChanged();
     }
 
     public void writeToNBT(@Nonnull NBTTagCompound compound) {
@@ -56,5 +47,8 @@ public class DMLEnergyStorage extends EnergyStorage {
 
     private void setEnergy(int energy) {
         this.energy = MathHelper.clamp(energy, 0, getMaxEnergyStored());
+        onEnergyChanged();
     }
+
+    protected void onEnergyChanged() {}
 }

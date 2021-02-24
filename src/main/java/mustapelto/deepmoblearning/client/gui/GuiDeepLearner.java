@@ -90,7 +90,7 @@ public class GuiDeepLearner extends GuiContainerBase {
             currentModelIndex = -1;
             currentModelStack = ItemStack.EMPTY;
             currentModelMetadata = MetadataDataModel.INVALID;
-            currentDisplayData = MetadataDataModel.DeepLearnerDisplayData.INVALID;
+            currentDisplayData = MetadataDataModel.INVALID.getDeepLearnerDisplayData();
             setModelSelectButtonsEnabled(false);
             return;
         }

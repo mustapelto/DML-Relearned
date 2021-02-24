@@ -6,6 +6,7 @@ import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
+import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
@@ -23,13 +24,19 @@ import javax.annotation.Nullable;
 public class TileEntityLootFabricator extends TileEntityMachine {
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
-        protected void onPristineTypeChanged() {
-            TileEntityLootFabricator.this.onPristineTypeChanged();
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            if ((slot == 0) && (pristineMatterMetadata != ItemPristineMatter.getDataModelMetadata(getStackInSlot(slot))))
+                onPristineTypeChanged();
+
+            markDirty();
         }
     };
     private final ItemHandlerInputWrapper pristineMatterWrapper = new ItemHandlerInputWrapper(inputPristineMatter);
+
     private final ItemHandlerOutput output = new ItemHandlerOutput(16);
 
+    private MetadataDataModel pristineMatterMetadata;
     private int outputItemIndex = -1; // index of selected output item in Pristine Matter's associated item list. -1 = no item selected
 
     public TileEntityLootFabricator() {
@@ -71,19 +78,18 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
 
-    public MetadataDataModel getDataModelMetadata() {
-        return inputPristineMatter.getDataModelMetadata();
+    public MetadataDataModel getPristineMatterMetadata() {
+        return pristineMatterMetadata;
     }
 
     private ItemStack getOutputItem() {
         if (outputItemIndex == -1)
             return ItemStack.EMPTY;
 
-        MetadataDataModel metadata = getDataModelMetadata();
-        if (metadata.isInvalid())
+        if (pristineMatterMetadata == null || pristineMatterMetadata.isInvalid())
             return ItemStack.EMPTY;
 
-        return metadata.getLootItem(outputItemIndex);
+        return pristineMatterMetadata.getLootItem(outputItemIndex);
     }
 
     @Override
@@ -105,6 +111,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
      */
     private void onPristineTypeChanged() {
         outputItemIndex = -1;
+        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata();
         resetCrafting();
     }
 
@@ -217,8 +224,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        String nbtTagVersion = getNBTTagVersion(compound);
-        if (nbtTagVersion.equals(LEGACY)) {
+        if (NBTHelper.isLegacyNBT(compound)) {
             // Original DML tag -> use old (non-nested) tag names
             inputPristineMatter.deserializeNBT(compound.getCompoundTag(PRISTINE_OLD));
             output.deserializeNBT(compound.getCompoundTag(OUTPUT));
@@ -232,6 +238,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             inputPristineMatter.deserializeNBT(inventory.getCompoundTag(PRISTINE_INPUT));
             output.deserializeNBT(inventory.getCompoundTag(OUTPUT));
 
+            pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata();
             outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(CRAFTING), OUTPUT_ITEM_INDEX, -1);
 
             if (isInvalidOutputItemIndex()) // Invalid index, e.g. config changed between world loads, or something else went wrong

@@ -64,8 +64,8 @@ public class MetadataDataModel extends Metadata {
         craftingIngredientStrings = ImmutableList.of();
         associatedMobs = ImmutableList.of();
         lootItemStrings = ImmutableList.of();
-        trialData = TrialData.INVALID;
-        deepLearnerDisplayData = DeepLearnerDisplayData.INVALID;
+        trialData = new TrialData(this);
+        deepLearnerDisplayData = new DeepLearnerDisplayData(this);
         dataModelRegistryName = new ResourceLocation("");
         pristineMatterRegistryName = new ResourceLocation("");
     }
@@ -84,16 +84,16 @@ public class MetadataDataModel extends Metadata {
 
         JsonObject trialDataJSON = JsonHelper.getJsonObject(data, "trial");
         if (trialDataJSON.size() == 0) {
-            trialData = TrialData.INVALID;
-            DMLRelearned.logger.warn("Invalid Trial JSON object in entry {}:{}", categoryID, metadataID);
+            trialData = new TrialData(this);
+            DMLRelearned.logger.warn("Missing Trial JSON object in entry {}:{}. Using default values.", categoryID, metadataID);
         } else {
             trialData = new TrialData(trialDataJSON, this);
         }
 
         JsonObject deepLearnerDisplayJSON = JsonHelper.getJsonObject(data, "deepLearnerDisplay");
         if (deepLearnerDisplayJSON.size() == 0) {
-            deepLearnerDisplayData = DeepLearnerDisplayData.INVALID;
-            DMLRelearned.logger.warn("Invalid Deep Learner display JSON object in entry {}:{}", categoryID, metadataID);
+            deepLearnerDisplayData = new DeepLearnerDisplayData(this);
+            DMLRelearned.logger.warn("Missing Deep Learner display JSON object in entry {}:{}. Using default values.", categoryID, metadataID);
         } else {
             deepLearnerDisplayData = new DeepLearnerDisplayData(deepLearnerDisplayJSON, this);
         }
@@ -266,8 +266,6 @@ public class MetadataDataModel extends Metadata {
     }
 
     public static class TrialData {
-        public static final TrialData INVALID = new TrialData();
-
         private final MetadataDataModel container;
 
         private final ImmutableList<WeightedItem<String>> entityStrings; // Name of entity to spawn for trial (from JSON, final string is built after entities are registered)
@@ -277,9 +275,12 @@ public class MetadataDataModel extends Metadata {
         private ImmutableList<WeightedItem<ResourceLocation>> entities; // Entity to spawn for trial (final, validated version)
         private ImmutableList<ItemStack> rewards; // List of actual ItemStacks that are received as trial reward
 
-
-        private TrialData() {
-            container = null;
+        /** Default constructor, used if Data Model JSON entry doesn't have Trial entry
+         *
+         * @param container MetadataDataModel that contains this instance
+         */
+        public TrialData(MetadataDataModel container) {
+            this.container = container;
 
             entityStrings = ImmutableList.of();
             spawnDelay = 2;
@@ -326,6 +327,10 @@ public class MetadataDataModel extends Metadata {
             return entities;
         }
 
+        public double getSpawnDelay() {
+            return spawnDelay;
+        }
+
         public ImmutableList<ItemStack> getRewards() {
             if (rewards == null)
                 return ImmutableList.of();
@@ -341,8 +346,6 @@ public class MetadataDataModel extends Metadata {
     }
 
     public static class DeepLearnerDisplayData {
-        public static final DeepLearnerDisplayData INVALID = new DeepLearnerDisplayData();
-
         private final MetadataDataModel container;
 
         private final int hearts; // Number of hearts. 0 will show as obfuscated text. Default: 10
@@ -357,11 +360,16 @@ public class MetadataDataModel extends Metadata {
         private final int extraEntityOffsetX; // X offset of additional entity. Default: 0
         private final int extraEntityOffsetY; // Y offset of additional entity. Default: 0
 
-        private DeepLearnerDisplayData() {
-            container = null;
+        /** Default constructor, used if Data Model JSON entry doesn't have Deep Learner Display entry
+         *
+         * @param container MetadataDataModel that contains this instance
+         */
+        public DeepLearnerDisplayData(MetadataDataModel container) {
+            this.container = container;
+
             hearts = 0;
-            mobTrivia = ImmutableList.of("INVALID");
-            entityName = "";
+            mobTrivia = ImmutableList.of();
+            entityName = String.format("%s:%s", this.container.categoryID, this.container.metadataID);
             entityHeldItem = "";
             entityScale = 1;
             entityOffsetX = 0;

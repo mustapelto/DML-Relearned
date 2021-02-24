@@ -255,8 +255,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        String nbtTagVersion = getNBTTagVersion(compound);
-        if (nbtTagVersion.equals(LEGACY)) {
+        if (NBTHelper.isLegacyNBT(compound)) {
             // Original DML tag -> use old (non-nested) tag names
             inputDataModel.deserializeNBT(compound.getCompoundTag(DATA_MODEL_OLD));
             inputPolymer.deserializeNBT(compound.getCompoundTag(POLYMER_OLD));

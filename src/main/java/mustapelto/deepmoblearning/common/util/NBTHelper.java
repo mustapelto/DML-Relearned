@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.util;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -53,8 +54,10 @@ public class NBTHelper {
     }
 
     //
-    // NBTTagCompound methods
+    // NBTTagCompound
     //
+
+    public static String DMLR_VERSION = "dmlrVersion";
 
     public static int getInteger(NBTTagCompound compound, String key, int defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_INT) ? compound.getInteger(key) : defaultValue;
@@ -66,5 +69,13 @@ public class NBTHelper {
 
     public static String getString(NBTTagCompound compound, String key, String defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_STRING) ? compound.getString(key) : defaultValue;
+    }
+
+    public static boolean isLegacyNBT(NBTTagCompound compound) {
+        return !compound.hasKey(DMLR_VERSION);
+    }
+
+    public static void setVersion(NBTTagCompound compound) {
+        compound.setString(DMLR_VERSION, DMLConstants.ModInfo.VERSION);
     }
 }

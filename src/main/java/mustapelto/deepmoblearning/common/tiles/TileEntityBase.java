@@ -22,7 +22,6 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     protected void sendUpdatePacketToClient() {
-        markDirty();
         DMLPacketHandler.sendToClient(new MessageUpdateTileEntity(this), world, pos);
     }
 
@@ -35,14 +34,6 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     public void handleUpdateData(ByteBuf buf) {}
-
-
-    /**
-     * @return true if server should send an update packet to client when requested
-     */
-    public boolean clientNeedsUpdate() {
-        return false;
-    }
 
     @Override
     public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newState) {

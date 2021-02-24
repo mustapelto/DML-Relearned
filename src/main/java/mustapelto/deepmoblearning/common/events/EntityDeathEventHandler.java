@@ -71,7 +71,7 @@ public class EntityDeathEventHandler {
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> trialKeys = inventory.stream()
-                .filter(ItemStackHelper::isTrialKey)
+                .filter(ItemTrialKey::isAttuned)
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> updatedModels = updateModels(deepLearners, player, target);
@@ -96,7 +96,7 @@ public class EntityDeathEventHandler {
         }
 
         // Attune Trial Keys to updated Model
-        // TODO
+        //trialKeys.forEach()
     }
 
     //

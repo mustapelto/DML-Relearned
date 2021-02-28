@@ -53,11 +53,19 @@ public class NBTHelper {
             stack.setTagCompound(null);
     }
 
+    public static void setVersion(ItemStack stack) {
+        setVersion(getTag(stack));
+    }
+
+    public static boolean isLegacyNBT(ItemStack stack) {
+        return hasTag(stack) && isLegacyNBT(getTag(stack));
+    }
+
     //
     // NBTTagCompound
     //
 
-    public static String DMLR_VERSION = "dmlrVersion";
+    public static final String DMLR_VERSION = "dmlrVersion";
 
     public static int getInteger(NBTTagCompound compound, String key, int defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_INT) ? compound.getInteger(key) : defaultValue;

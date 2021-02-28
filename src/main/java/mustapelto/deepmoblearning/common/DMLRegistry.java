@@ -6,6 +6,7 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.blocks.*;
 import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import mustapelto.deepmoblearning.common.items.*;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
@@ -14,6 +15,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -145,6 +147,18 @@ public class DMLRegistry {
                 .build();
 
         registry.registerAll(itemGlitchFragment);
+    }
+
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        // Finalize Data Managers (initialize ItemStack lists and crafting recipes)
+        MetadataManagerDataModels.INSTANCE.finalizeData();
+        MetadataManagerDataModelTiers.INSTANCE.finalizeData();
+        MetadataManagerLivingMatter.INSTANCE.finalizeData();
+
+        DMLRelearned.logger.info("Registering Dynamic Recipes...");
+        IForgeRegistry<IRecipe> registry = event.getRegistry();
+        registry.registerAll(MetadataManagerDataModels.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
     }
 
     public static ItemStack getLivingMatter(String id) {

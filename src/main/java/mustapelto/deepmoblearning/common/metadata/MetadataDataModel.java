@@ -40,7 +40,7 @@ public class MetadataDataModel extends Metadata {
     private final int simulationRFCost; // Cost to simulate this Model in RF/t. Default: 256
     private final String extraTooltip; // Extra tooltip to display on Data Model item. Default: ""
     private final ImmutableList<String> craftingIngredientStrings; // Ingredients to craft this model (in addition to a Blank Model). Default: none
-    private final ImmutableList<String> associatedMobs; // List of mobs that increase Model data. Default: ["modID:metadataID"]
+    private final ImmutableList<String> associatedMobStrings; // List of mobs that increase Model data. Default: ["modID:metadataID"]
     private final ImmutableList<String> lootItemStrings; // List of possible loot items from this Model's Pristine Matter. Default: ["minecraft:stone"]
     private final TrialData trialData; // Data for Trials attuned to this Model
     private final DeepLearnerDisplayData deepLearnerDisplayData; // Data used in Deep Learner display
@@ -49,6 +49,7 @@ public class MetadataDataModel extends Metadata {
     private final ResourceLocation dataModelRegistryName; // deepmoblearning:data_model_[metadataID]
     private final ResourceLocation pristineMatterRegistryName; // deepmoblearning:pristine_matter_[metadataID]
 
+    private ImmutableList<ResourceLocation> associatedMobs; // List of mobs that increase Model data.
     private ImmutableList<ItemStack> lootItems; // List of actual ItemStacks that can be selected as "loot"
     private IRecipe craftingRecipe; // Recipe to craft this Data Model
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
@@ -62,7 +63,7 @@ public class MetadataDataModel extends Metadata {
         simulationRFCost = Integer.MAX_VALUE;
         extraTooltip = "";
         craftingIngredientStrings = ImmutableList.of();
-        associatedMobs = ImmutableList.of();
+        associatedMobStrings = ImmutableList.of();
         lootItemStrings = ImmutableList.of();
         trialData = new TrialData(this);
         deepLearnerDisplayData = new DeepLearnerDisplayData(this);
@@ -79,7 +80,7 @@ public class MetadataDataModel extends Metadata {
         simulationRFCost = JsonHelper.getInt(data, "simulationRFCost", 256, 0, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
         extraTooltip = JsonHelper.getString(data, "extraTooltip");
         craftingIngredientStrings = JsonHelper.getStringListFromJsonArray(data, "craftingIngredients");
-        associatedMobs = JsonHelper.getStringListFromJsonArray(data, "associatedMobs", String.format("%s:%s", categoryID, metadataID));
+        associatedMobStrings = JsonHelper.getStringListFromJsonArray(data, "associatedMobs", StringHelper.toRegistryName(categoryID, metadataID));
         lootItemStrings = JsonHelper.getStringListFromJsonArray(data, "lootItems", "minecraft:stone");
 
         JsonObject trialDataJSON = JsonHelper.getJsonObject(data, "trial");
@@ -104,6 +105,11 @@ public class MetadataDataModel extends Metadata {
 
     @Override
     public void finalizeData() {
+        // Build mob list
+        ImmutableList.Builder<ResourceLocation> mobListBuilder = ImmutableList.builder();
+        associatedMobStrings.forEach(mob -> mobListBuilder.add(new ResourceLocation(mob)));
+        associatedMobs = mobListBuilder.build();
+
         // Replace placeholder strings with actual item name and build ItemStack list
         ImmutableList<String> replacedLootList = StringHelper.replaceInList(lootItemStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
         replacedLootList = StringHelper.replaceInList(replacedLootList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
@@ -243,8 +249,7 @@ public class MetadataDataModel extends Metadata {
         if (registryName == null)
             return false;
 
-        String name = registryName.toString();
-        return associatedMobs.contains(name);
+        return associatedMobs.contains(registryName);
     }
 
     @Nonnull
@@ -282,7 +287,7 @@ public class MetadataDataModel extends Metadata {
         public TrialData(MetadataDataModel container) {
             this.container = container;
 
-            entityStrings = ImmutableList.of();
+            entityStrings = ImmutableList.of(new WeightedItem<>(StringHelper.toRegistryName(container.categoryID, container.metadataID), 100));
             spawnDelay = 2;
             rewardStrings = ImmutableList.of();
         }
@@ -296,6 +301,7 @@ public class MetadataDataModel extends Metadata {
         }
 
         public void finalizeData() {
+            DMLRelearned.logger.info("Registering Trial for {}", container.getDisplayName());
             // Build weighted list of trial entities
             ImmutableList.Builder<WeightedItem<ResourceLocation>> weightedEntityListBuilder = ImmutableList.builder();
             for (WeightedItem<String> entry : entityStrings) {
@@ -304,12 +310,14 @@ public class MetadataDataModel extends Metadata {
                     // Try using categoryID:metadataID
                     trialEntity = new ResourceLocation(container.categoryID, container.metadataID);
                     if (!EntityList.isRegistered(trialEntity)) {
-                        DMLRelearned.logger.info("No Trial available for Data Model: {}:{}", container.categoryID, container.metadataID);
+                        DMLRelearned.logger.info("No Trial available for {}", container.getDisplayName());
                         trialEntity = null;
                     }
                 }
-                if (trialEntity != null)
+                if (trialEntity != null) {
+                    DMLRelearned.logger.info("Registering Trial entity {} with weight {}", trialEntity.toString(), entry.getWeight());
                     weightedEntityListBuilder.add(new WeightedItem<>(trialEntity, entry.getWeight()));
+                }
             }
             entities = weightedEntityListBuilder.build();
 
@@ -350,12 +358,12 @@ public class MetadataDataModel extends Metadata {
 
         private final int hearts; // Number of hearts. 0 will show as obfuscated text. Default: 10
         private final ImmutableList<String> mobTrivia; // Mob trivia text. Default: "Nothing is known about this mob."
-        private final String entityName; // Registry name of displayed entity. Default: "modID:metadataID"
-        private final String entityHeldItem; // Registry name of item held by displayed entity. Default: ""
+        private final ResourceLocation entityName; // Registry name of displayed entity. Default: "modID:metadataID"
+        private final ResourceLocation entityHeldItem; // Registry name of item held by displayed entity. Default: ""
         private final int entityScale; // Scale of displayed entity. Default: 40
         private final int entityOffsetX; // X offset of displayed entity. Default: 0
         private final int entityOffsetY; // Y offset of displayed entity. Default: 0
-        private final String extraEntityName; // Registry name of additional displayed entity. Default: ""
+        private final ResourceLocation extraEntityName; // Registry name of additional displayed entity. Default: ""
         private final boolean extraEntityIsChild; // Is additional displayed entity a child (e.g. zombie)? Default: false
         private final int extraEntityOffsetX; // X offset of additional entity. Default: 0
         private final int extraEntityOffsetY; // Y offset of additional entity. Default: 0
@@ -369,12 +377,12 @@ public class MetadataDataModel extends Metadata {
 
             hearts = 0;
             mobTrivia = ImmutableList.of();
-            entityName = String.format("%s:%s", this.container.categoryID, this.container.metadataID);
-            entityHeldItem = "";
+            entityName = new ResourceLocation(this.container.categoryID, this.container.metadataID);
+            entityHeldItem = null;
             entityScale = 1;
             entityOffsetX = 0;
             entityOffsetY = 0;
-            extraEntityName = "";
+            extraEntityName = null;
             extraEntityIsChild = false;
             extraEntityOffsetX = 0;
             extraEntityOffsetY = 0;
@@ -386,14 +394,14 @@ public class MetadataDataModel extends Metadata {
             hearts = JsonHelper.getInt(data, "hearts", 0, 0, Integer.MAX_VALUE);
             mobTrivia = JsonHelper.getStringListFromJsonArray(data, "mobTrivia", "Nothing is known about this mob.");
 
-            String defaultEntityName = String.format("%s:%s", this.container.categoryID, this.container.metadataID);
-            entityName = JsonHelper.getRegistryName(data, "entity", defaultEntityName);
+            String defaultEntityName = StringHelper.toRegistryName(this.container.categoryID, this.container.metadataID);
+            entityName = JsonHelper.getResourceLocation(data, "entity", defaultEntityName);
 
-            entityHeldItem = JsonHelper.getRegistryName(data, "entityHeldItem");
+            entityHeldItem = JsonHelper.getResourceLocation(data, "entityHeldItem");
             entityScale = JsonHelper.getInt(data, "entityScale", 40, 0, 200);
             entityOffsetX = JsonHelper.getInt(data, "entityOffsetX", 0, -200, 200);
             entityOffsetY = JsonHelper.getInt(data, "entityOffsetY", 0, -200, 200);
-            extraEntityName = JsonHelper.getRegistryName(data, "extraEntity");
+            extraEntityName = JsonHelper.getResourceLocation(data, "extraEntity");
             extraEntityIsChild = JsonHelper.getBoolean(data, "extraEntityIsChild");
             extraEntityOffsetX = JsonHelper.getInt(data, "extraEntityOffsetX", 0, -200, 200);
             extraEntityOffsetY = JsonHelper.getInt(data, "extraEntityOffsetY", 0, -200, 200);
@@ -408,9 +416,12 @@ public class MetadataDataModel extends Metadata {
         }
 
         public Entity getEntity(World world) {
-            Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(entityName), world);
-            if (entity instanceof EntityLiving && !entityHeldItem.isEmpty()) {
-                Item heldItem = Item.getByNameOrId(entityHeldItem);
+            if (!EntityList.isRegistered(entityName))
+                return null;
+
+            Entity entity = EntityList.createEntityByIDFromName(entityName, world);
+            if (entity instanceof EntityLiving && entityHeldItem != null) {
+                Item heldItem = Item.getByNameOrId(entityHeldItem.toString());
                 if (heldItem != null)
                     ((EntityLiving) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(heldItem));
             }
@@ -431,7 +442,10 @@ public class MetadataDataModel extends Metadata {
         }
 
         public Entity getExtraEntity(World world) {
-            Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(extraEntityName), world);
+            if (!EntityList.isRegistered(extraEntityName))
+                return null;
+
+            Entity entity = EntityList.createEntityByIDFromName(extraEntityName, world);
             if (extraEntityIsChild) {
                 if (entity instanceof EntityZombie) {
                     ((EntityZombie) entity).setChild(true);
@@ -440,10 +454,6 @@ public class MetadataDataModel extends Metadata {
                 }
             }
             return entity;
-        }
-
-        public boolean isExtraEntityIsChild() {
-            return extraEntityIsChild;
         }
 
         public int getExtraEntityOffsetX() {

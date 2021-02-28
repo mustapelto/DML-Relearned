@@ -45,4 +45,8 @@ public class StringHelper {
     public static String uppercaseFirst(String original) {
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
+
+    public static String toRegistryName(String domain, String path) {
+        return String.format("%s:%s", domain, path);
+    }
 }

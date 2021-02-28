@@ -44,6 +44,6 @@ public abstract class ContainerMachine extends ContainerBase {
             return false;
 
         // Don't allow player interaction from far away
-        return playerIn.getDistanceSqToCenter(pos) <= 64;
+        return Math.sqrt(playerIn.getDistanceSqToCenter(pos)) < 8;
     }
 }

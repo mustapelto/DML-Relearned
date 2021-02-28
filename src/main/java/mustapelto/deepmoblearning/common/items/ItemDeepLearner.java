@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.util.KeyboardHelper;
+import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
@@ -68,8 +69,12 @@ public class ItemDeepLearner extends ItemBase {
                 tooltip.add(I18n.format("deepmoblearning.general.more_info", KeyboardHelper.getSneakKeyName()));
             } else {
                 tooltip.add(I18n.format("deepmoblearning.deep_learner.contains"));
-                containedDataModels.forEach(dataModel ->
-                        tooltip.add(DataModelHelper.getTierDisplayNameFormatted(dataModel) + " " + dataModel.getDisplayName()));
+                containedDataModels.forEach(dataModel -> {
+                    if (DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME)
+                        tooltip.add(dataModel.getDisplayName());
+                    else
+                        tooltip.add(DataModelHelper.getTierDisplayNameFormatted(dataModel) + " " + dataModel.getDisplayName());
+                });
             }
         }
     }

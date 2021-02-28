@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import mustapelto.deepmoblearning.DMLRelearned;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Optional;
 
@@ -201,16 +202,16 @@ public class JsonHelper {
         return registryName.contains(":");
     }
 
-    public static String getRegistryName(JsonObject data, String key, String defaultValue) {
+    public static ResourceLocation getResourceLocation(JsonObject data, String key, String defaultValue) {
         String jsonEntry = getString(data, key);
         if (!jsonEntry.isEmpty() && !isValidRegistryName(jsonEntry)) {
             DMLRelearned.logger.warn("Invalid registry name entry in JSON! Using default value (if applicable).");
-            return defaultValue;
+            return new ResourceLocation(defaultValue);
         }
-        return jsonEntry;
+        return new ResourceLocation(jsonEntry);
     }
 
-    public static String getRegistryName(JsonObject data, String key) {
-        return getRegistryName(data, key, "");
+    public static ResourceLocation getResourceLocation(JsonObject data, String key) {
+        return getResourceLocation(data, key, "");
     }
 }

@@ -52,8 +52,11 @@ public class ItemTrialKey extends ItemBase {
                 if (attunementMetadata.isInvalid() || attunementTierMetadata.isInvalid())
                     return;
 
-                tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.trial_key.tooltip.attunement") + StringHelper.getFormattedString(attunementMetadata.getDisplayName(), TextFormatting.GRAY));
-                tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.trial_key.tooltip.tier") + attunementTierMetadata.getDisplayNameFormatted());
+                String mobName = StringHelper.getFormattedString(attunementMetadata.getDisplayName(), TextFormatting.GRAY);
+                tooltip.add(I18n.format("deepmoblearning.trial_key.tooltip.attunement", mobName));
+
+                String tierName = attunementTierMetadata.getDisplayNameFormatted();
+                tooltip.add(I18n.format("deepmoblearning.trial_key.tooltip.tier",tierName));
 
                 // TODO: Affixes
             }
@@ -62,8 +65,14 @@ public class ItemTrialKey extends ItemBase {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         return super.initCapabilities(stack, nbt);
+    }
+
+    @Override
+    @Nonnull
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        return StringHelper.getFormattedString(super.getItemStackDisplayName(stack), TextFormatting.AQUA);
     }
 
     //
@@ -71,14 +80,12 @@ public class ItemTrialKey extends ItemBase {
     //
 
     public static void attune(@Nonnull ItemStack trialKey, @Nonnull ItemStack dataModel, @Nonnull EntityPlayerMP player) {
-        if (!ItemStackHelper.isTrialKey(trialKey) || !ItemStackHelper.isDataModel(dataModel))
-            return;
-
         MetadataDataModel metadataDataModel = DataModelHelper.getDataModelMetadata(dataModel);
+        NBTHelper.setVersion(trialKey);
         NBTHelper.setString(trialKey, ATTUNEMENT, metadataDataModel.getMetadataID());
         NBTHelper.setInteger(trialKey, TIER, DataModelHelper.getTierLevel(dataModel));
 
-        player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.attunement_message", trialKey.getDisplayName(), dataModel.getDisplayName()));
+        player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.attunement_message", trialKey.getDisplayName(), metadataDataModel.getDisplayName()));
     }
 
     public static boolean isAttuned(@Nonnull ItemStack trialKey) {
@@ -89,7 +96,7 @@ public class ItemTrialKey extends ItemBase {
         if (!ItemStackHelper.isTrialKey(trialKey))
             return "";
 
-        if (!NBTHelper.hasKey(trialKey, "dmlr_version"))
+        if (NBTHelper.isLegacyNBT(trialKey))
             return NBTHelper.getString(trialKey, OLD_MOB_KEY, "");
         else
             return NBTHelper.getString(trialKey, ATTUNEMENT, "");

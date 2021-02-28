@@ -12,15 +12,5 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @EventBusSubscriber
 public class RecipeRegistry {
-    @SubscribeEvent
-    public static void registerEvent(RegistryEvent.Register<IRecipe> event) {
-        // Finalize Data Managers (initialize ItemStack lists and crafting recipes)
-        MetadataManagerDataModels.INSTANCE.finalizeData();
-        MetadataManagerDataModelTiers.INSTANCE.finalizeData();
-        MetadataManagerLivingMatter.INSTANCE.finalizeData();
 
-        DMLRelearned.logger.info("Registering Dynamic Recipes...");
-        IForgeRegistry<IRecipe> registry = event.getRegistry();
-        registry.registerAll(MetadataManagerDataModels.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
-    }
 }

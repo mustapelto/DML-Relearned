@@ -41,6 +41,12 @@ public class DMLConstants {
         public static final int ENERGY_IN_MAX = 25600;
     }
 
+    public static final class TrialKeystone {
+        public static final int TRIAL_AREA_RADIUS = 7; // Block radius of area that must be solid blocks, not including keystone itself
+        public static final int TRIAL_AREA_HEIGHT = 9; // Block height of area that must be air blocks, not including keystone layer
+        public static final int TRIAL_ARENA_RADIUS = 21; // Geometric radius of area inside of which players are considered to be part of a trial
+    }
+
     public static final class Recipes {
         public static final class Placeholders {
             public static final String DATA_MODEL = "dataModel";

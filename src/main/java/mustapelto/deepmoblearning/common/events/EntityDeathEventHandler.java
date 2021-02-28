@@ -1,7 +1,10 @@
 package mustapelto.deepmoblearning.common.events;
 
 import com.google.common.collect.ImmutableList;
-import mustapelto.deepmoblearning.common.items.*;
+import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
+import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
+import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
+import mustapelto.deepmoblearning.common.items.ItemTrialKey;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
@@ -11,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -71,7 +75,7 @@ public class EntityDeathEventHandler {
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> trialKeys = inventory.stream()
-                .filter(ItemTrialKey::isAttuned)
+                .filter(key -> ItemStackHelper.isTrialKey(key) && !ItemTrialKey.isAttuned(key))
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> updatedModels = updateModels(deepLearners, player, target);
@@ -96,7 +100,7 @@ public class EntityDeathEventHandler {
         }
 
         // Attune Trial Keys to updated Model
-        //trialKeys.forEach()
+        trialKeys.forEach(key -> tryAttuneTrialKey(key, highestTierModel, player));
     }
 
     //
@@ -149,7 +153,21 @@ public class EntityDeathEventHandler {
                 .anyMatch(uuid -> uuid.compareTo(entityLiving.getUniqueID()) == 0);
     }
 
-    private static void attuneTrialKey(ItemStack trialKey, ItemStack dataModel) {
+    private static void tryAttuneTrialKey(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
+        // Don't have to test for isTrialKey - isAttuned takes care of that
+        if (ItemTrialKey.isAttuned(trialKey) || dataModel.isEmpty() || !ItemStackHelper.isDataModel(dataModel))
+            return;
 
+        MetadataDataModel metadataDataModel = DataModelHelper.getDataModelMetadata(dataModel);
+        if (metadataDataModel.isInvalid())
+            return;
+
+        MetadataDataModel.TrialData trialData = metadataDataModel.getTrialData();
+        if (trialData.hasEntity()) {
+            ItemTrialKey.attune(trialKey, dataModel, player);
+            // TODO: addAffixes
+        } else {
+            player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.cannot_attune_message", trialKey.getDisplayName(), metadataDataModel.getDisplayName()));
+        }
     }
 }

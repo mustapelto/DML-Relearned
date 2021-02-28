@@ -87,6 +87,9 @@ public class PlayerEventHandler {
 
     @SubscribeEvent
     public static void playerTickUpdate(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START)
+            return;
+
         if (!DMLConfig.GENERAL_SETTINGS.GLITCH_CREATIVE_FLIGHT_ENABLED || event.player.world.isRemote)
             return;
 
@@ -97,7 +100,8 @@ public class PlayerEventHandler {
             if (!capabilities.allowFlying) {
                 capabilities.allowFlying = true;
                 event.player.sendPlayerAbilities();
-                FLYING_PLAYERS.add(playerUUID);
+                if (!FLYING_PLAYERS.contains(playerUUID))
+                    FLYING_PLAYERS.add(playerUUID);
             }
         } else {
             if (FLYING_PLAYERS.contains(playerUUID)) {
@@ -106,16 +110,17 @@ public class PlayerEventHandler {
                     capabilities.isFlying = false;
                     event.player.sendPlayerAbilities();
                 }
-                FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
+                removeFlyingPlayer(playerUUID);
             }
         }
     }
 
     @SubscribeEvent
     public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        UUID playerUUID = event.player.getUniqueID();
-        if (FLYING_PLAYERS.contains(playerUUID)) {
-            FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
-        }
+        removeFlyingPlayer(event.player.getUniqueID());
+    }
+
+    private static void removeFlyingPlayer(UUID playerUUID) {
+        FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
     }
 }

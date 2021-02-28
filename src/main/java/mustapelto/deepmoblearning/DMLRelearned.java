@@ -3,6 +3,7 @@ package mustapelto.deepmoblearning;
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.ServerProxy;
+import mustapelto.deepmoblearning.common.capabilities.PlayerTrial;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
@@ -48,6 +49,9 @@ public class DMLRelearned
         // Network Stuff
         DMLPacketHandler.registerPackets();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new DMLGuiHandler());
+
+        // Initialize Capabilities
+        PlayerTrial.register();
     }
 
     @EventHandler

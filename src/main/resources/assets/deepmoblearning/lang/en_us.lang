@@ -3,6 +3,8 @@ item.deepmoblearning.polymer_clay.name=Polymer Clay
 item.deepmoblearning.data_model_blank.name=Blank Data Model
 item.deepmoblearning.deep_learner.name=Deep Learner
 item.deepmoblearning.creative_model_learner.name=Creative Model Learner
+item.deepmoblearning.trial_key.name=Trial Key
+
 item.deepmoblearning.soot_covered_redstone.name=Soot-covered Redstone
 item.deepmoblearning.soot_covered_plate.name=Soot-covered Plate
 item.deepmoblearning.glitch_infused_ingot.name=Glitch Infused Ingot
@@ -77,8 +79,9 @@ deepmoblearning.creative_model_learner.increase_kills=%s to simulate kills.
 
 # Trial Key
 deepmoblearning.trial_key.attunement_message=%s was attuned to: %s
-deepmoblearning.trial_key.tooltip.attunement=Attuned to:
-deepmoblearning.trial_key.tooltip.tier=Key tier:
+deepmoblearning.trial_key.cannot_attune_message=Can't attune the %s - there is no Trial for %s
+deepmoblearning.trial_key.tooltip.attunement=Attuned to: %s
+deepmoblearning.trial_key.tooltip.tier=Tier: %s
 deepmoblearning.trial_key.tooltip.affixes=Affixes:
 deepmoblearning.trial_key.tooltip.no_affixes=Trial has no affixes
 deepmoblearning.trial_key.tooltip.affix_info=Read more about each affix in the Guidebook
@@ -170,6 +173,9 @@ deepmoblearning.redstone_mode.always_off=Always off
 # Page select button
 deepmoblearning.button_page_select.next=Next page
 deepmoblearning.button_page_select.prev=Previous page
+
+# Trials
+deepmoblearning.trial.message.player_left=You left the Trial!
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned

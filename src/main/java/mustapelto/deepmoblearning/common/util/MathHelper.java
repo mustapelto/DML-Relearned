@@ -1,11 +1,12 @@
 package mustapelto.deepmoblearning.common.util;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class MathHelper {
+    /**
+     * Integer division, but result is always rounded up
+     * @param a dividend
+     * @param b divisor
+     * @return division result, rounded up to nearest integer
+     */
     public static int divideAndRoundUp(int a, int b) {
         return a / b + ((a % b == 0) ? 0 : 1);
     }
@@ -20,23 +21,5 @@ public class MathHelper {
 
     public static double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(value, max));
-    }
-
-    public static <T> Optional<T> getWeightedRandom(ImmutableList<WeightedItem<T>> items) {
-        int weightSum = items.stream()
-                .map(WeightedItem::getWeight)
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        int random = ThreadLocalRandom.current().nextInt(weightSum);
-        for (WeightedItem<T> item : items) {
-            int itemWeight = item.getWeight();
-            if (random < itemWeight)
-                return Optional.of(item.getValue());
-
-            random -= itemWeight;
-        }
-
-        return Optional.empty(); // This should never happen!
     }
 }

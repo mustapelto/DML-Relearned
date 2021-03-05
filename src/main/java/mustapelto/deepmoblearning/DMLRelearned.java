@@ -58,6 +58,11 @@ public class DMLRelearned
     public void init(FMLInitializationEvent event)
     {
         proxy.registerGuiRenderers();
+
+        // Finalize Data Managers (done here so all items/entities from other mods are registered)
+        MetadataManagerDataModels.INSTANCE.finalizeData();
+        MetadataManagerDataModelTiers.INSTANCE.finalizeData();
+        MetadataManagerLivingMatter.INSTANCE.finalizeData();
     }
 
     @EventHandler

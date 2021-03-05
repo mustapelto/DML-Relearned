@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.util;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,19 +26,6 @@ public class StringHelper {
         int leftPad = padLength / 2;
         String leftPadded = StringUtils.leftPad(original, original.length() + leftPad);
         return StringUtils.rightPad(leftPadded, targetLength);
-    }
-
-    public static ImmutableList<String> replaceInList(ImmutableList<String> original, String toReplace, String replaceWith) {
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
-
-        for (String entry : original) {
-            String newEntry = entry;
-            if (newEntry.equals(toReplace))
-                newEntry = replaceWith;
-            builder.add(newEntry);
-        }
-
-        return builder.build();
     }
 
     public static String uppercaseFirst(String original) {

@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.common.items.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -41,17 +40,5 @@ public class ItemStackHelper {
 
     public static boolean isCreativeModelLearner(@Nonnull ItemStack stack) {
         return stack.getItem() instanceof ItemCreativeModelLearner;
-    }
-
-    public static ItemStack getHeldDeepLearner(EntityPlayer player) {
-        ItemStack mainHandStack = player.getHeldItemMainhand();
-        ItemStack offHandStack = player.getHeldItemOffhand();
-
-        if (isDeepLearner(mainHandStack))
-            return mainHandStack;
-        else if (isDeepLearner(offHandStack))
-            return offHandStack;
-
-        return ItemStack.EMPTY;
     }
 }

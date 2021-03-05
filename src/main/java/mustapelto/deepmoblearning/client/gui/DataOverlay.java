@@ -6,7 +6,7 @@ import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.PlayerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -51,7 +51,7 @@ public class DataOverlay extends GuiScreen {
             return;
 
         EntityPlayer player = mc.player;
-        ItemStack deepLearner = ItemStackHelper.getHeldDeepLearner(player);
+        ItemStack deepLearner = PlayerHelper.getHeldDeepLearner(player);
 
         if (deepLearner.isEmpty())
             return;

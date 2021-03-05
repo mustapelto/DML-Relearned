@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by mustapelto on 2021-02-13
+ * Helper methods to create an ItemStack or Ingredient from a String.
+ *
  * Partially derived from brandonscore.lib.StackReference by brandon3055.
- * Stores information about an ItemStack read from a string input.
  */
 public class ItemStackDefinitionHelper {
     public static ItemStack itemStackFromString(String itemDefinitionString) {

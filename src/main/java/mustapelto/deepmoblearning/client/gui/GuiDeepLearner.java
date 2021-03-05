@@ -8,7 +8,7 @@ import mustapelto.deepmoblearning.common.inventory.ContainerDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.PlayerHelper;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -45,7 +45,7 @@ public class GuiDeepLearner extends GuiContainerBase {
     public GuiDeepLearner(EntityPlayer player, World world) {
         super(player, world, new ContainerDeepLearner(player), WIDTH, HEIGHT);
 
-        deepLearner = ItemStackHelper.getHeldDeepLearner(player);
+        deepLearner = PlayerHelper.getHeldDeepLearner(player);
         if (deepLearner.isEmpty())
             throw new IllegalStateException("Tried to open Deep Learner GUI without Deep Learner equipped");
     }

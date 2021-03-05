@@ -1,7 +1,7 @@
 package mustapelto.deepmoblearning.common.inventory;
 
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.PlayerHelper;
 import mustapelto.deepmoblearning.common.util.Point;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
@@ -9,7 +9,8 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.DATA_MODEL_SLOTS;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.PLAYER_INVENTORY;
 
 public class ContainerDeepLearner extends ContainerBase {
     public static final int INTERNAL_SLOTS = DATA_MODEL_SLOTS.size();
@@ -19,7 +20,7 @@ public class ContainerDeepLearner extends ContainerBase {
     private final ItemStack deepLearner;
 
     public ContainerDeepLearner(EntityPlayer player) {
-        deepLearner = ItemStackHelper.getHeldDeepLearner(player);
+        deepLearner = PlayerHelper.getHeldDeepLearner(player);
         if (deepLearner.isEmpty())
             throw new IllegalArgumentException("Tried to open Deep Learner GUI without Deep Learner equipped");
 

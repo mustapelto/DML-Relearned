@@ -17,6 +17,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Helper methods for Data Model ItemStacks
+ */
 public class DataModelHelper {
     //
     // NBT Getters/Setters

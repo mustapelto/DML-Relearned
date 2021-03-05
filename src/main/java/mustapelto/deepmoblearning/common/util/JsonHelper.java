@@ -10,6 +10,9 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Optional;
 
+/**
+ * Helper methods for reading JSON data
+ */
 public class JsonHelper {
     public static String getString(JsonObject data, String key, String defaultValue) {
         if (!data.has(key))

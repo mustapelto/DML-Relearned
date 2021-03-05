@@ -6,6 +6,14 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Possible crafting states for machines
+ * - idle (= no input)
+ * - running
+ * - error (= has input but can't start for some reason)
+ *
+ * gets saved into machine NBT by integer index
+ */
 public enum CraftingState implements IStringSerializable {
     IDLE(0, "idle"),
     RUNNING(1, "running"),

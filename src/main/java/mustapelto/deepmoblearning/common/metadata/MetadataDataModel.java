@@ -5,7 +5,10 @@ import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLRegistry;
-import mustapelto.deepmoblearning.common.util.*;
+import mustapelto.deepmoblearning.common.util.ItemStackDefinitionHelper;
+import mustapelto.deepmoblearning.common.util.JsonHelper;
+import mustapelto.deepmoblearning.common.util.StringHelper;
+import mustapelto.deepmoblearning.common.util.WeightedItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityZombie;
@@ -17,6 +20,7 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -26,6 +30,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by mustapelto on 2021-02-14
@@ -40,7 +46,6 @@ public class MetadataDataModel extends Metadata {
     private final int simulationRFCost; // Cost to simulate this Model in RF/t. Default: 256
     private final String extraTooltip; // Extra tooltip to display on Data Model item. Default: ""
     private final ImmutableList<String> craftingIngredientStrings; // Ingredients to craft this model (in addition to a Blank Model). Default: none
-    private final ImmutableList<String> associatedMobStrings; // List of mobs that increase Model data. Default: ["modID:metadataID"]
     private final ImmutableList<String> lootItemStrings; // List of possible loot items from this Model's Pristine Matter. Default: ["minecraft:stone"]
     private final TrialData trialData; // Data for Trials attuned to this Model
     private final DeepLearnerDisplayData deepLearnerDisplayData; // Data used in Deep Learner display
@@ -48,10 +53,9 @@ public class MetadataDataModel extends Metadata {
     // Calculated data
     private final ResourceLocation dataModelRegistryName; // deepmoblearning:data_model_[metadataID]
     private final ResourceLocation pristineMatterRegistryName; // deepmoblearning:pristine_matter_[metadataID]
+    private final ImmutableList<ResourceLocation> associatedMobs; // List of mobs that increase Model data.
 
-    private ImmutableList<ResourceLocation> associatedMobs; // List of mobs that increase Model data.
     private ImmutableList<ItemStack> lootItems; // List of actual ItemStacks that can be selected as "loot"
-    private IRecipe craftingRecipe; // Recipe to craft this Data Model
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
     private ItemStack pristineMatter; // Pristine Matter associated with this Data Model
 
@@ -63,7 +67,7 @@ public class MetadataDataModel extends Metadata {
         simulationRFCost = Integer.MAX_VALUE;
         extraTooltip = "";
         craftingIngredientStrings = ImmutableList.of();
-        associatedMobStrings = ImmutableList.of();
+        associatedMobs = ImmutableList.of();
         lootItemStrings = ImmutableList.of();
         trialData = new TrialData(this);
         deepLearnerDisplayData = new DeepLearnerDisplayData(this);
@@ -74,13 +78,22 @@ public class MetadataDataModel extends Metadata {
     public MetadataDataModel(JsonObject data, String categoryID, String metadataID) {
         super(categoryID, metadataID);
 
+        dataModelRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "data_model_" + metadataID);
+        pristineMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "pristine_matter_" + metadataID);
+
         displayName = JsonHelper.getString(data, "displayName", StringHelper.uppercaseFirst(metadataID));
         displayNamePlural = JsonHelper.getString(data, "displayNamePlural", displayName + "s");
         livingMatterString = JsonHelper.getString(data, "livingMatter");
         simulationRFCost = JsonHelper.getInt(data, "simulationRFCost", 256, 0, DMLConstants.SimulationChamber.ENERGY_IN_MAX);
         extraTooltip = JsonHelper.getString(data, "extraTooltip");
         craftingIngredientStrings = JsonHelper.getStringListFromJsonArray(data, "craftingIngredients");
-        associatedMobStrings = JsonHelper.getStringListFromJsonArray(data, "associatedMobs", StringHelper.toRegistryName(categoryID, metadataID));
+
+        // Build list of associated mobs
+        List<String> associatedMobStrings = JsonHelper.getStringListFromJsonArray(data, "associatedMobs", StringHelper.toRegistryName(categoryID, metadataID));
+        ImmutableList.Builder<ResourceLocation> mobListBuilder = ImmutableList.builder();
+        associatedMobStrings.forEach(mob -> mobListBuilder.add(new ResourceLocation(mob)));
+        associatedMobs = mobListBuilder.build();
+
         lootItemStrings = JsonHelper.getStringListFromJsonArray(data, "lootItems", "minecraft:stone");
 
         JsonObject trialDataJSON = JsonHelper.getJsonObject(data, "trial");
@@ -98,63 +111,18 @@ public class MetadataDataModel extends Metadata {
         } else {
             deepLearnerDisplayData = new DeepLearnerDisplayData(deepLearnerDisplayJSON, this);
         }
-
-        dataModelRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "data_model_" + metadataID);
-        pristineMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "pristine_matter_" + metadataID);
     }
 
     @Override
     public void finalizeData() {
-        // Build mob list
-        ImmutableList.Builder<ResourceLocation> mobListBuilder = ImmutableList.builder();
-        associatedMobStrings.forEach(mob -> mobListBuilder.add(new ResourceLocation(mob)));
-        associatedMobs = mobListBuilder.build();
-
-        // Replace placeholder strings with actual item name and build ItemStack list
-        ImmutableList<String> replacedLootList = StringHelper.replaceInList(lootItemStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
-        replacedLootList = StringHelper.replaceInList(replacedLootList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
-        lootItems = ItemStackDefinitionHelper.itemStackListFromStringList(replacedLootList);
-
-        // Build crafting recipe
-        ImmutableList<String> replacedIngredientList = StringHelper.replaceInList(craftingIngredientStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, dataModelRegistryName.toString());
-        replacedIngredientList = StringHelper.replaceInList(replacedIngredientList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, pristineMatterRegistryName.toString());
-        buildCraftingRecipe(replacedIngredientList);
+        // Build loot item ItemStack list
+        lootItems = ItemStackDefinitionHelper.itemStackListFromStringList(lootItemStrings);
 
         // Get associated Living Matter
         livingMatter = DMLRegistry.getLivingMatter(livingMatterString);
         pristineMatter = DMLRegistry.getPristineMatter(pristineMatterRegistryName.getResourcePath());
 
         trialData.finalizeData();
-    }
-
-    private void buildCraftingRecipe(ImmutableList<String> ingredientStringList) {
-        ItemStack output = DMLRegistry.getDataModel(metadataID);
-        if (output.isEmpty())
-            return;
-
-        NonNullList<Ingredient> ingredients = NonNullList.create();
-        Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL_BLANK));
-        ingredients.add(blankModel);
-
-        boolean isOreRecipe = false;
-        ImmutableList<Ingredient> customIngredients = ItemStackDefinitionHelper.ingredientListFromStringList(ingredientStringList);
-        for (Ingredient ingredient : customIngredients) {
-            if (ingredient.equals(Ingredient.EMPTY)) {
-                DMLRelearned.logger.warn("Invalid Data Model crafting ingredient. Skipping.");
-                continue;
-            }
-            if (ingredient instanceof OreIngredient)
-                isOreRecipe = true;
-
-            ingredients.add(ingredient);
-        }
-
-        if (isOreRecipe)
-            craftingRecipe = new ShapelessOreRecipe(DMLConstants.Recipes.Groups.DATA_MODELS, output, ingredients);
-        else
-            craftingRecipe = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
-
-        craftingRecipe.setRegistryName(dataModelRegistryName);
     }
 
     @Override
@@ -267,7 +235,35 @@ public class MetadataDataModel extends Metadata {
     }
 
     public IRecipe getCraftingRecipe() {
-        return craftingRecipe;
+        ItemStack output = DMLRegistry.getDataModel(metadataID);
+        if (output.isEmpty())
+            return null;
+
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL_BLANK));
+        ingredients.add(blankModel);
+
+        boolean isOreRecipe = false;
+        ImmutableList<Ingredient> customIngredients = ItemStackDefinitionHelper.ingredientListFromStringList(craftingIngredientStrings);
+        for (Ingredient ingredient : customIngredients) {
+            if (ingredient.equals(Ingredient.EMPTY)) {
+                DMLRelearned.logger.warn("Invalid Data Model crafting ingredient. Skipping.");
+                continue;
+            }
+            if (ingredient instanceof OreIngredient)
+                isOreRecipe = true;
+
+            ingredients.add(ingredient);
+        }
+
+        IRecipe result;
+        if (isOreRecipe)
+            result = new ShapelessOreRecipe(DMLConstants.Recipes.Groups.DATA_MODELS, output, ingredients);
+        else
+            result = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
+
+        result.setRegistryName(dataModelRegistryName);
+        return result;
     }
 
     public static class TrialData {
@@ -315,24 +311,27 @@ public class MetadataDataModel extends Metadata {
                     }
                 }
                 if (trialEntity != null) {
-                    DMLRelearned.logger.info("Registering Trial entity {} with weight {}", trialEntity.toString(), entry.getWeight());
-                    weightedEntityListBuilder.add(new WeightedItem<>(trialEntity, entry.getWeight()));
+                    DMLRelearned.logger.info("Registering Trial entity {} with weight {}", trialEntity.toString(), entry.itemWeight);
+                    weightedEntityListBuilder.add(new WeightedItem<>(trialEntity, entry.itemWeight));
                 }
             }
             entities = weightedEntityListBuilder.build();
 
             // Build list of trial rewards
-            ImmutableList<String> replacedTrialList = StringHelper.replaceInList(rewardStrings, DMLConstants.Recipes.Placeholders.DATA_MODEL, container.getDataModelRegistryName().toString());
-            replacedTrialList = StringHelper.replaceInList(replacedTrialList, DMLConstants.Recipes.Placeholders.PRISTINE_MATTER, container.getPristineMatterRegistryName().toString());
-            rewards = ItemStackDefinitionHelper.itemStackListFromStringList(replacedTrialList);
+            rewards = ItemStackDefinitionHelper.itemStackListFromStringList(rewardStrings);
         }
 
         public boolean hasEntity() {
             return entities.size() > 0;
         }
 
-        public ImmutableList<WeightedItem<ResourceLocation>> getEntities() {
-            return entities;
+        public Entity getRandomEntity(World world) {
+            ResourceLocation entityName = WeightedRandom.getRandomItem(ThreadLocalRandom.current(), entities).getValue();
+
+            if (!EntityList.isRegistered(entityName))
+                return null; // Shouldn't happen due to how the entity list is built, but check anyway
+
+            return EntityList.createEntityByIDFromName(entityName, world);
         }
 
         public double getSpawnDelay() {

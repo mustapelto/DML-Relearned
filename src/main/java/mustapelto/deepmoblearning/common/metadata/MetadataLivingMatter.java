@@ -24,7 +24,7 @@ public class MetadataLivingMatter extends Metadata {
     private final String displayName; // Name shown in tooltips and GUI. Also used as item display name. Default: metadataID
     private final TextFormatting displayColor; // Color of name when displayed. Default: white
     private final int xpValue; // XP received when single item is consumed. Default: 10
-    private ImmutableList<String> craftingRecipeStrings; // Recipes using this item in JSON string format
+    private final ImmutableList<String> craftingRecipeStrings; // Recipes using this item in JSON string format
 
     // Calculated data
     private final ResourceLocation livingMatterRegistryName;

@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemPristineMatter extends ItemBase {
     private final MetadataDataModel metadata;
@@ -24,13 +24,12 @@ public class ItemPristineMatter extends ItemBase {
     }
 
     @Override
-    public boolean hasEffect(@Nonnull ItemStack stack) {
+    public boolean hasEffect(ItemStack stack) {
         return true; // Make items glow
     }
 
     @Override
-    @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         if (FMLCommonHandler.instance().getSide() == Side.SERVER)
             return super.getItemStackDisplayName(stack); // Can't do localization on server side
 
@@ -39,7 +38,7 @@ public class ItemPristineMatter extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(TextFormatting.AQUA + I18n.format("deepmoblearning.pristine_matter.loot_items") + TextFormatting.RESET);
         for (ItemStack lootStack : metadata.getLootItems()) {
             tooltip.add(lootStack.getDisplayName());
@@ -50,10 +49,9 @@ public class ItemPristineMatter extends ItemBase {
         return metadata;
     }
 
-    public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
-        if (!ItemStackHelper.isPristineMatter(stack))
-            return MetadataDataModel.INVALID;
-
-        return ((ItemPristineMatter) stack.getItem()).getDataModelMetadata();
+    public static Optional<MetadataDataModel> getDataModelMetadata(ItemStack stack) {
+        return ItemStackHelper.isPristineMatter(stack) ?
+               Optional.of(((ItemPristineMatter) stack.getItem()).getDataModelMetadata()) :
+               Optional.empty();
     }
 }

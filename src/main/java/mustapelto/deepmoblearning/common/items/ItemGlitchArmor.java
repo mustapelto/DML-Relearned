@@ -3,7 +3,6 @@ package mustapelto.deepmoblearning.common.items;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.resources.I18n;
@@ -20,7 +19,6 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -45,7 +43,7 @@ public abstract class ItemGlitchArmor extends ItemArmor {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         String pristineChance = DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE + "%";
         String pristineCount = String.valueOf(DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_COUNT);
 
@@ -59,7 +57,7 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     }
 
     @Override
-    public boolean getIsRepairable(@Nonnull ItemStack toRepair, ItemStack repair) {
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return repair.getItem() instanceof ItemGlitchIngot;
     }
 
@@ -74,12 +72,11 @@ public abstract class ItemGlitchArmor extends ItemArmor {
 
     public static void dropPristineMatter(World world, BlockPos position, ItemStack dataModel) {
         if (ThreadLocalRandom.current().nextInt(1, 100) <= DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE) {
-            MetadataDataModel metadata = DataModelHelper.getDataModelMetadata(dataModel);
-            if (metadata.isInvalid())
-                return;
-            EntityItem drop = new EntityItem(world, position.getX(), position.getY(), position.getZ(), metadata.getPristineMatter());
-            drop.setDefaultPickupDelay();
-            world.spawnEntity(drop);
+            DataModelHelper.getDataModelMetadata(dataModel).ifPresent(metadata -> {
+                EntityItem drop = new EntityItem(world, position.getX(), position.getY(), position.getZ(), metadata.getPristineMatter());
+                drop.setDefaultPickupDelay();
+                world.spawnEntity(drop);
+            });
         }
     }
 

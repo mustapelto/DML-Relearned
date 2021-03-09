@@ -99,7 +99,7 @@ public class DataOverlay extends GuiScreen {
         mc.getTextureManager().bindTexture(TEXTURE);
         drawTexturedModalRect(x + DATA_MODEL_WIDTH, y + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, 0, EXP_BAR_MAX_WIDTH, EXP_BAR_OUTER_HEIGHT);
 
-        if (DataModelHelper.isAtMaxTier(dataModel)) {
+        if (DataModelHelper.isMaxTier(dataModel)) {
             drawTexturedModalRect(x + DATA_MODEL_WIDTH + 1, y + 1 + ROW_SPACING + (index * COMPONENT_HEIGHT), 0, EXP_BAR_OUTER_HEIGHT, EXP_BAR_MAX_WIDTH, EXP_BAR_INNER_HEIGHT);
         } else {
             int dataCurrent = DataModelHelper.getCurrentTierDataCount(dataModel);

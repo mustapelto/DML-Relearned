@@ -178,7 +178,7 @@ public class GuiSimulationChamber extends GuiMachine {
         if (DATA_BAR.isInside(x, y)) {
             // Draw Data Bar Tooltip
             if (simulationChamber.hasDataModel()) {
-                if (!DataModelHelper.isAtMaxTier(dataModel)) {
+                if (!DataModelHelper.isMaxTier(dataModel)) {
                     String currentData = String.valueOf(DataModelHelper.getCurrentTierDataCount(dataModel));
                     String maxData = String.valueOf(DataModelHelper.getTierRequiredData(dataModel));
                     tooltip.add(I18n.format("deepmoblearning.simulation_chamber.tooltip.model_data", currentData + "/" + maxData));
@@ -233,7 +233,7 @@ public class GuiSimulationChamber extends GuiMachine {
         // Data Model Experience Bar
         if (dataModelError == DataModelError.NONE) {
             int dataBarHeight;
-            if (DataModelHelper.isAtMaxTier(dataModel)) {
+            if (DataModelHelper.isMaxTier(dataModel)) {
                 dataBarHeight = DATA_BAR.HEIGHT;
             } else {
                 int currentData = DataModelHelper.getCurrentTierDataCount(dataModel);

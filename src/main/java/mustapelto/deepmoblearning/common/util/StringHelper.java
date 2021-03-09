@@ -5,9 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class StringHelper {
     public static String getFormattedString(String string, TextFormatting formatting) {
-        return (formatting != null) ?
-                formatting + string + TextFormatting.RESET :
-                string;
+        return formatting + string + TextFormatting.RESET;
     }
 
     public static String getFormattedString(TextFormatting pre, String string, TextFormatting post) {

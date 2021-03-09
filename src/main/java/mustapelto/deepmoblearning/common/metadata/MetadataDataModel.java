@@ -28,17 +28,15 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataDataModel extends Metadata {
-    public static final MetadataDataModel INVALID = new MetadataDataModel();
-
     // Data from JSON
     private final String displayName; // Used in Data Model and Pristine Matter display name, and Deep Learner GUI. Default: metadataID
     private final String displayNamePlural; // Plural form of display name. Used in Deep Learner GUI. Default: displayName + "s"
@@ -58,22 +56,6 @@ public class MetadataDataModel extends Metadata {
     private ImmutableList<ItemStack> lootItems; // List of actual ItemStacks that can be selected as "loot"
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
     private ItemStack pristineMatter; // Pristine Matter associated with this Data Model
-
-    private MetadataDataModel() {
-        super("", "");
-        displayName = "INVALID";
-        displayNamePlural = "INVALID";
-        livingMatterString = "";
-        simulationRFCost = Integer.MAX_VALUE;
-        extraTooltip = "";
-        craftingIngredientStrings = ImmutableList.of();
-        associatedMobs = ImmutableList.of();
-        lootItemStrings = ImmutableList.of();
-        trialData = new TrialData(this);
-        deepLearnerDisplayData = new DeepLearnerDisplayData(this);
-        dataModelRegistryName = new ResourceLocation("");
-        pristineMatterRegistryName = new ResourceLocation("");
-    }
 
     public MetadataDataModel(JsonObject data, String categoryID, String metadataID) {
         super(categoryID, metadataID);
@@ -123,11 +105,6 @@ public class MetadataDataModel extends Metadata {
         pristineMatter = DMLRegistry.getPristineMatter(pristineMatterRegistryName.getResourcePath());
 
         trialData.finalizeData();
-    }
-
-    @Override
-    public boolean isInvalid() {
-        return this.equals(INVALID);
     }
 
     public String getDisplayName() {
@@ -220,7 +197,6 @@ public class MetadataDataModel extends Metadata {
         return associatedMobs.contains(registryName);
     }
 
-    @Nonnull
     public ImmutableList<ItemStack> getLootItems() {
         if (lootItems == null)
             return ImmutableList.of();
@@ -234,10 +210,10 @@ public class MetadataDataModel extends Metadata {
         return ItemStack.EMPTY;
     }
 
-    public IRecipe getCraftingRecipe() {
+    public Optional<IRecipe> getCraftingRecipe() {
         ItemStack output = DMLRegistry.getDataModel(metadataID);
         if (output.isEmpty())
-            return null;
+            return Optional.empty();
 
         NonNullList<Ingredient> ingredients = NonNullList.create();
         Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL_BLANK));
@@ -263,7 +239,7 @@ public class MetadataDataModel extends Metadata {
             result = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
 
         result.setRegistryName(dataModelRegistryName);
-        return result;
+        return Optional.of(result);
     }
 
     public static class TrialData {
@@ -325,13 +301,10 @@ public class MetadataDataModel extends Metadata {
             return entities.size() > 0;
         }
 
-        public Entity getRandomEntity(World world) {
+        public Optional<Entity> getRandomEntity(World world) {
             ResourceLocation entityName = WeightedRandom.getRandomItem(ThreadLocalRandom.current(), entities).getValue();
-
-            if (!EntityList.isRegistered(entityName))
-                return null; // Shouldn't happen due to how the entity list is built, but check anyway
-
-            return EntityList.createEntityByIDFromName(entityName, world);
+            Entity entity = EntityList.createEntityByIDFromName(entityName, world);
+            return (entity != null) ? Optional.of(entity) : Optional.empty();
         }
 
         public double getSpawnDelay() {
@@ -414,9 +387,9 @@ public class MetadataDataModel extends Metadata {
             return mobTrivia;
         }
 
-        public Entity getEntity(World world) {
+        public Optional<Entity> getEntity(World world) {
             if (!EntityList.isRegistered(entityName))
-                return null;
+                return Optional.empty();
 
             Entity entity = EntityList.createEntityByIDFromName(entityName, world);
             if (entity instanceof EntityLiving && entityHeldItem != null) {
@@ -425,7 +398,7 @@ public class MetadataDataModel extends Metadata {
                     ((EntityLiving) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(heldItem));
             }
 
-            return entity;
+            return entity != null ? Optional.of(entity) : Optional.empty();
         }
 
         public int getEntityScale() {
@@ -440,9 +413,9 @@ public class MetadataDataModel extends Metadata {
             return entityOffsetY;
         }
 
-        public Entity getExtraEntity(World world) {
+        public Optional<Entity> getExtraEntity(World world) {
             if (!EntityList.isRegistered(extraEntityName))
-                return null;
+                return Optional.empty();
 
             Entity entity = EntityList.createEntityByIDFromName(extraEntityName, world);
             if (extraEntityIsChild) {
@@ -452,7 +425,8 @@ public class MetadataDataModel extends Metadata {
                     ((EntityAgeable) entity).setGrowingAge(-1000000); // big number -> won't grow up while Deep Learner is open
                 }
             }
-            return entity;
+
+            return entity != null ? Optional.of(entity) : Optional.empty();
         }
 
         public int getExtraEntityOffsetX() {

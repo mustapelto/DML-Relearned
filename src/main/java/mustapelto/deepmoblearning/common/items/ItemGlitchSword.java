@@ -20,7 +20,6 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -45,7 +44,7 @@ public class ItemGlitchSword extends ItemSword {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_1"));
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_2"));
         tooltip.add(TextFormatting.GOLD + I18n.format("deepmoblearning.glitch_sword.tooltip_3"));
@@ -57,13 +56,12 @@ public class ItemGlitchSword extends ItemSword {
     }
 
     @Override
-    public boolean getIsRepairable(@Nonnull ItemStack toRepair, ItemStack repair) {
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return repair.getItem() instanceof ItemGlitchIngot;
     }
 
     @Override
-    @Nonnull
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot equipmentSlot, @Nonnull ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
         AttributeModifier attackDamage = new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", material.getAttackDamage() + getPermanentWeaponDamage(stack), 0);
         AttributeModifier attackSpeed = new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4, 0);
 
@@ -98,9 +96,6 @@ public class ItemGlitchSword extends ItemSword {
                 newDamage = DMLConstants.GlitchSword.DAMAGE_BONUS_MAX;
 
             setPermanentWeaponDamage(stack, newDamage);
-
-            if (player == null)
-                return;
 
             if (newDamage >= DMLConstants.GlitchSword.DAMAGE_BONUS_MAX)
                 player.sendMessage(new TextComponentString(I18n.format("deepmoblearning.glitch_sword.max_damage_reached", stack.getDisplayName())));

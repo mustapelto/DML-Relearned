@@ -7,7 +7,6 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerDataModel;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
-import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
@@ -19,7 +18,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -70,21 +68,19 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
         ItemStack dataModel = getDataModel();
 
-        MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(dataModel);
-        if (dataModelMetadata.isInvalid())
-            return;
+        DataModelHelper.getDataModelMetadata(dataModel).ifPresent(metadata -> {
+            DataModelHelper.addSimulation(dataModel);
 
-        DataModelHelper.addSimulation(dataModel);
+            ItemStack oldLivingMatterOutput = outputLiving.getStackInSlot(0);
+            ItemStack newLivingMatterOutput = metadata.getLivingMatter(oldLivingMatterOutput.getCount() + 1);
+            outputLiving.setStackInSlot(0, newLivingMatterOutput);
 
-        ItemStack oldLivingMatterOutput = outputLiving.getStackInSlot(0);
-        ItemStack newLivingMatterOutput = dataModelMetadata.getLivingMatter(oldLivingMatterOutput.getCount() + 1);
-        outputLiving.setStackInSlot(0, newLivingMatterOutput);
-
-        if (pristineSuccess) {
-            ItemStack oldPristineMatterOutput = outputPristine.getStackInSlot(0);
-            ItemStack newPristineMatterOutput = dataModelMetadata.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
-            outputPristine.setStackInSlot(0, newPristineMatterOutput);
-        }
+            if (pristineSuccess) {
+                ItemStack oldPristineMatterOutput = outputPristine.getStackInSlot(0);
+                ItemStack newPristineMatterOutput = metadata.getPristineMatter(oldPristineMatterOutput.getCount() + 1);
+                outputPristine.setStackInSlot(0, newPristineMatterOutput);
+            }
+        });
     }
 
     @Override
@@ -179,14 +175,14 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
@@ -235,57 +231,64 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     //
 
     @Override
-    @Nonnull
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
         NBTTagCompound inventory = new NBTTagCompound();
-        inventory.setTag(INPUT_DATA_MODEL, inputDataModel.serializeNBT());
-        inventory.setTag(INPUT_POLYMER, inputPolymer.serializeNBT());
-        inventory.setTag(OUTPUT_LIVING, outputLiving.serializeNBT());
-        inventory.setTag(OUTPUT_PRISTINE, outputPristine.serializeNBT());
-        compound.setTag(INVENTORY, inventory);
+        inventory.setTag(NBT_INPUT_DATA_MODEL, inputDataModel.serializeNBT());
+        inventory.setTag(NBT_INPUT_POLYMER, inputPolymer.serializeNBT());
+        inventory.setTag(NBT_OUTPUT_LIVING, outputLiving.serializeNBT());
+        inventory.setTag(NBT_OUTPUT_PRISTINE, outputPristine.serializeNBT());
+        compound.setTag(NBT_INVENTORY, inventory);
 
-        compound.getCompoundTag(CRAFTING).setBoolean(PRISTINE_SUCCESS, pristineSuccess);
+        compound.getCompoundTag(NBT_CRAFTING).setBoolean(NBT_PRISTINE_SUCCESS, pristineSuccess);
 
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        if (NBTHelper.isLegacyNBT(compound)) {
+        if (isLegacyNBT(compound)) {
             // Original DML tag -> use old (non-nested) tag names
-            inputDataModel.deserializeNBT(compound.getCompoundTag(DATA_MODEL_OLD));
-            inputPolymer.deserializeNBT(compound.getCompoundTag(POLYMER_OLD));
-            outputLiving.deserializeNBT(compound.getCompoundTag(LIVING_OLD));
-            outputPristine.deserializeNBT(compound.getCompoundTag(PRISTINE_OLD));
+            inputDataModel.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_INPUT_DATA_MODEL));
+            inputPolymer.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_INPUT_POLYMER));
+            outputLiving.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_OUTPUT_LIVING));
+            outputPristine.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_OUTPUT_PRISTINE));
 
-            pristineSuccess = NBTHelper.getBoolean(compound, PRISTINE_SUCCESS_OLD, false);
+            pristineSuccess = NBTHelper.getBoolean(compound, NBT_LEGACY_PRISTINE_SUCCESS, false);
         } else {
             // DML:Relearned tag -> use new (nested) tag names
-            NBTTagCompound inventory = compound.getCompoundTag(INVENTORY);
-            inputDataModel.deserializeNBT(inventory.getCompoundTag(INPUT_DATA_MODEL));
-            inputPolymer.deserializeNBT(inventory.getCompoundTag(INPUT_POLYMER));
-            outputLiving.deserializeNBT(inventory.getCompoundTag(OUTPUT_LIVING));
-            outputPristine.deserializeNBT(inventory.getCompoundTag(OUTPUT_PRISTINE));
+            NBTTagCompound inventory = compound.getCompoundTag(NBT_INVENTORY);
+            inputDataModel.deserializeNBT(inventory.getCompoundTag(NBT_INPUT_DATA_MODEL));
+            inputPolymer.deserializeNBT(inventory.getCompoundTag(NBT_INPUT_POLYMER));
+            outputLiving.deserializeNBT(inventory.getCompoundTag(NBT_OUTPUT_LIVING));
+            outputPristine.deserializeNBT(inventory.getCompoundTag(NBT_OUTPUT_PRISTINE));
 
-            pristineSuccess = NBTHelper.getBoolean(compound.getCompoundTag(CRAFTING), PRISTINE_SUCCESS, false);
+            pristineSuccess = NBTHelper.getBoolean(compound.getCompoundTag(NBT_CRAFTING), NBT_PRISTINE_SUCCESS, false);
         }
     }
 
+    private static boolean isLegacyNBT(NBTTagCompound nbt) {
+        return nbt.hasKey(NBT_LEGACY_INPUT_DATA_MODEL) ||
+                nbt.hasKey(NBT_LEGACY_INPUT_POLYMER) ||
+                nbt.hasKey(NBT_LEGACY_OUTPUT_LIVING) ||
+                nbt.hasKey(NBT_LEGACY_OUTPUT_PRISTINE) ||
+                nbt.hasKey(NBT_LEGACY_PRISTINE_SUCCESS);
+    }
+
     // NBT Tag Names
-    private static final String INPUT_DATA_MODEL = "inputDataModel";
-    private static final String INPUT_POLYMER = "inputPolymer";
-    private static final String OUTPUT_LIVING = "outputLiving";
-    private static final String OUTPUT_PRISTINE = "outputPristine";
-    private static final String PRISTINE_SUCCESS = "pristineSuccess";
+    private static final String NBT_INPUT_DATA_MODEL = "inputDataModel";
+    private static final String NBT_INPUT_POLYMER = "inputPolymer";
+    private static final String NBT_OUTPUT_LIVING = "outputLiving";
+    private static final String NBT_OUTPUT_PRISTINE = "outputPristine";
+    private static final String NBT_PRISTINE_SUCCESS = "pristineSuccess";
 
     // Tag names from old mod, used for backwards compatibility
-    private static final String DATA_MODEL_OLD = "dataModel";
-    private static final String POLYMER_OLD = "polymer";
-    private static final String LIVING_OLD = "lOutput";
-    private static final String PRISTINE_OLD = "pOutput";
-    private static final String PRISTINE_SUCCESS_OLD = "craftSuccess";
+    private static final String NBT_LEGACY_INPUT_DATA_MODEL = "dataModel";
+    private static final String NBT_LEGACY_INPUT_POLYMER = "polymer";
+    private static final String NBT_LEGACY_OUTPUT_LIVING = "lOutput";
+    private static final String NBT_LEGACY_OUTPUT_PRISTINE = "pOutput";
+    private static final String NBT_LEGACY_PRISTINE_SUCCESS = "craftSuccess";
 }

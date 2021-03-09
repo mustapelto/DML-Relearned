@@ -3,9 +3,9 @@ package mustapelto.deepmoblearning.common.tiles;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerTrialKey;
-import mustapelto.deepmoblearning.common.items.ItemTrialKey;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.PlayerHelper;
+import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,7 +45,7 @@ public class TileEntityTrialKeystone extends TileEntityBase implements ITickable
             return;
 
         activeTrialKey = getTrialKey();
-        if (!ItemTrialKey.isAttuned(activeTrialKey))
+        if (!TrialKeyHelper.isAttuned(activeTrialKey))
             return;
 
         participants.addAll(

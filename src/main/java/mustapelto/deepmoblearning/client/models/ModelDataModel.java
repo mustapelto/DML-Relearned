@@ -9,11 +9,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.ForgeBlockStateV1;
+import net.minecraftforge.client.model.ICustomModelLoader;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.common.model.IModelState;
 
-import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ModelDataModel implements IModel {
@@ -27,25 +31,20 @@ public class ModelDataModel implements IModel {
     }
 
     @Override
-    @Nonnull
     public Collection<ResourceLocation> getTextures() {
         return ImmutableSet.of(BASE_LOCATION, mobLocation);
     }
 
     @Override
-    @Nonnull
     public Collection<ResourceLocation> getDependencies() {
         return ImmutableSet.of();
     }
 
     @Override
-    @Nonnull
-    public IBakedModel bake(@Nonnull IModelState state, @Nonnull VertexFormat format, @Nonnull Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        Optional<IModelState> itemGenerated = ForgeBlockStateV1.Transforms.get("forge:default-item");
-        if (itemGenerated.isPresent())
-            state = itemGenerated.get();
-
-        return (new ItemLayerModel(ImmutableList.of(BASE_LOCATION, mobLocation))).bake(state, format, bakedTextureGetter);
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+        state = ForgeBlockStateV1.Transforms.get("forge:default-item").orElse(state);
+        ItemLayerModel model = new ItemLayerModel(ImmutableList.of(BASE_LOCATION, mobLocation));
+        return model.bake(state, format, bakedTextureGetter);
     }
 
     public enum LoaderDataModel implements ICustomModelLoader {
@@ -61,8 +60,7 @@ public class ModelDataModel implements IModel {
         }
 
         @Override
-        @Nonnull
-        public IModel loadModel(@Nonnull ResourceLocation modelLocation) throws Exception {
+        public IModel loadModel(ResourceLocation modelLocation) throws Exception {
             String mobId = modelLocation.getResourcePath().substring("data_model_".length());
 
             ModelDataModel model;
@@ -74,7 +72,7 @@ public class ModelDataModel implements IModel {
         }
 
         @Override
-        public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
+        public void onResourceManagerReload(IResourceManager resourceManager) {
             initTextureCache();
         }
 

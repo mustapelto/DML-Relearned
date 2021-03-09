@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public class ButtonItemSelect extends ButtonBase {
     private final ItemStack stack;
     private final int index;
@@ -18,7 +16,6 @@ public class ButtonItemSelect extends ButtonBase {
         this.selected = selected;
     }
 
-    @Nonnull
     @Override
     public ImmutableList<String> getTooltip() {
         return ImmutableList.of(stack.getDisplayName());

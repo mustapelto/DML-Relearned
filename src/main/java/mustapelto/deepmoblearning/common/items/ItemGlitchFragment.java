@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -23,14 +22,13 @@ public class ItemGlitchFragment extends ItemBase {
     }
 
     @Override
-    @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         return TextFormatting.AQUA + super.getItemStackDisplayName(stack) + TextFormatting.RESET;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         String glitchHeart = new ItemStack(DMLRegistry.ITEM_GLITCH_HEART).getDisplayName();
         String obsidian = TextFormatting.RESET + I18n.format("tile.obsidian.name") + TextFormatting.GRAY;
         String leftClick = KeyboardHelper.getAttackKeyName();
@@ -40,13 +38,13 @@ public class ItemGlitchFragment extends ItemBase {
     }
 
     @Override
-    public boolean hasCustomEntity(@Nonnull ItemStack stack) {
+    public boolean hasCustomEntity(ItemStack stack) {
         return true;
     }
 
     @Nullable
     @Override
-    public Entity createEntity(@Nonnull World world, @Nonnull Entity location, @Nonnull ItemStack itemstack) {
+    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
         Entity result = new EntityItemGlitchFragment(world, location.posX, location.posY, location.posZ, new ItemStack(this, itemstack.getCount()));
         result.motionX = location.motionX;
         result.motionY = location.motionY;

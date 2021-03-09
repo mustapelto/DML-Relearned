@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -121,7 +121,6 @@ public class ItemStackDefinitionHelper {
      *
      * @param itemString The string which contains the item data.
      */
-    @Nonnull
     private static ItemStackDefinition itemDefinitionFromString(String itemString) {
         if (itemString.isEmpty()) {
             DMLRelearned.logger.warn("ItemStackBuilder: Input string empty");
@@ -193,7 +192,7 @@ public class ItemStackDefinitionHelper {
             nbt = null;
         }
 
-        public ItemStackDefinition(String registryName, int stackSize, int metadata, NBTTagCompound nbt) {
+        public ItemStackDefinition(String registryName, int stackSize, int metadata, @Nullable NBTTagCompound nbt) {
             this.registryName = registryName;
             isOre = registryName.startsWith("ore:");
             this.stackSize = stackSize;

@@ -8,6 +8,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Optional;
+
 public abstract class BlockBase extends Block {
     /**
      * @param name Block id (for internal use)
@@ -21,10 +23,10 @@ public abstract class BlockBase extends Block {
         setLightLevel(1f);
     }
 
-    public Item getItemBlock() {
+    public Optional<Item> getItemBlock() {
         ResourceLocation registryName = getRegistryName();
         return (registryName != null) ?
-                new ItemBlock(this).setRegistryName(registryName) :
-                null;
+                Optional.of(new ItemBlock(this).setRegistryName(registryName)) :
+                Optional.empty();
     }
 }

@@ -5,8 +5,6 @@ import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.tiles.RedstoneMode;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
-
 public class ButtonRedstoneMode extends ButtonBase {
     private RedstoneMode redstoneMode;
 
@@ -28,7 +26,6 @@ public class ButtonRedstoneMode extends ButtonBase {
         this.redstoneMode = redstoneMode;
     }
 
-    @Nonnull
     @Override
     public ImmutableList<String> getTooltip() {
         switch (redstoneMode) {

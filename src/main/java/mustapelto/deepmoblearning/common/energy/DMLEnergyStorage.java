@@ -6,8 +6,6 @@ import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.EnergyStorage;
 
-import javax.annotation.Nonnull;
-
 public class DMLEnergyStorage extends EnergyStorage {
     public DMLEnergyStorage(int capacity, int maxReceive) {
         super(capacity, maxReceive, 0);
@@ -29,11 +27,11 @@ public class DMLEnergyStorage extends EnergyStorage {
         onEnergyChanged();
     }
 
-    public void writeToNBT(@Nonnull NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound) {
         compound.setInteger("energy", energy);
     }
 
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         setEnergy(NBTHelper.getInteger(compound, "energy", 0));
     }
 

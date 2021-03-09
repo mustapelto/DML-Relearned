@@ -129,7 +129,7 @@ public class DMLRegistry {
         registeredItems.forEach(registry::register);
 
         // Register ItemBlocks
-        registeredBlocks.forEach(block -> registry.register(block.getItemBlock()));
+        registeredBlocks.forEach(block -> block.getItemBlock().ifPresent(registry::register));
     }
 
     @SubscribeEvent

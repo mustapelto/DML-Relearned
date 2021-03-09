@@ -1,7 +1,6 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"front": "#front",
 		"particle": "deepmoblearning:blocks/machine_blue",
 		"sides": "deepmoblearning:blocks/machine_blue",
 		"base": "deepmoblearning:blocks/machine_base"
@@ -162,14 +161,14 @@
 		},
 		{
 			"from": [3, 3, 0.75],
-			"to": [4, 4, 1],
+			"to": [5, 4, 1],
 			"rotation": {"angle": 0, "axis": "y", "origin": [11, 11, 8]},
 			"faces": {
-				"north": {"uv": [12, 12, 13, 13], "texture": "#front"},
-				"east": {"uv": [12, 12, 13, 13], "texture": "#front"},
+				"north": {"uv": [11, 12, 13, 13], "texture": "#front"},
+				"east": {"uv": [11, 12, 12, 13], "texture": "#front"},
 				"west": {"uv": [12, 12, 13, 13], "texture": "#front"},
-				"up": {"uv": [12, 12, 13, 13], "texture": "#front"},
-				"down": {"uv": [12, 12, 13, 13], "texture": "#front"}
+				"up": {"uv": [13, 12, 11, 13], "texture": "#front"},
+				"down": {"uv": [13, 12, 11, 13], "texture": "#front"}
 			}
 		},
 		{

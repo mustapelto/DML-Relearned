@@ -3,8 +3,6 @@ package mustapelto.deepmoblearning.common.inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import javax.annotation.Nonnull;
-
 public class ItemHandlerOutput extends ItemHandlerBase {
     public ItemHandlerOutput() {
         super();
@@ -14,9 +12,8 @@ public class ItemHandlerOutput extends ItemHandlerBase {
         super(size);
     }
 
-    @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         return stack;
     }
 
@@ -25,7 +22,7 @@ public class ItemHandlerOutput extends ItemHandlerBase {
      *
      * @param stack input ItemStack
      */
-    public void addItemToAvailableSlots(@Nonnull ItemStack stack) {
+    public void addItemToAvailableSlots(ItemStack stack) {
         int i = 0;
         while (i < getSlots() && !stack.isEmpty()) {
             ItemStack currentSlotStack = getStackInSlot(i);
@@ -51,7 +48,7 @@ public class ItemHandlerOutput extends ItemHandlerBase {
         }
     }
 
-    public boolean hasRoomForItem(@Nonnull ItemStack stack) {
+    public boolean hasRoomForItem(ItemStack stack) {
         if (stack.isEmpty())
             return true;
 

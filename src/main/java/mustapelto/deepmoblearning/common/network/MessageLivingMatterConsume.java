@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class MessageLivingMatterConsume implements IMessage {
     private boolean consumeStack;
 
@@ -32,6 +34,7 @@ public class MessageLivingMatterConsume implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageLivingMatterConsume, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageLivingMatterConsume message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
             ItemStack mainHand = player.getHeldItemMainhand();

@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
-
 public class ButtonPageSelect extends ButtonBase {
     private final Direction direction;
 
@@ -14,7 +12,6 @@ public class ButtonPageSelect extends ButtonBase {
         this.direction = direction;
     }
 
-    @Nonnull
     @Override
     public ImmutableList<String> getTooltip() {
         switch (direction) {

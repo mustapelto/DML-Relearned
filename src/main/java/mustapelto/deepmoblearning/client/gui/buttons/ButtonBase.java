@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class ButtonBase extends GuiButton {
@@ -26,7 +25,7 @@ public abstract class ButtonBase extends GuiButton {
     }
 
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         this.hovered = isHovered(mouseX, mouseY);
         int hoverState = getHoverState(hovered);
 
@@ -37,6 +36,5 @@ public abstract class ButtonBase extends GuiButton {
         }
     }
 
-    @Nonnull
     public abstract ImmutableList<String> getTooltip();
 }

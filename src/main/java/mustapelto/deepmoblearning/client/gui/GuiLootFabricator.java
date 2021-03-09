@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
@@ -19,7 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,10 +96,10 @@ public class GuiLootFabricator extends GuiMachine {
             craftingError = CraftingError.NONE;
     }
 
-    private void resetOutputData(@Nonnull MetadataDataModel newData, boolean preselectedOutput) {
+    private void resetOutputData(@Nullable MetadataDataModel newData, boolean preselectedOutput) {
         currentDataModelMetadata = newData;
 
-        if (currentDataModelMetadata.isInvalid()) {
+        if (currentDataModelMetadata == null) {
             setInputEmpty();
             return;
         }

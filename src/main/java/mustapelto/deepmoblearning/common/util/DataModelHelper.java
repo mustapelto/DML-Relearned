@@ -11,178 +11,182 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper methods for Data Model ItemStacks
  */
 public class DataModelHelper {
     //
-    // NBT Getters/Setters
+    // ItemStack methods - NBT getters / setters
     //
 
-    public static int getTierLevel(ItemStack stack) {
-        return NBTHelper.getInteger(stack, "tier", 0);
+    public static final String NBT_TIER = "tier";
+    public static final String NBT_DATA_COUNT = "dataCount";
+    public static final String NBT_TOTAL_KILL_COUNT = "totalKillCount";
+    public static final String NBT_TOTAL_SIMULATION_COUNT = "totalSimulationCount";
+    public static final String NBT_LEGACY_SIMULATION_COUNT = "simulationCount";
+    public static final String NBT_LEGACY_KILL_COUNT = "killCount";
+
+    private static boolean isLegacyNBT(ItemStack stack) {
+        return NBTHelper.hasKey(stack, NBT_LEGACY_KILL_COUNT) ||
+                NBTHelper.hasKey(stack, NBT_LEGACY_SIMULATION_COUNT);
     }
 
-    public static void setTierLevel(ItemStack stack, int tier) {
-        NBTHelper.setInteger(stack, "tier", tier);
+    private static void convertLegacyNBT(ItemStack stack) {
+        int currentSimulations = NBTHelper.getInteger(stack, NBT_LEGACY_SIMULATION_COUNT);
+        int currentKills = NBTHelper.getInteger(stack, NBT_LEGACY_KILL_COUNT);
+
+        NBTHelper.removeKey(stack, NBT_LEGACY_SIMULATION_COUNT);
+        NBTHelper.removeKey(stack, NBT_LEGACY_KILL_COUNT);
+
+        Optional<MetadataDataModelTier> tierData = getTierData(stack);
+        int killMultiplier = tierData.map(MetadataDataModelTier::getKillMultiplier).orElse(0);
+        int currentData = currentSimulations + currentKills * killMultiplier;
+
+        NBTHelper.setInteger(stack, NBT_DATA_COUNT, currentData);
+    }
+
+    public static int getTierLevel(ItemStack stack) {
+        return ItemStackHelper.isDataModel(stack) ? NBTHelper.getInteger(stack, NBT_TIER) : 0;
+    }
+
+    public static void setTierLevel(ItemStack stack, int level) {
+        NBTHelper.setInteger(stack, NBT_TIER, level);
     }
 
     public static int getCurrentTierDataCount(ItemStack stack) {
-        if (NBTHelper.hasKey(stack, "simulationCount") || NBTHelper.hasKey(stack, "killCount")) {
-            // Update DeepMobLearning NBT to DMLRelearned format
-            // i.e. "simulationCount" and "killCount" combined to a single value "dataCount"
-            int currentSimulations = NBTHelper.getInteger(stack, "simulationCount", 0);
-            int currentKills = NBTHelper.getInteger(stack, "killCount", 0);
-
-            NBTHelper.removeKey(stack, "simulationCount");
-            NBTHelper.removeKey(stack, "killCount");
-
-            MetadataDataModelTier tierData = getTierData(stack);
-            if (tierData.isInvalid())
-                return 0;
-
-            NBTHelper.setInteger(stack, "dataCount", currentSimulations + currentKills * tierData.getKillMultiplier());
-        }
-        return NBTHelper.getInteger(stack, "dataCount", 0);
+        if (isLegacyNBT(stack))
+            convertLegacyNBT(stack);
+        return NBTHelper.getInteger(stack, NBT_DATA_COUNT);
     }
 
-    public static void setCurrentTierDataCount(ItemStack stack, int data) {
-        NBTHelper.setInteger(stack, "dataCount", data);
+    public static void setCurrentTierDataCount(ItemStack stack, int count) {
+        NBTHelper.setInteger(stack, NBT_DATA_COUNT, count);
     }
 
     public static int getTotalKillCount(ItemStack stack) {
-        return NBTHelper.getInteger(stack, "totalKillCount", 0);
+        return NBTHelper.getInteger(stack, NBT_TOTAL_KILL_COUNT);
     }
 
     public static void setTotalKillCount(ItemStack stack, int count) {
-        NBTHelper.setInteger(stack, "totalKillCount", count);
+        NBTHelper.setInteger(stack, NBT_TOTAL_KILL_COUNT, count);
     }
 
     public static int getTotalSimulationCount(ItemStack stack) {
-        return NBTHelper.getInteger(stack, "totalSimulationCount", 0);
+        return NBTHelper.getInteger(stack, NBT_TOTAL_SIMULATION_COUNT);
     }
 
     public static void setTotalSimulationCount(ItemStack stack, int count) {
-        NBTHelper.setInteger(stack, "totalSimulationCount", count);
+        NBTHelper.setInteger(stack, NBT_TOTAL_SIMULATION_COUNT, count);
     }
 
     //
-    // Calculated Getters
+    // ItemStack methods - calculated getters
     //
 
-    @Nullable
-    public static ItemDataModel getDataModelItem(ItemStack stack) {
-        return ItemStackHelper.isDataModel(stack) ? (ItemDataModel) stack.getItem() : null;
+    public static Optional<MetadataDataModel> getDataModelMetadata(ItemStack stack) {
+        return (ItemStackHelper.isDataModel(stack)) ?
+                Optional.of(((ItemDataModel)stack.getItem()).getDataModelMetadata()) :
+                Optional.empty();
     }
 
-    @Nonnull
-    public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
-        ItemDataModel stackItem = getDataModelItem(stack);
-        return stackItem != null ? stackItem.getDataModelMetadata() : MetadataDataModel.INVALID;
+    public static Optional<MetadataDataModelTier> getTierData(ItemStack stack) {
+        int level = getTierLevel(stack);
+        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(level);
     }
 
-    @Nonnull
-    private static MetadataDataModelTier getTierData(ItemStack stack) {
-        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(getTierLevel(stack));
+    private static Optional<MetadataDataModelTier> getNextTierData(ItemStack stack) {
+        int level = getTierLevel(stack) + 1;
+        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(level);
     }
 
-    @Nonnull
-    private static MetadataDataModelTier getNextTierData(ItemStack stack) {
-        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(getTierLevel(stack) + 1);
-    }
-
-    public static boolean isAtMaxTier(ItemStack stack) {
-        // also true if "over max" (in case config has been changed on a running world to include fewer tiers)
+    /**
+     * Is this Data Model at or above max tier?
+     * @param stack Data Model stack
+     * @return true if Data Model tier is equal or greater than config-based max tier
+     */
+    public static boolean isMaxTier(ItemStack stack) {
         return getTierLevel(stack) >= MetadataManagerDataModelTiers.INSTANCE.getMaxLevel();
     }
 
+    /**
+     * Can this Data Model be used in a Simulation Chamber?
+     * @param stack Data Model stack
+     * @return true if Data Model can be used in a Simulation Chamber
+     */
     public static boolean canSimulate(ItemStack stack) {
-        // Can this model be run in a simulation chamber?
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() && data.getCanSimulate();
+        return getTierData(stack)
+                .map(MetadataDataModelTier::getCanSimulate)
+                .orElse(false);
     }
 
     public static String getTierDisplayNameFormatted(ItemStack stack) {
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() ? data.getDisplayNameFormatted() : "";
+        return getTierData(stack)
+                .map(MetadataDataModelTier::getDisplayNameFormatted)
+                .orElse("");
     }
 
     public static String getTierDisplayNameFormatted(ItemStack stack, String template) {
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() ? data.getDisplayNameFormatted(template) : "";
+        return getTierData(stack)
+                .map(metadata -> metadata.getDisplayNameFormatted(template))
+                .orElse("");
     }
 
     public static String getNextTierDisplayNameFormatted(ItemStack stack) {
-        MetadataDataModelTier data = getNextTierData(stack);
-        return !data.isInvalid() ? data.getDisplayNameFormatted() : "";
+        return getNextTierData(stack)
+                .map(MetadataDataModelTier::getDisplayNameFormatted)
+                .orElse("");
     }
 
     public static int getTierRequiredData(ItemStack stack) {
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() ? data.getDataToNext() : 0;
+        return getTierData(stack)
+                .map(MetadataDataModelTier::getDataToNext)
+                .orElse(0);
     }
 
     public static int getTierKillMultiplier(ItemStack stack) {
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() ? data.getKillMultiplier() : 0;
+        return getTierData(stack)
+                .map(MetadataDataModelTier::getKillMultiplier)
+                .orElse(0);
     }
 
     public static int getKillsToNextTier(ItemStack stack) {
         int dataRequired = getTierRequiredData(stack);
         int dataCurrent = getCurrentTierDataCount(stack);
         int killMultiplier = getTierKillMultiplier(stack);
-        return isAtMaxTier(stack) ? 0 : MathHelper.divideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
+        return isMaxTier(stack) ? 0 :
+                MathHelper.divideAndRoundUp(dataRequired - dataCurrent, killMultiplier);
     }
 
     public static int getSimulationEnergy(ItemStack stack) {
-        MetadataDataModel data = getDataModelMetadata(stack);
-        return !data.isInvalid() ? data.getSimulationRFCost() : 0;
+        return getDataModelMetadata(stack)
+                .map(MetadataDataModel::getSimulationRFCost)
+                .orElse(0);
     }
 
     public static int getPristineChance(ItemStack stack) {
-        MetadataDataModelTier data = getTierData(stack);
-        return !data.isInvalid() ? data.getPristineChance() : 0;
+        return getTierData(stack)
+                .map(MetadataDataModelTier::getPristineChance)
+                .orElse(0);
     }
 
-    /** Test if Data Model type matches Living Matter type
-     *
-     * @param dataModel Data Model stack to compare
-     * @param livingMatter Living Matter stack to compare
-     * @return true if Data Model's associated Living Matter matches Living Matter stack
-     */
     public static boolean getDataModelMatchesLivingMatter(ItemStack dataModel, ItemStack livingMatter) {
-        MetadataDataModel data = getDataModelMetadata(dataModel);
-        if (data.isInvalid())
-            return false;
-        return data.getLivingMatter().isItemEqual(livingMatter);
+        return getDataModelMetadata(dataModel)
+                .map(data -> data.getLivingMatter().isItemEqual(livingMatter))
+                .orElse(false);
     }
 
-    /** Test if Data Model type matches Pristine Matter type
-     *
-     * @param dataModel Data Model stack to compare
-     * @param pristineMatter Pristine Matter stack to compare
-     * @return true if Data Model's associated Pristine Matter matches Pristine Matter stack
-     */
     public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
-        MetadataDataModel data = getDataModelMetadata(dataModel);
-        if (data.isInvalid())
-            return false;
-        return data.getPristineMatter().isItemEqual(pristineMatter);
+        return getDataModelMetadata(dataModel)
+                .map(data -> data.getPristineMatter().isItemEqual(pristineMatter))
+                .orElse(false);
     }
 
-    /** Filter out non-data model stacks and return filtered list
-     *
-     * @param stackList List of ItemStacks to filter
-     * @return List of Data Model ItemStacks
-      */
-
-    public static ImmutableList<ItemStack> getDataModelStacksFromList(NonNullList<ItemStack> stackList) {
+    public static ImmutableList<ItemStack> getDataModelStacksFromList(List<ItemStack> stackList) {
         return stackList.stream()
                 .filter(ItemStackHelper::isDataModel)
                 .collect(ImmutableList.toImmutableList());
@@ -210,30 +214,28 @@ public class DataModelHelper {
     }
 
     public static void addKill(ItemStack stack, EntityPlayerMP player) {
-        MetadataDataModelTier tierData = getTierData(stack);
-        if (tierData.isInvalid())
-            return;
+        getTierData(stack).ifPresent(tierData -> {
+            int increase = tierData.getKillMultiplier();
 
-        int increase = tierData.getKillMultiplier();
+            // TODO: Trial stuff
 
-        // TODO: Trial stuff
+            if (ItemStackHelper.isGlitchSword(player.getHeldItemMainhand()) /* && no trial active */)
+                increase *= 2;
+            increaseDataCount(stack, increase);
 
-        if (ItemStackHelper.isGlitchSword(player.getHeldItemMainhand()) /* && no trial active */)
-            increase *= 2;
-        increaseDataCount(stack, increase);
+            // Update appropriate total count
+            setTotalKillCount(stack, getTotalKillCount(stack) + 1);
 
-        // Update appropriate total count
-        setTotalKillCount(stack, getTotalKillCount(stack) + 1);
-
-        if (tryIncreaseTier(stack)) {
-            player.sendMessage(
-                    new TextComponentTranslation(
-                            "deepmoblearning.data_model.reached_tier",
-                            stack.getDisplayName(),
-                            getTierDisplayNameFormatted(stack)
-                    )
-            );
-        }
+            if (tryIncreaseTier(stack)) {
+                player.sendMessage(
+                        new TextComponentTranslation(
+                                "deepmoblearning.data_model.reached_tier",
+                                stack.getDisplayName(),
+                                getTierDisplayNameFormatted(stack)
+                        )
+                );
+            }
+        });
     }
 
     /**
@@ -243,7 +245,7 @@ public class DataModelHelper {
      * @return true if tier could be increased, otherwise false
      */
     private static boolean tryIncreaseTier(ItemStack stack) {
-        if (isAtMaxTier(stack))
+        if (isMaxTier(stack))
             return false;
 
         int currentData = getCurrentTierDataCount(stack);
@@ -275,11 +277,11 @@ public class DataModelHelper {
                                     setTierLevel(modelStack, tier - 1);
                                 break;
                             case INCREASE_TIER:
-                                if (!isAtMaxTier(modelStack))
+                                if (!isMaxTier(modelStack))
                                     setTierLevel(modelStack, tier + 1);
                                 break;
                             case INCREASE_KILLS:
-                                if (!isAtMaxTier(modelStack))
+                                if (!isMaxTier(modelStack))
                                     addKill(modelStack, player);
                         }
                     }

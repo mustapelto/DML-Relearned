@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class MessageLootFabOutputItemToServer implements IMessage {
     private BlockPos pos;
     private int dimension;
@@ -42,6 +44,7 @@ public class MessageLootFabOutputItemToServer implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageLootFabOutputItemToServer, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageLootFabOutputItemToServer message, MessageContext ctx) {
             WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             world.addScheduledTask(() -> {

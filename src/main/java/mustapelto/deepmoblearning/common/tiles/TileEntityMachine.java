@@ -11,7 +11,6 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class TileEntityMachine extends TileEntityBase implements ITickable {
@@ -153,7 +152,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     // Redstone Control
     //
 
-    @Nonnull
     public RedstoneMode getRedstoneMode() {
         return redstoneMode;
     }
@@ -180,14 +178,14 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityEnergy.ENERGY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY) {
             return CapabilityEnergy.ENERGY.cast(energyStorage);
         }
@@ -260,66 +258,69 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
 
     @Override
-    @Nonnull
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-
-        NBTHelper.setVersion(compound);
 
         energyStorage.writeToNBT(compound);
 
         NBTTagCompound redstoneTag = new NBTTagCompound();
-        redstoneTag.setInteger(REDSTONE_LEVEL, redstoneLevel);
-        redstoneTag.setBoolean(REDSTONE_POWERED, redstonePowered);
-        redstoneTag.setInteger(REDSTONE_MODE, redstoneMode.getIndex());
-        compound.setTag(REDSTONE, redstoneTag);
+        redstoneTag.setInteger(NBT_REDSTONE_LEVEL, redstoneLevel);
+        redstoneTag.setBoolean(NBT_REDSTONE_POWERED, redstonePowered);
+        redstoneTag.setInteger(NBT_REDSTONE_MODE, redstoneMode.getIndex());
+        compound.setTag(NBT_REDSTONE, redstoneTag);
 
         NBTTagCompound craftingTag = new NBTTagCompound();
-        craftingTag.setBoolean(IS_CRAFTING, crafting);
-        craftingTag.setInteger(CRAFTING_PROGRESS, craftingProgress);
-        compound.setTag(CRAFTING, craftingTag);
+        craftingTag.setBoolean(NBT_IS_CRAFTING, crafting);
+        craftingTag.setInteger(NBT_CRAFTING_PROGRESS, craftingProgress);
+        compound.setTag(NBT_CRAFTING, craftingTag);
 
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
         energyStorage.readFromNBT(compound);
 
-        NBTTagCompound redstoneTag = compound.getCompoundTag(REDSTONE);
-        redstoneLevel = NBTHelper.getInteger(redstoneTag, REDSTONE_LEVEL, 0);
-        redstonePowered = NBTHelper.getBoolean(redstoneTag, REDSTONE_POWERED, false);
-        redstoneMode = RedstoneMode.byIndex(NBTHelper.getInteger(redstoneTag, REDSTONE_MODE, 0));
+        NBTTagCompound redstoneTag = compound.getCompoundTag(NBT_REDSTONE);
+        redstoneLevel = NBTHelper.getInteger(redstoneTag, NBT_REDSTONE_LEVEL, 0);
+        redstonePowered = NBTHelper.getBoolean(redstoneTag, NBT_REDSTONE_POWERED, false);
+        redstoneMode = RedstoneMode.byIndex(NBTHelper.getInteger(redstoneTag, NBT_REDSTONE_MODE, 0));
 
-        if (NBTHelper.isLegacyNBT(compound)) {
+        if (isLegacyNBT(compound)) {
             // Original DML tag -> use old tag system without nesting and with machine-specific progress tag
-            crafting = NBTHelper.getBoolean(compound, IS_CRAFTING, false);
+            crafting = NBTHelper.getBoolean(compound, NBT_IS_CRAFTING, false);
             if (this instanceof TileEntitySimulationChamber)
-                craftingProgress = NBTHelper.getInteger(compound, CRAFTING_PROGRESS_SIM_CHAMBER_OLD, 0);
+                craftingProgress = NBTHelper.getInteger(compound, NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER, 0);
             else if (this instanceof TileEntityLootFabricator)
-                craftingProgress = NBTHelper.getInteger(compound, CRAFTING_PROGRESS_LOOT_FAB_OLD, 0);
+                craftingProgress = NBTHelper.getInteger(compound, NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB, 0);
         } else {
             // DML:Relearned tag -> use new tag system
-            NBTTagCompound craftingTag = compound.getCompoundTag(CRAFTING);
-            crafting = NBTHelper.getBoolean(craftingTag, IS_CRAFTING, false);
-            craftingProgress = NBTHelper.getInteger(craftingTag, CRAFTING_PROGRESS, 0);
+            NBTTagCompound craftingTag = compound.getCompoundTag(NBT_CRAFTING);
+            crafting = NBTHelper.getBoolean(craftingTag, NBT_IS_CRAFTING, false);
+            craftingProgress = NBTHelper.getInteger(craftingTag, NBT_CRAFTING_PROGRESS, 0);
         }
     }
 
-    private static final String REDSTONE = "redstone"; // Redstone state subtag
-    private static final String REDSTONE_LEVEL = "level";
-    private static final String REDSTONE_POWERED = "powered";
-    private static final String REDSTONE_MODE = "mode";
+    private static boolean isLegacyNBT(NBTTagCompound nbt) {
+        return nbt.hasKey(NBT_IS_CRAFTING) ||
+                nbt.hasKey(NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB) ||
+                nbt.hasKey(NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER);
+    }
 
-    protected static final String CRAFTING = "crafting"; // Crafting state subtag
-    private static final String IS_CRAFTING = "isCrafting"; // Old system uses same tag, only not nested
-    private static final String CRAFTING_PROGRESS = "progress";
+    private static final String NBT_REDSTONE = "redstone"; // Redstone state subtag
+    private static final String NBT_REDSTONE_LEVEL = "level";
+    private static final String NBT_REDSTONE_POWERED = "powered";
+    private static final String NBT_REDSTONE_MODE = "mode";
 
-    protected static final String INVENTORY = "inventory"; // Inventory contents subtag (only used by subclasses)
+    protected static final String NBT_CRAFTING = "crafting"; // Crafting state subtag
+    private static final String NBT_IS_CRAFTING = "isCrafting"; // Old system uses same tag, only not nested
+    private static final String NBT_CRAFTING_PROGRESS = "progress";
+
+    protected static final String NBT_INVENTORY = "inventory"; // Inventory contents subtag (only used by subclasses)
 
     // Tag names from old mod, used for backwards compatibility
-    private static final String CRAFTING_PROGRESS_SIM_CHAMBER_OLD = "simulationProgress";
-    private static final String CRAFTING_PROGRESS_LOOT_FAB_OLD = "crafingProgress"; // SIC!
+    private static final String NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER = "simulationProgress";
+    private static final String NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB = "crafingProgress"; // SIC!
 }

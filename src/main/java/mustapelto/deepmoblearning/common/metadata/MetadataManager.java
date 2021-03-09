@@ -9,6 +9,7 @@ import mustapelto.deepmoblearning.common.util.FileHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by mustapelto on 2021-02-14
@@ -27,26 +28,25 @@ public abstract class MetadataManager<T extends Metadata> {
         if (!configFile.exists())
             FileHelper.copyFromJar("/settings/" + configFileName, configFile.toPath());
 
-        JsonObject dataObject = readConfigFile(configFile);
-        populateDataStore(dataObject);
+        readConfigFile(configFile).ifPresent(this::populateDataStore);
     }
 
     public void finalizeData() {
         dataStore.values().forEach(Metadata::finalizeData);
     }
 
-    private JsonObject readConfigFile(File configFile) {
+    private Optional<JsonObject> readConfigFile(File configFile) {
         try {
-            return FileHelper.readObject(configFile);
+            return Optional.of(FileHelper.readObject(configFile));
         } catch (IOException e) {
             DMLRelearned.logger.error("Could not read config file! THis will cause the mod to malfunction." +
                     "Error message: {}", e.getMessage());
-            return null;
+            return Optional.empty();
         }
     }
 
     private void populateDataStore(JsonObject data) {
-        if (data == null || !data.isJsonObject())
+        if (!data.isJsonObject())
             return;
 
         ImmutableMap.Builder<String, T> builder = ImmutableMap.builder();
@@ -64,10 +64,10 @@ public abstract class MetadataManager<T extends Metadata> {
                 JsonElement entryData = entry.getValue();
                 if (!entryData.isJsonObject()) {
                     DMLRelearned.logger.warn("Invalid entry in JSON file, skipping! Filename: {}, Entry: {}", configFileName, entryName);
+                    continue;
                 }
-                T metadata = constructMetadataFromJson(entryData.getAsJsonObject(), categoryName, entryName);
-                if (metadata != null)
-                    builder.put(entryName, metadata);
+
+                builder.put(entryName, constructMetadataFromJson(entryData.getAsJsonObject(), categoryName, entryName));
             }
         }
 
@@ -76,8 +76,9 @@ public abstract class MetadataManager<T extends Metadata> {
 
     protected abstract T constructMetadataFromJson(JsonObject data, String categoryName, String entryName);
 
-    public T getByKey(String key) {
-        return dataStore.get(key);
+    public Optional<T> getByKey(String key) {
+        T result = dataStore.get(key);
+        return result != null ? Optional.of(result) : Optional.empty();
     }
 
     public ImmutableMap<String, T> getDataStore() {

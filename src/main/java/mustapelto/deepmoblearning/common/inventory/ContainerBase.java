@@ -6,8 +6,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public abstract class ContainerBase extends Container {
     private static final int INVENTORY_MARGIN = 9;
     private static final int INVENTORY_SLOT_SIZE = 18;
@@ -33,8 +31,7 @@ public abstract class ContainerBase extends Container {
     }
 
     @Override
-    @Nonnull
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = inventorySlots.get(index);
 

@@ -10,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockTrialKeystone extends BlockTileEntity {
@@ -24,14 +23,13 @@ public class BlockTrialKeystone extends BlockTileEntity {
 
     @SuppressWarnings("deprecation")
     @Override
-    @Nonnull
-    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOUNDING_BOX;
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileEntityTrialKeystone();
     }
 }

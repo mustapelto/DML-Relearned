@@ -13,8 +13,6 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.chunk.Chunk;
 
-import javax.annotation.Nonnull;
-
 public abstract class BlockMachine extends BlockTileEntity {
     private static final PropertyEnum<CraftingState> CRAFTING_STATE = PropertyEnum.create("state", CraftingState.class);
 
@@ -25,7 +23,6 @@ public abstract class BlockMachine extends BlockTileEntity {
         setDefaultState(super.getDefaultState().withProperty(CRAFTING_STATE, CraftingState.IDLE));
     }
 
-    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, CRAFTING_STATE);
@@ -33,8 +30,7 @@ public abstract class BlockMachine extends BlockTileEntity {
 
     @SuppressWarnings("deprecation")
     @Override
-    @Nonnull
-    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity te;
         if (worldIn instanceof ChunkCache) {
             te = ((ChunkCache) worldIn).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);

@@ -20,6 +20,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import javax.annotation.Nullable;
+
 import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
@@ -30,7 +32,11 @@ public class GuiDeepLearner extends GuiContainerBase {
     private ImmutableList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
     private ItemStack currentModelStack;
+
+    @Nullable
     private MetadataDataModel currentModelMetadata;
+
+    @Nullable
     private MetadataDataModel.DeepLearnerDisplayData currentDisplayData;
 
     private ImmutableList<ImmutablePair<String, Integer>> defaultStringList;
@@ -89,8 +95,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         if (dataModels.isEmpty()) {
             currentModelIndex = -1;
             currentModelStack = ItemStack.EMPTY;
-            currentModelMetadata = MetadataDataModel.INVALID;
-            currentDisplayData = MetadataDataModel.INVALID.getDeepLearnerDisplayData();
+            currentModelMetadata = null;
+            currentDisplayData = null;
             setModelSelectButtonsEnabled(false);
             return;
         }
@@ -101,8 +107,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
 
         currentModelStack = dataModels.get(currentModelIndex);
-        currentModelMetadata = DataModelHelper.getDataModelMetadata(currentModelStack);
-        currentDisplayData = currentModelMetadata.getDeepLearnerDisplayData();
+        currentModelMetadata = DataModelHelper.getDataModelMetadata(currentModelStack).orElse(null);
+        currentDisplayData = currentModelMetadata != null ? currentModelMetadata.getDeepLearnerDisplayData() : null;
 
         setModelSelectButtonsEnabled(dataModels.size() > 1);
     }
@@ -184,35 +190,37 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
 
         // At least 1 data model -> display metadata
+        if (currentDisplayData == null)
+            return;
+
         // Get and render main entity
-        Entity mainEntity = currentDisplayData.getEntity(world);
-        if (mainEntity != null) {
-            renderEntity(
-                    mainEntity,
-                    currentDisplayData.getEntityScale(),
-                    guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getEntityOffsetX(),
-                    guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getEntityOffsetY(),
-                    partialTicks
-            );
-        }
+        currentDisplayData.getEntity(world)
+                .ifPresent(entity -> renderEntity(
+                        entity,
+                        currentDisplayData.getEntityScale(),
+                        guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getEntityOffsetX(),
+                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getEntityOffsetY(),
+                        partialTicks
+                ));
 
         // Get and render extra entity
-        Entity extraEntity = currentDisplayData.getExtraEntity(world);
-        if (extraEntity != null) {
-            renderEntity(
-                    extraEntity,
-                    currentDisplayData.getEntityScale(),
-                    guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getExtraEntityOffsetX(),
-                    guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getExtraEntityOffsetY(),
-                    partialTicks
-            );
-        }
+        currentDisplayData.getExtraEntity(world)
+                .ifPresent(entity -> renderEntity(
+                        entity,
+                        currentDisplayData.getEntityScale(),
+                        guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getExtraEntityOffsetX(),
+                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getExtraEntityOffsetY(),
+                        partialTicks
+                ));
 
         // Draw metadata text
         renderMetaData();
     }
 
     private void renderMetaData() {
+        if (currentModelMetadata == null || currentDisplayData == null)
+            return;
+
         // Get data from Data Model ItemStack
         String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(currentModelStack);
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(currentModelStack);
@@ -222,7 +230,7 @@ public class GuiDeepLearner extends GuiContainerBase {
 
         int totalKills = DataModelHelper.getTotalKillCount(currentModelStack);
         int killsToNextTier = DataModelHelper.getKillsToNextTier(currentModelStack);
-        String tierString = DataModelHelper.isAtMaxTier(currentModelStack) ?
+        String tierString = DataModelHelper.isMaxTier(currentModelStack) ?
                 I18n.format("deepmoblearning.deep_learner.maximum") :
                 I18n.format("deepmoblearning.deep_learner.required", killsToNextTier, nextTier);
 

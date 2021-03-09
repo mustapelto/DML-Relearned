@@ -18,18 +18,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityLootFabricator extends TileEntityMachine {
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
         protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            if ((slot == 0) && (pristineMatterMetadata != ItemPristineMatter.getDataModelMetadata(getStackInSlot(slot))))
-                onPristineTypeChanged();
+            if (slot != 0)
+                return;
 
-            markDirty();
+            ItemPristineMatter.getDataModelMetadata(getStackInSlot(slot)).ifPresent(metadata -> {
+                if (pristineMatterMetadata != metadata)
+                    onPristineTypeChanged();
+            });
         }
     };
     private final ItemHandlerInputWrapper pristineMatterWrapper = new ItemHandlerInputWrapper(inputPristineMatter);
@@ -77,7 +78,8 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     public int getCraftingEnergyCost() {
         return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
-
+    
+    @Nullable
     public MetadataDataModel getPristineMatterMetadata() {
         return pristineMatterMetadata;
     }
@@ -86,7 +88,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         if (outputItemIndex == -1)
             return ItemStack.EMPTY;
 
-        if (pristineMatterMetadata == null || pristineMatterMetadata.isInvalid())
+        if (pristineMatterMetadata == null)
             return ItemStack.EMPTY;
 
         return pristineMatterMetadata.getLootItem(outputItemIndex);
@@ -111,7 +113,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
      */
     private void onPristineTypeChanged() {
         outputItemIndex = -1;
-        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata();
+        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
         resetCrafting();
     }
 
@@ -151,13 +153,13 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
@@ -205,41 +207,38 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     // NBT WRITE/READ
     //
 
-    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
         NBTTagCompound inventory = new NBTTagCompound();
-        inventory.setTag(PRISTINE_INPUT, inputPristineMatter.serializeNBT());
-        inventory.setTag(OUTPUT, output.serializeNBT());
-        compound.setTag(INVENTORY, inventory);
+        inventory.setTag(NBT_PRISTINE_INPUT, inputPristineMatter.serializeNBT());
+        inventory.setTag(NBT_OUTPUT, output.serializeNBT());
+        compound.setTag(NBT_INVENTORY, inventory);
 
-        compound.getCompoundTag(CRAFTING).setInteger(OUTPUT_ITEM_INDEX, outputItemIndex);
+        compound.getCompoundTag(NBT_CRAFTING).setInteger(NBT_OUTPUT_ITEM_INDEX, outputItemIndex);
 
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        if (NBTHelper.isLegacyNBT(compound)) {
-            // Original DML tag -> use old (non-nested) tag names
-            inputPristineMatter.deserializeNBT(compound.getCompoundTag(PRISTINE_OLD));
-            output.deserializeNBT(compound.getCompoundTag(OUTPUT));
+        if (compound.hasKey(NBT_LEGACY_PRISTINE)) {
+            inputPristineMatter.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_PRISTINE));
+            output.deserializeNBT(compound.getCompoundTag(NBT_OUTPUT));
 
             // Old system stores ItemStack, too much hassle to read from that so we set to "nothing".
             // I.e. players will have to restart all their loot fabricators once after switching.
             onPristineTypeChanged();
         } else {
-            // DML:Relearned tag -> use new (nested) tag names
-            NBTTagCompound inventory = compound.getCompoundTag(INVENTORY);
-            inputPristineMatter.deserializeNBT(inventory.getCompoundTag(PRISTINE_INPUT));
-            output.deserializeNBT(inventory.getCompoundTag(OUTPUT));
+            NBTTagCompound inventory = compound.getCompoundTag(NBT_INVENTORY);
+            inputPristineMatter.deserializeNBT(inventory.getCompoundTag(NBT_PRISTINE_INPUT));
+            output.deserializeNBT(inventory.getCompoundTag(NBT_OUTPUT));
 
-            pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata();
-            outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(CRAFTING), OUTPUT_ITEM_INDEX, -1);
+            pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
+            outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(NBT_CRAFTING), NBT_OUTPUT_ITEM_INDEX, -1);
 
             if (isInvalidOutputItemIndex()) // Invalid index, e.g. config changed between world loads, or something else went wrong
                 onPristineTypeChanged();
@@ -247,9 +246,9 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     }
 
     // NBT Tag Names
-    private static final String PRISTINE_INPUT = "inputPristine";
-    private static final String OUTPUT = "output";
-    private static final String OUTPUT_ITEM_INDEX = "outputItemIndex";
+    private static final String NBT_PRISTINE_INPUT = "inputPristine";
+    private static final String NBT_OUTPUT = "output";
+    private static final String NBT_OUTPUT_ITEM_INDEX = "outputItemIndex";
 
-    private static final String PRISTINE_OLD = "pristine";
+    private static final String NBT_LEGACY_PRISTINE = "pristine";
 }

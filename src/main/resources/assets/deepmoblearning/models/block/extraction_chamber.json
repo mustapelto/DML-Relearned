@@ -1,7 +1,6 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"front": "deepmoblearning:blocks/extraction_chamber_idle",
 		"particle": "deepmoblearning:blocks/machine_yellow",
 		"sides": "deepmoblearning:blocks/machine_yellow",
 		"base": "deepmoblearning:blocks/machine_base"

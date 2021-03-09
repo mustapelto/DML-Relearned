@@ -6,7 +6,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("ConstantConditions") // IDE complains about PLAYER_TRIAL_CAPABILITY being always null
@@ -17,13 +16,13 @@ public class PlayerTrialProvider implements ICapabilitySerializable<NBTBase> {
     private final IPlayerTrial instance = PLAYER_TRIAL_CAPABILITY.getDefaultInstance();
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == PLAYER_TRIAL_CAPABILITY;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         return capability == PLAYER_TRIAL_CAPABILITY ? PLAYER_TRIAL_CAPABILITY.cast(instance) : null;
     }
 

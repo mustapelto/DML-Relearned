@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class MessageLevelUpModel implements IMessage {
     private CreativeLevelUpAction increaseTier; // false -> add one kill; true -> add one tier
 
@@ -30,6 +32,7 @@ public class MessageLevelUpModel implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageLevelUpModel, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageLevelUpModel message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
 

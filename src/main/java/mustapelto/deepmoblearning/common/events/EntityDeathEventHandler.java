@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
 import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
-import mustapelto.deepmoblearning.common.items.ItemTrialKey;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,7 +75,7 @@ public class EntityDeathEventHandler {
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> trialKeys = inventory.stream()
-                .filter(key -> ItemStackHelper.isTrialKey(key) && !ItemTrialKey.isAttuned(key))
+                .filter(key -> ItemStackHelper.isTrialKey(key) && !TrialKeyHelper.isAttuned(key))
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> updatedModels = updateModels(deepLearners, player, target);
@@ -120,19 +120,15 @@ public class EntityDeathEventHandler {
         deepLearners.forEach(deepLearner -> {
            NonNullList<ItemStack> containedItems = ItemDeepLearner.getContainedItems(deepLearner);
 
-           containedItems.forEach(stack -> {
-               if (!ItemStackHelper.isDataModel(stack))
-                   return;
-
-               MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(stack);
-               if (dataModelMetadata.isInvalid())
-                   return;
-
-               if (dataModelMetadata.isAssociatedMob(target)) {
-                   DataModelHelper.addKill(stack, player);
-                   updatedModelsBuilder.add(stack);
-               }
-           });
+           containedItems.forEach(stack ->
+                   DataModelHelper.getDataModelMetadata(stack)
+                           .ifPresent(metadata -> {
+                               if (metadata.isAssociatedMob(target)) {
+                                   DataModelHelper.addKill(stack, player);
+                                   updatedModelsBuilder.add(stack);
+                               }
+                           })
+           );
 
             ItemDeepLearner.setContainedItems(deepLearner, containedItems);
         });
@@ -155,19 +151,17 @@ public class EntityDeathEventHandler {
 
     private static void tryAttuneTrialKey(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
         // Don't have to test for isTrialKey - isAttuned takes care of that
-        if (ItemTrialKey.isAttuned(trialKey) || dataModel.isEmpty() || !ItemStackHelper.isDataModel(dataModel))
+        if (TrialKeyHelper.isAttuned(trialKey) || dataModel.isEmpty() || !ItemStackHelper.isDataModel(dataModel))
             return;
 
-        MetadataDataModel metadataDataModel = DataModelHelper.getDataModelMetadata(dataModel);
-        if (metadataDataModel.isInvalid())
-            return;
-
-        MetadataDataModel.TrialData trialData = metadataDataModel.getTrialData();
-        if (trialData.hasEntity()) {
-            ItemTrialKey.attune(trialKey, dataModel, player);
-            // TODO: addAffixes
-        } else {
-            player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.cannot_attune_message", trialKey.getDisplayName(), metadataDataModel.getDisplayName()));
-        }
+        DataModelHelper.getDataModelMetadata(dataModel).ifPresent(metadata -> {
+            MetadataDataModel.TrialData trialData = metadata.getTrialData();
+            if (trialData.hasEntity()) {
+                TrialKeyHelper.attune(trialKey, dataModel, player);
+                // TODO: addAffixes
+            } else {
+                player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.cannot_attune_message", trialKey.getDisplayName(), metadata.getDisplayName()));
+            }
+        });
     }
 }

@@ -61,11 +61,6 @@ public class MetadataDataModelTier extends Metadata {
         return true; // Irrelevant for Data Model Tiers
     }
 
-    @Override
-    public boolean isInvalid() {
-        return this.equals(INVALID);
-    }
-
     public String getDisplayNameFormatted(String template) {
         String completeString = String.format(template, displayName);
         return StringHelper.getFormattedString(completeString, displayColor);

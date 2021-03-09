@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
@@ -10,13 +11,12 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemDataModel extends ItemBase {
     private final MetadataDataModel metadata;
@@ -32,13 +32,13 @@ public class ItemDataModel extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        MetadataDataModel metadata = DataModelHelper.getDataModelMetadata(stack);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        Optional<MetadataDataModel> metadata = DataModelHelper.getDataModelMetadata(stack);
 
-        if (metadata.isInvalid())
+        if (!metadata.isPresent())
             return;
 
-        String extraToolTip = metadata.getExtraTooltip();
+        String extraToolTip = metadata.get().getExtraTooltip();
         if (!extraToolTip.equals("")) {
             tooltip.add(extraToolTip);
         }
@@ -53,7 +53,7 @@ public class ItemDataModel extends ItemBase {
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
             }
 
-            if (!DataModelHelper.isAtMaxTier(stack)) {
+            if (!DataModelHelper.isMaxTier(stack)) {
                 int currentData = DataModelHelper.getCurrentTierDataCount(stack);
                 int requiredData = DataModelHelper.getTierRequiredData(stack);
                 int currentKillMultiplier = DataModelHelper.getTierKillMultiplier(stack);
@@ -61,10 +61,10 @@ public class ItemDataModel extends ItemBase {
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.kill_multiplier", TextFormatting.GRAY + String.valueOf(currentKillMultiplier) + TextFormatting.RESET));
             }
 
-            int rfCost = metadata.getSimulationRFCost();
+            int rfCost = metadata.get().getSimulationRFCost();
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.rf_cost", TextFormatting.GRAY + String.valueOf(rfCost)) + TextFormatting.RESET);
 
-            ItemStack livingMatter = metadata.getLivingMatter();
+            ItemStack livingMatter = metadata.get().getLivingMatter();
             ItemLivingMatter livingMatterItem = (ItemLivingMatter) livingMatter.getItem();
             tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.type", livingMatterItem.getLivingMatterData().getDisplayNameFormatted()));
 
@@ -76,13 +76,13 @@ public class ItemDataModel extends ItemBase {
     }
 
     @Override
-    @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        if (FMLCommonHandler.instance().getSide() == Side.SERVER)
-            return super.getItemStackDisplayName(stack); // Can't do localization on server side
+    public String getItemStackDisplayName(ItemStack stack) {
+        Optional<MetadataDataModel> metadata = DataModelHelper.getDataModelMetadata(stack);
+        if (!metadata.isPresent())
+            return "";
 
-        String name = I18n.format("deepmoblearning.data_model.display_name", metadata.getDisplayName());
+        String name = DMLRelearned.proxy.getLocalizedString("deepmoblearning.data_model.display_name", metadata.get().getDisplayName());
         String tier = DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME ? DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") : "";
-        return TextFormatting.AQUA + name + tier + TextFormatting.RESET;
+        return StringHelper.getFormattedString(name + tier, TextFormatting.AQUA);
     }
 }

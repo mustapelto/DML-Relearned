@@ -8,6 +8,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class MessageUpdateTileEntity implements IMessage {
     private ByteBuf payload;
 
@@ -33,6 +35,7 @@ public class MessageUpdateTileEntity implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageUpdateTileEntity, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageUpdateTileEntity message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 BlockPos pos = BlockPos.fromLong(message.payload.readLong());

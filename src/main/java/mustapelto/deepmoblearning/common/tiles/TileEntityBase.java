@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class TileEntityBase extends TileEntity {
@@ -36,7 +35,7 @@ public abstract class TileEntityBase extends TileEntity {
     public void handleUpdateData(ByteBuf buf) {}
 
     @Override
-    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newState) {
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return (oldState.getBlock() != newState.getBlock());
     }
 
@@ -51,7 +50,7 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     @Override
-    public void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         if (pkt.getPos() != pos)
             return;
 
@@ -59,7 +58,6 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     @Override
-    @Nonnull
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(new NBTTagCompound());
     }

@@ -18,11 +18,8 @@ import java.io.IOException;
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataLivingMatter extends Metadata {
-    public static final MetadataLivingMatter INVALID = new MetadataLivingMatter();
-
     // Data from JSON
     private final String displayName; // Name shown in tooltips and GUI. Also used as item display name. Default: metadataID
-    private final TextFormatting displayColor; // Color of name when displayed. Default: white
     private final int xpValue; // XP received when single item is consumed. Default: 10
     private final ImmutableList<String> craftingRecipeStrings; // Recipes using this item in JSON string format
 
@@ -31,29 +28,20 @@ public class MetadataLivingMatter extends Metadata {
     private final String displayNameFormatted;
     private ItemStack itemStack;
 
-    private MetadataLivingMatter() {
-        super("", "");
-
-        displayName = "INVALID";
-        displayColor = TextFormatting.WHITE;
-        xpValue = 0;
-        craftingRecipeStrings = ImmutableList.of();
-        livingMatterRegistryName = new ResourceLocation("");
-        displayNameFormatted = "INVALID";
-    }
-
     public MetadataLivingMatter(JsonObject data, String categoryID, String metadataID) {
         super(categoryID, metadataID);
 
         displayName = JsonHelper.getString(data, "displayName", StringHelper.uppercaseFirst(metadataID));
         String displayColorString = JsonHelper.getString(data, "displayColor", "white");
         TextFormatting displayFormatting = TextFormatting.getValueByName(displayColorString);
-        displayColor = (displayFormatting != null) ? displayFormatting : TextFormatting.WHITE;
+        if (displayFormatting == null)
+            displayFormatting = TextFormatting.WHITE;
+
         xpValue = JsonHelper.getInt(data, "xpValue", 10, 0, 1000);
         craftingRecipeStrings = JsonHelper.getStringListFromJsonArray(data, "craftingRecipes");
 
         livingMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "living_matter_" + metadataID);
-        displayNameFormatted = StringHelper.getFormattedString(displayName, displayColor);
+        displayNameFormatted = StringHelper.getFormattedString(displayName, displayFormatting);
     }
 
     @Override
@@ -61,9 +49,8 @@ public class MetadataLivingMatter extends Metadata {
         itemStack = DMLRegistry.getLivingMatter(metadataID);
     }
 
-    @Override
-    public boolean isInvalid() {
-        return this.equals(INVALID);
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getDisplayNameFormatted() {

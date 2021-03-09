@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class MessageRequestUpdateTileEntity implements IMessage {
     private BlockPos pos;
     private int dimension;
@@ -38,6 +40,7 @@ public class MessageRequestUpdateTileEntity implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageRequestUpdateTileEntity, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageRequestUpdateTileEntity message, MessageContext ctx) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             TileEntityBase te = (TileEntityBase) world.getTileEntity(message.pos);

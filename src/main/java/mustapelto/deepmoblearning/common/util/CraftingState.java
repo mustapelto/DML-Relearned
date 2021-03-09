@@ -2,7 +2,6 @@ package mustapelto.deepmoblearning.common.util;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,6 @@ public enum CraftingState implements IStringSerializable {
     }
 
     @Override
-    @Nonnull
     public String getName() {
         return name;
     }

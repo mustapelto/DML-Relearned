@@ -1,89 +1,106 @@
 package mustapelto.deepmoblearning.common.util;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+
+import javax.annotation.Nullable;
 
 public class NBTHelper {
     //
     // ItemStack methods
     //
 
-    public static boolean hasTag(ItemStack stack) {
-        return stack.hasTagCompound();
+    public static NBTTagCompound getOrCreateTag(ItemStack stack) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound result = stack.getTagCompound();
+        if (result == null)
+            throw new NullPointerException("ItemStack NBTTagCompound is null when it shouldn't be");
+        return result;
     }
 
+    @Nullable
     public static NBTTagCompound getTag(ItemStack stack) {
-        if (!hasTag(stack)) {
-            stack.setTagCompound(new NBTTagCompound());
-        }
-        return stack.getTagCompound();
+        return stack.hasTagCompound() ? stack.getTagCompound() : null;
     }
 
     public static boolean hasKey(ItemStack stack, String key) {
-        return hasTag(stack) && getTag(stack).hasKey(key);
-    }
-
-    public static void setInteger(ItemStack stack, String key, int value) {
-        getTag(stack).setInteger(key, value);
-    }
-
-    public static int getInteger(ItemStack stack, String key, int defaultValue) {
-        return hasTag(stack) ? getInteger(getTag(stack), key, defaultValue) : defaultValue;
-    }
-
-    public static void setString(ItemStack stack, String key, String value) {
-        getTag(stack).setString(key, value);
-    }
-
-    public static String getString(ItemStack stack, String key, String defaultValue) {
-        return hasTag(stack) ? getString(getTag(stack), key, defaultValue) : defaultValue;
-    }
-
-    public static NBTTagList getCompoundList(ItemStack stack, String key) {
-        return hasTag(stack) ? getTag(stack).getTagList(key, Constants.NBT.TAG_COMPOUND) : null;
+        NBTTagCompound nbt = getTag(stack);
+        return nbt != null && nbt.hasKey(key);
     }
 
     public static void removeKey(ItemStack stack, String key) {
-        if (hasKey(stack, key))
-            getTag(stack).removeTag(key);
-        if (getTag(stack).hasNoTags())
+        NBTTagCompound nbt = getTag(stack);
+        if (nbt == null)
+            return;
+
+        nbt.removeTag(key);
+
+        if (nbt.hasNoTags())
             stack.setTagCompound(null);
     }
 
-    public static void setVersion(ItemStack stack) {
-        setVersion(getTag(stack));
+    public static void setInteger(ItemStack stack, String key, int value) {
+        NBTTagCompound nbt = getOrCreateTag(stack);
+        nbt.setInteger(key, value);
     }
 
-    public static boolean isLegacyNBT(ItemStack stack) {
-        return hasTag(stack) && isLegacyNBT(getTag(stack));
+    public static int getInteger(ItemStack stack, String key, int defaultValue) {
+        NBTTagCompound nbt = getTag(stack);
+        return nbt != null ? getInteger(nbt, key, defaultValue) : defaultValue;
+    }
+
+    public static int getInteger(ItemStack stack, String key) {
+        return getInteger(stack, key, 0);
+    }
+
+    public static void setString(ItemStack stack, String key, String value) {
+        NBTTagCompound nbt = getOrCreateTag(stack);
+        nbt.setString(key, value);
+    }
+
+    public static String getString(ItemStack stack, String key, String defaultValue) {
+        NBTTagCompound nbt = getTag(stack);
+        return nbt != null ? getString(nbt, key, defaultValue) : defaultValue;
+    }
+
+    public static String getString(ItemStack stack, String key) {
+        return getString(stack, key, "");
+    }
+
+    public static NBTTagList getTagList(ItemStack stack, String key) {
+        NBTTagCompound nbt = getTag(stack);
+        return nbt != null ? nbt.getTagList(key, Constants.NBT.TAG_COMPOUND) : new NBTTagList();
     }
 
     //
-    // NBTTagCompound
+    // NBTTagCompound methods
     //
-
-    public static final String DMLR_VERSION = "dmlrVersion";
 
     public static int getInteger(NBTTagCompound compound, String key, int defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_INT) ? compound.getInteger(key) : defaultValue;
+    }
+
+    public static int getInteger(NBTTagCompound compound, String key) {
+        return getInteger(compound, key, 0);
     }
 
     public static boolean getBoolean(NBTTagCompound compound, String key, boolean defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_BYTE) ? compound.getBoolean(key) : defaultValue;
     }
 
+    public static boolean getBoolean(NBTTagCompound compound, String key) {
+        return getBoolean(compound, key, false);
+    }
+
     public static String getString(NBTTagCompound compound, String key, String defaultValue) {
         return compound.hasKey(key, Constants.NBT.TAG_STRING) ? compound.getString(key) : defaultValue;
     }
 
-    public static boolean isLegacyNBT(NBTTagCompound compound) {
-        return !compound.hasKey(DMLR_VERSION);
-    }
-
-    public static void setVersion(NBTTagCompound compound) {
-        compound.setString(DMLR_VERSION, DMLConstants.ModInfo.VERSION);
+    public static String getString(NBTTagCompound compound, String key) {
+        return getString(compound, key, "");
     }
 }

@@ -61,7 +61,6 @@ public class DMLConstants {
     }
 
     public static final class DefaultModels {
-        public static final ResourceLocation DATA_MODEL = new ResourceLocation(DMLConstants.ModInfo.ID, "items/data_model_default");
         public static final ResourceLocation LIVING_MATTER = new ResourceLocation(DMLConstants.ModInfo.ID, "items/living_matter_default");
         public static final ResourceLocation PRISTINE_MATTER = new ResourceLocation(DMLConstants.ModInfo.ID, "items/pristine_matter_default");
     }

@@ -2,11 +2,14 @@ package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Optional;
 
 /**
  * Created by mustapelto on 2021-02-14
@@ -35,13 +38,15 @@ public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel
         return new MetadataDataModel(data, categoryName, entryName);
     }
 
-    public ImmutableMap<String, ResourceLocation> getDataModelTextures() {
-        ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+    public ImmutableSet<ResourceLocation> getDataModelTextures() {
+        ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
-        dataStore.forEach((k, v) -> {
-            ResourceLocation dataModelTexture = v.getDataModelTexture();
-            if (!dataModelTexture.equals(DMLConstants.DefaultModels.DATA_MODEL))
-                builder.put(k, dataModelTexture);
+        dataStore.values().forEach(metadata -> {
+            Optional<ResourceLocation> dataModelTexture = metadata.getDataModelTexture();
+            if (!dataModelTexture.isPresent())
+                DMLRelearned.logger.info("Data Model texture not found for entry {}:{}. Using default texture.", metadata.categoryID, metadata.metadataID);
+            else
+                builder.add(dataModelTexture.get());
         });
 
         return builder.build();

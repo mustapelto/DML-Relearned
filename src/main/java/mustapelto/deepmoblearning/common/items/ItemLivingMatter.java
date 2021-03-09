@@ -36,7 +36,7 @@ public class ItemLivingMatter extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         String useString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getUseKeyName(), TextFormatting.GRAY);
         String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakKeyName(), TextFormatting.GRAY);
         tooltip.add(I18n.format("deepmoblearning.living_matter.consume_for_xp", useString));
@@ -46,7 +46,7 @@ public class ItemLivingMatter extends ItemBase {
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (worldIn.isRemote) {
             if (KeyboardHelper.isHoldingSneakKey()) {
                 DMLPacketHandler.network.sendToServer(new MessageLivingMatterConsume(true));
@@ -60,7 +60,7 @@ public class ItemLivingMatter extends ItemBase {
 
     @Override
     @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         if (FMLCommonHandler.instance().getSide() == Side.SERVER)
             return super.getItemStackDisplayName(stack); // Can't do localization on server side
 

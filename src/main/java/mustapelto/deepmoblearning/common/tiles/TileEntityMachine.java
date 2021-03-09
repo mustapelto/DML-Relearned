@@ -180,14 +180,14 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityEnergy.ENERGY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY) {
             return CapabilityEnergy.ENERGY.cast(energyStorage);
         }
@@ -261,7 +261,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     @Override
     @Nonnull
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
         NBTHelper.setVersion(compound);
@@ -283,7 +283,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
         energyStorage.readFromNBT(compound);

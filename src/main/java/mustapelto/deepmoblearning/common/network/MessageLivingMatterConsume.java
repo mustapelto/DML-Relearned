@@ -2,7 +2,6 @@ package mustapelto.deepmoblearning.common.network;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

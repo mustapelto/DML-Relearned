@@ -25,8 +25,8 @@ public abstract class BlockMachine extends BlockTileEntity {
         setDefaultState(super.getDefaultState().withProperty(CRAFTING_STATE, CraftingState.IDLE));
     }
 
-    @Nonnull
     @Override
+    @Nonnull
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, CRAFTING_STATE);
     }
@@ -34,7 +34,7 @@ public abstract class BlockMachine extends BlockTileEntity {
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
-    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity te;
         if (worldIn instanceof ChunkCache) {
             te = ((ChunkCache) worldIn).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);

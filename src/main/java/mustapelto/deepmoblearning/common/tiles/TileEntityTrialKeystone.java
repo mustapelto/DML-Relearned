@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerTrialKey;
 import mustapelto.deepmoblearning.common.items.ItemTrialKey;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.PlayerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

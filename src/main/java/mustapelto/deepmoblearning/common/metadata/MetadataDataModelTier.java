@@ -61,7 +61,6 @@ public class MetadataDataModelTier extends Metadata {
         return true; // Irrelevant for Data Model Tiers
     }
 
-    @Override
     public boolean isInvalid() {
         return this.equals(INVALID);
     }

@@ -61,7 +61,6 @@ public class MetadataLivingMatter extends Metadata {
         itemStack = DMLRegistry.getLivingMatter(metadataID);
     }
 
-    @Override
     public boolean isInvalid() {
         return this.equals(INVALID);
     }

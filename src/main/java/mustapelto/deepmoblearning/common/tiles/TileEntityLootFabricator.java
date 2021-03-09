@@ -9,7 +9,6 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -86,7 +85,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         if (outputItemIndex == -1)
             return ItemStack.EMPTY;
 
-        if (pristineMatterMetadata == null || pristineMatterMetadata.isInvalid())
+        if (pristineMatterMetadata == null)
             return ItemStack.EMPTY;
 
         return pristineMatterMetadata.getLootItem(outputItemIndex);
@@ -151,13 +150,13 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
@@ -205,9 +204,9 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     // NBT WRITE/READ
     //
 
-    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    @Nonnull
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
         NBTTagCompound inventory = new NBTTagCompound();
@@ -221,7 +220,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
         if (NBTHelper.isLegacyNBT(compound)) {

@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package mustapelto.deepmoblearning.common.energy;
+
+import javax.annotation.ParametersAreNonnullByDefault;

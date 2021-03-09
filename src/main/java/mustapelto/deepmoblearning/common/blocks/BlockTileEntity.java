@@ -43,16 +43,16 @@ public abstract class BlockTileEntity extends BlockBase {
     //
 
     @Override
-    public boolean hasTileEntity(@Nonnull IBlockState state) {
+    public boolean hasTileEntity(IBlockState state) {
         return true;
     }
 
     @Nullable
     @Override
-    public abstract TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state);
+    public abstract TileEntity createTileEntity(World world, IBlockState state);
 
     @Override
-    public void breakBlock(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntity tileEntity = Objects.requireNonNull(worldIn.getTileEntity(pos));
         IItemHandler inventory = Objects.requireNonNull(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
 
@@ -69,7 +69,7 @@ public abstract class BlockTileEntity extends BlockBase {
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (worldIn.isRemote)
             return false;
 
@@ -87,7 +87,7 @@ public abstract class BlockTileEntity extends BlockBase {
     //
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
             ((TileEntityMachine) tile).onBlockPlaced();
@@ -96,7 +96,7 @@ public abstract class BlockTileEntity extends BlockBase {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(@Nonnull IBlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
             ((TileEntityMachine) tile).onNeighborChange();
@@ -127,7 +127,7 @@ public abstract class BlockTileEntity extends BlockBase {
 
     @Override
     @Nonnull
-    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, @Nonnull EnumHand hand) {
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 }

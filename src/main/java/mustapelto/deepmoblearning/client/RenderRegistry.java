@@ -9,6 +9,7 @@ import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemLivingMatter;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -34,7 +35,11 @@ public class RenderRegistry {
     private static void registerModel(Item item) {
         ResourceLocation modelLocation;
 
-        if (item instanceof ItemDataModel || item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
+        if (item instanceof ItemDataModel) {
+            ModelLoader.setCustomMeshDefinition(item, stack -> ModelDataModel.LOCATION);
+            ModelBakery.registerItemVariants(item, ModelDataModel.LOCATION);
+            return;
+        } else if (item instanceof ItemPristineMatter || item instanceof ItemLivingMatter) {
             // Custom model registration
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null)

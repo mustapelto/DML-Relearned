@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package mustapelto.deepmoblearning.common.blocks;
+
+import javax.annotation.ParametersAreNonnullByDefault;

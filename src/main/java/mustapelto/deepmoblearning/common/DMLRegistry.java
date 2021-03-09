@@ -32,7 +32,6 @@ public class DMLRegistry {
 
     // Dynamic items, referenced by ID
     private static ImmutableMap<String, ItemLivingMatter> registeredLivingMatter;
-    private static ImmutableMap<String, ItemDataModel> registeredDataModels;
     private static ImmutableMap<String, ItemPristineMatter> registeredPristineMatter;
 
     // Blocks
@@ -43,9 +42,9 @@ public class DMLRegistry {
     public static final BlockTrialKeystone BLOCK_TRIAL_KEYSTONE = new BlockTrialKeystone();
 
     // Items
+    public static final ItemDataModel ITEM_DATA_MODEL = new ItemDataModel();
     public static final ItemDeepLearner ITEM_DEEP_LEARNER = new ItemDeepLearner();
     public static final ItemPolymerClay ITEM_POLYMER_CLAY = new ItemPolymerClay();
-    public static final ItemDataModelBlank ITEM_DATA_MODEL_BLANK = new ItemDataModelBlank();
     public static final ItemCreativeModelLearner ITEM_CREATIVE_MODEL_LEARNER = new ItemCreativeModelLearner();
     public static final ItemSootedRedstone ITEM_SOOTED_REDSTONE = new ItemSootedRedstone();
     public static final ItemSootedPlate ITEM_SOOTED_PLATE = new ItemSootedPlate();
@@ -89,8 +88,8 @@ public class DMLRegistry {
         DMLRelearned.logger.info("Registering Items...");
 
         // Misc Items
+        registeredItems.add(ITEM_DATA_MODEL);
         registeredItems.add(ITEM_POLYMER_CLAY);
-        registeredItems.add(ITEM_DATA_MODEL_BLANK);
         registeredItems.add(ITEM_DEEP_LEARNER);
         registeredItems.add(ITEM_CREATIVE_MODEL_LEARNER);
         registeredItems.add(ITEM_SOOTED_REDSTONE);
@@ -114,14 +113,10 @@ public class DMLRegistry {
         registeredItems.addAll(registeredLivingMatter.values());
 
         DMLRelearned.logger.info("Registering Data Models and Pristine Matter...");
-        ImmutableMap.Builder<String, ItemDataModel> dataModelBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<String, ItemPristineMatter> pristineMatterBuilder = ImmutableMap.builder();
         MetadataManagerDataModels.INSTANCE.getDataStore().forEach((key, value) -> {
-            dataModelBuilder.put(key, new ItemDataModel(value));
             pristineMatterBuilder.put(key, new ItemPristineMatter(value));
         });
-        registeredDataModels = dataModelBuilder.build();
-        registeredItems.addAll(registeredDataModels.values());
         registeredPristineMatter = pristineMatterBuilder.build();
         registeredItems.addAll(registeredPristineMatter.values());
 
@@ -166,12 +161,6 @@ public class DMLRegistry {
     public static ItemStack getPristineMatter(String id) {
         if (registeredPristineMatter.containsKey(id))
             return new ItemStack(registeredPristineMatter.get(id));
-        return ItemStack.EMPTY;
-    }
-
-    public static ItemStack getDataModel(String id) {
-        if (registeredDataModels.containsKey(id))
-            return new ItemStack(registeredDataModels.get(id));
         return ItemStack.EMPTY;
     }
 }

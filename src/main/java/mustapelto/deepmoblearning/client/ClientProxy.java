@@ -5,6 +5,7 @@ import mustapelto.deepmoblearning.client.particles.ParticleScalableSmoke;
 import mustapelto.deepmoblearning.common.ServerProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -73,5 +74,10 @@ public class ClientProxy extends ServerProxy {
 
     private void setColorGray(Particle particle) {
         particle.setRBGColorF(0.09f, 0.09f, 0.09f);
+    }
+
+    @Override
+    public String getLocalizedString(String key, Object... args) {
+        return I18n.format(key, args);
     }
 }

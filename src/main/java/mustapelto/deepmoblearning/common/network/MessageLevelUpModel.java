@@ -3,7 +3,6 @@ package mustapelto.deepmoblearning.common.network;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper.CreativeLevelUpAction;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

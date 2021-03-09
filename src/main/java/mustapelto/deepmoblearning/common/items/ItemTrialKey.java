@@ -7,7 +7,6 @@ import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.resources.I18n;
@@ -33,7 +32,7 @@ public class ItemTrialKey extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (!KeyboardHelper.isHoldingSneakKey()) {
             String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakKeyName(), TextFormatting.GRAY);
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
@@ -49,7 +48,7 @@ public class ItemTrialKey extends ItemBase {
             } else {
                 MetadataDataModel attunementMetadata = getAttunementMetadata(stack);
                 MetadataDataModelTier attunementTierMetadata = getAttunementTier(stack);
-                if (attunementMetadata.isInvalid() || attunementTierMetadata.isInvalid())
+                if (attunementMetadata == null || attunementTierMetadata.isInvalid())
                     return;
 
                 String mobName = StringHelper.getFormattedString(attunementMetadata.getDisplayName(), TextFormatting.GRAY);
@@ -65,13 +64,13 @@ public class ItemTrialKey extends ItemBase {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         return super.initCapabilities(stack, nbt);
     }
 
     @Override
     @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         return StringHelper.getFormattedString(super.getItemStackDisplayName(stack), TextFormatting.AQUA);
     }
 
@@ -79,7 +78,7 @@ public class ItemTrialKey extends ItemBase {
     // ItemStack methods
     //
 
-    public static void attune(@Nonnull ItemStack trialKey, @Nonnull ItemStack dataModel, @Nonnull EntityPlayerMP player) {
+    public static void attune(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
         MetadataDataModel metadataDataModel = DataModelHelper.getDataModelMetadata(dataModel);
         NBTHelper.setVersion(trialKey);
         NBTHelper.setString(trialKey, ATTUNEMENT, metadataDataModel.getMetadataID());
@@ -88,11 +87,11 @@ public class ItemTrialKey extends ItemBase {
         player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.attunement_message", trialKey.getDisplayName(), metadataDataModel.getDisplayName()));
     }
 
-    public static boolean isAttuned(@Nonnull ItemStack trialKey) {
+    public static boolean isAttuned(ItemStack trialKey) {
         return !getAttunement(trialKey).isEmpty();
     }
 
-    private static String getAttunement(@Nonnull ItemStack trialKey) {
+    private static String getAttunement(ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
             return "";
 
@@ -102,16 +101,17 @@ public class ItemTrialKey extends ItemBase {
             return NBTHelper.getString(trialKey, ATTUNEMENT, "");
     }
 
-    private static MetadataDataModel getAttunementMetadata(@Nonnull ItemStack trialKey) {
+    @Nullable
+    private static MetadataDataModel getAttunementMetadata(ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
-            return MetadataDataModel.INVALID;
+            return null;
 
         String dataModelID = getAttunement(trialKey);
 
         return MetadataManagerDataModels.INSTANCE.getByKey(dataModelID);
     }
 
-    private static MetadataDataModelTier getAttunementTier(@Nonnull ItemStack trialKey) {
+    private static MetadataDataModelTier getAttunementTier(ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
             return MetadataDataModelTier.INVALID;
 

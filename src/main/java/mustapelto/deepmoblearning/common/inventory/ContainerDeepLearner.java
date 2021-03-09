@@ -42,7 +42,7 @@ public class ContainerDeepLearner extends ContainerBase {
 
     @Override
     @Nonnull
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack result = super.transferStackInSlot(playerIn, index);
         ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
         playerIn.inventory.markDirty();
@@ -51,7 +51,7 @@ public class ContainerDeepLearner extends ContainerBase {
 
     @Override
     @Nonnull
-    public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull EntityPlayer player) {
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         // Prevent moving Deep Learner while it is open
         if (((deepLearnerSlotIndex != -1) && (slotId == deepLearnerSlotIndex))
                 || ((clickTypeIn == ClickType.SWAP) && (dragType == player.inventory.currentItem))) {
@@ -64,7 +64,7 @@ public class ContainerDeepLearner extends ContainerBase {
     }
 
     @Override
-    public void onContainerClosed(@Nonnull EntityPlayer playerIn) {
+    public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
         ItemDeepLearner.setContainedItems(deepLearner, itemHandler.getItemStacks());
     }

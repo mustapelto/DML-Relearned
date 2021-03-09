@@ -36,7 +36,7 @@ public abstract class TileEntityBase extends TileEntity {
     public void handleUpdateData(ByteBuf buf) {}
 
     @Override
-    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newState) {
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return (oldState.getBlock() != newState.getBlock());
     }
 
@@ -51,7 +51,7 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     @Override
-    public void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         if (pkt.getPos() != pos)
             return;
 
@@ -63,4 +63,7 @@ public abstract class TileEntityBase extends TileEntity {
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(new NBTTagCompound());
     }
+
+    protected abstract boolean isLegacyNBT(NBTTagCompound compound);
+    protected abstract void readLegacyNBT(NBTTagCompound compound);
 }

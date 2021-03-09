@@ -28,7 +28,7 @@ public class ItemCreativeModelLearner extends ItemBase {
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (playerIn.world.isRemote) {
             CreativeLevelUpAction action;
             if (KeyboardHelper.isHoldingSneakKey())
@@ -46,7 +46,7 @@ public class ItemCreativeModelLearner extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (!KeyboardHelper.isHoldingSneakKey()) {
             String sneakString = TextFormatting.RESET + "" + TextFormatting.ITALIC + KeyboardHelper.getSneakKeyName() + TextFormatting.RESET + "" + TextFormatting.GRAY;
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);

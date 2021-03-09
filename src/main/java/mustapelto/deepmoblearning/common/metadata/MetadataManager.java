@@ -9,6 +9,7 @@ import mustapelto.deepmoblearning.common.util.FileHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by mustapelto on 2021-02-14
@@ -76,8 +77,9 @@ public abstract class MetadataManager<T extends Metadata> {
 
     protected abstract T constructMetadataFromJson(JsonObject data, String categoryName, String entryName);
 
-    public T getByKey(String key) {
-        return dataStore.get(key);
+    public Optional<T> getByKey(String key) {
+        T result = dataStore.get(key);
+        return result != null ? Optional.of(result) : Optional.empty();
     }
 
     public ImmutableMap<String, T> getDataStore() {

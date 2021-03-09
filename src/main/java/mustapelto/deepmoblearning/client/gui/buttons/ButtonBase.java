@@ -26,7 +26,7 @@ public abstract class ButtonBase extends GuiButton {
     }
 
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         this.hovered = isHovered(mouseX, mouseY);
         int hoverState = getHoverState(hovered);
 

@@ -34,7 +34,7 @@ public abstract class ContainerBase extends Container {
 
     @Override
     @Nonnull
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = inventorySlots.get(index);
 

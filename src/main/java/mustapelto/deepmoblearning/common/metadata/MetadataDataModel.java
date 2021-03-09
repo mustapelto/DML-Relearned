@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLRegistry;
+import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.util.ItemStackDefinitionHelper;
 import mustapelto.deepmoblearning.common.util.JsonHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -31,14 +33,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataDataModel extends Metadata {
-    public static final MetadataDataModel INVALID = new MetadataDataModel();
-
     // Data from JSON
     private final String displayName; // Used in Data Model and Pristine Matter display name, and Deep Learner GUI. Default: metadataID
     private final String displayNamePlural; // Plural form of display name. Used in Deep Learner GUI. Default: displayName + "s"
@@ -51,7 +52,6 @@ public class MetadataDataModel extends Metadata {
     private final DeepLearnerDisplayData deepLearnerDisplayData; // Data used in Deep Learner display
 
     // Calculated data
-    private final ResourceLocation dataModelRegistryName; // deepmoblearning:data_model_[metadataID]
     private final ResourceLocation pristineMatterRegistryName; // deepmoblearning:pristine_matter_[metadataID]
     private final ImmutableList<ResourceLocation> associatedMobs; // List of mobs that increase Model data.
 
@@ -59,26 +59,9 @@ public class MetadataDataModel extends Metadata {
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
     private ItemStack pristineMatter; // Pristine Matter associated with this Data Model
 
-    private MetadataDataModel() {
-        super("", "");
-        displayName = "INVALID";
-        displayNamePlural = "INVALID";
-        livingMatterString = "";
-        simulationRFCost = Integer.MAX_VALUE;
-        extraTooltip = "";
-        craftingIngredientStrings = ImmutableList.of();
-        associatedMobs = ImmutableList.of();
-        lootItemStrings = ImmutableList.of();
-        trialData = new TrialData(this);
-        deepLearnerDisplayData = new DeepLearnerDisplayData(this);
-        dataModelRegistryName = new ResourceLocation("");
-        pristineMatterRegistryName = new ResourceLocation("");
-    }
-
     public MetadataDataModel(JsonObject data, String categoryID, String metadataID) {
         super(categoryID, metadataID);
 
-        dataModelRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "data_model_" + metadataID);
         pristineMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "pristine_matter_" + metadataID);
 
         displayName = JsonHelper.getString(data, "displayName", StringHelper.uppercaseFirst(metadataID));
@@ -125,11 +108,6 @@ public class MetadataDataModel extends Metadata {
         trialData.finalizeData();
     }
 
-    @Override
-    public boolean isInvalid() {
-        return this.equals(INVALID);
-    }
-
     public String getDisplayName() {
         return displayName;
     }
@@ -174,25 +152,39 @@ public class MetadataDataModel extends Metadata {
         return deepLearnerDisplayData;
     }
 
-    public ResourceLocation getDataModelRegistryName() {
-        return dataModelRegistryName;
-    }
-
     public ResourceLocation getPristineMatterRegistryName() {
         return pristineMatterRegistryName;
     }
 
-    public ResourceLocation getDataModelTexture() {
+    public ItemStack getDataModel() {
+        ItemStack dataModel = new ItemStack(DMLRegistry.ITEM_DATA_MODEL);
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString(ItemDataModel.NBT_METADATA_KEY, metadataID);
+        dataModel.setTagCompound(nbt);
+        return dataModel;
+    }
+
+    private String getDataModelPath() {
+        return "data_model_" + metadataID;
+    }
+
+    private boolean hasDataModelTexture() {
         try {
             // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
-            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + dataModelRegistryName.getResourcePath() + ".png");
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + getDataModelPath() + ".png");
             Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
-            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + dataModelRegistryName.getResourcePath());
         } catch (IOException e) {
-            // File not found -> use default model and output info
-            DMLRelearned.logger.info("Data Model texture not found for entry {}:{}. Using default texture.", categoryID, metadataID);
-            return DMLConstants.DefaultModels.DATA_MODEL;
+            return false;
         }
+
+        return true;
+    }
+
+    public Optional<ResourceLocation> getDataModelTexture() {
+        if (hasDataModelTexture())
+            return Optional.of(new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + getDataModelPath()));
+
+        return Optional.empty();
     }
 
     public ResourceLocation getPristineMatterTexture() {
@@ -235,12 +227,10 @@ public class MetadataDataModel extends Metadata {
     }
 
     public IRecipe getCraftingRecipe() {
-        ItemStack output = DMLRegistry.getDataModel(metadataID);
-        if (output.isEmpty())
-            return null;
+        ItemStack output = getDataModel();
 
         NonNullList<Ingredient> ingredients = NonNullList.create();
-        Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL_BLANK));
+        Ingredient blankModel = CraftingHelper.getIngredient(new ItemStack(DMLRegistry.ITEM_DATA_MODEL));
         ingredients.add(blankModel);
 
         boolean isOreRecipe = false;
@@ -262,7 +252,7 @@ public class MetadataDataModel extends Metadata {
         else
             result = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
 
-        result.setRegistryName(dataModelRegistryName);
+        result.setRegistryName(new ResourceLocation(DMLConstants.ModInfo.ID, getDataModelPath()));
         return result;
     }
 

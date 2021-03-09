@@ -1,11 +1,8 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-
-import javax.annotation.Nonnull;
 
 public class SlotPristineMatter extends SlotItemHandler {
     public SlotPristineMatter(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
@@ -13,7 +10,7 @@ public class SlotPristineMatter extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean isItemValid(ItemStack stack) {
         return ItemStackHelper.isPristineMatter(stack);
     }
 

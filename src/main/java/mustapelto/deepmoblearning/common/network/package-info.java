@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package mustapelto.deepmoblearning.common.network;
+
+import javax.annotation.ParametersAreNonnullByDefault;

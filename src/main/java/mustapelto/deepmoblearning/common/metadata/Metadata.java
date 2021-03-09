@@ -24,6 +24,4 @@ public abstract class Metadata {
     public boolean isModLoaded() {
         return categoryID.equals(DMLConstants.MINECRAFT) || Loader.isModLoaded(categoryID);
     }
-
-    public abstract boolean isInvalid();
 }

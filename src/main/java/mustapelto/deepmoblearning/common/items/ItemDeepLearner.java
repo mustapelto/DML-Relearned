@@ -41,7 +41,7 @@ public class ItemDeepLearner extends ItemBase {
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {
             // set inventory slot of this Deep Learner (used to prevent moving Deep Learner while container is open)
             if (handIn == EnumHand.MAIN_HAND)
@@ -60,7 +60,7 @@ public class ItemDeepLearner extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(I18n.format("deepmoblearning.deep_learner.hud"));
 
         ImmutableList<ItemStack> containedDataModels = DataModelHelper.getDataModelStacksFromList(getContainedItems(stack));
@@ -81,7 +81,7 @@ public class ItemDeepLearner extends ItemBase {
 
     public static NonNullList<ItemStack> getContainedItems(ItemStack deepLearner) {
         NonNullList<ItemStack> items = NonNullList.withSize(ContainerDeepLearner.INTERNAL_SLOTS, ItemStack.EMPTY);
-        NBTTagList inventory = NBTHelper.getCompoundList(deepLearner, "inventory");
+        NBTTagList inventory = NBTHelper.getTagList(deepLearner, "inventory");
 
         if (inventory != null) {
             for (int i = 0; i < inventory.tagCount(); i++) {
@@ -108,13 +108,13 @@ public class ItemDeepLearner extends ItemBase {
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
 
     @Override
     @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         return TextFormatting.AQUA + super.getItemStackDisplayName(stack) + TextFormatting.RESET;
     }
 }

@@ -25,13 +25,13 @@ public class BlockTrialKeystone extends BlockTileEntity {
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
-    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOUNDING_BOX;
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileEntityTrialKeystone();
     }
 }

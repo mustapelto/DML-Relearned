@@ -20,6 +20,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import javax.annotation.Nullable;
+
 import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
@@ -30,7 +32,11 @@ public class GuiDeepLearner extends GuiContainerBase {
     private ImmutableList<ItemStack> dataModels; // Contained Data Models
     private int currentModelIndex = 0; // Currently selected Model for display
     private ItemStack currentModelStack;
+
+    @Nullable
     private MetadataDataModel currentModelMetadata;
+
+    @Nullable
     private MetadataDataModel.DeepLearnerDisplayData currentDisplayData;
 
     private ImmutableList<ImmutablePair<String, Integer>> defaultStringList;
@@ -89,8 +95,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         if (dataModels.isEmpty()) {
             currentModelIndex = -1;
             currentModelStack = ItemStack.EMPTY;
-            currentModelMetadata = MetadataDataModel.INVALID;
-            currentDisplayData = MetadataDataModel.INVALID.getDeepLearnerDisplayData();
+            currentModelMetadata = null;
+            currentDisplayData = null;
             setModelSelectButtonsEnabled(false);
             return;
         }
@@ -102,7 +108,8 @@ public class GuiDeepLearner extends GuiContainerBase {
 
         currentModelStack = dataModels.get(currentModelIndex);
         currentModelMetadata = DataModelHelper.getDataModelMetadata(currentModelStack);
-        currentDisplayData = currentModelMetadata.getDeepLearnerDisplayData();
+        if (currentModelMetadata != null)
+            currentDisplayData = currentModelMetadata.getDeepLearnerDisplayData();
 
         setModelSelectButtonsEnabled(dataModels.size() > 1);
     }
@@ -184,6 +191,9 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
 
         // At least 1 data model -> display metadata
+        if (currentDisplayData == null)
+            return; // Invalid metadata --> nothing to display
+
         // Get and render main entity
         Entity mainEntity = currentDisplayData.getEntity(world);
         if (mainEntity != null) {
@@ -213,6 +223,9 @@ public class GuiDeepLearner extends GuiContainerBase {
     }
 
     private void renderMetaData() {
+        if (currentModelMetadata == null || currentDisplayData == null)
+            return;
+
         // Get data from Data Model ItemStack
         String dataModelTier = DataModelHelper.getTierDisplayNameFormatted(currentModelStack);
         String nextTier = DataModelHelper.getNextTierDisplayNameFormatted(currentModelStack);

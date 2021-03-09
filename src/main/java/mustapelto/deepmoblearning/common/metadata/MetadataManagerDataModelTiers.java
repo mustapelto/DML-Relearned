@@ -3,6 +3,8 @@ package mustapelto.deepmoblearning.common.metadata;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLRelearned;
 
+import java.util.Optional;
+
 /**
  * Created by mustapelto on 2021-02-14
  */
@@ -24,8 +26,8 @@ public class MetadataManagerDataModelTiers extends MetadataManager<MetadataDataM
         return new MetadataDataModelTier(data, entryName);
     }
 
-    public MetadataDataModelTier getByLevel(int level) {
-        return dataStore.getOrDefault(String.valueOf(level), MetadataDataModelTier.INVALID);
+    public Optional<MetadataDataModelTier> getByLevel(int level) {
+        return getByKey(String.valueOf(level));
     }
 
     public int getMaxLevel() {

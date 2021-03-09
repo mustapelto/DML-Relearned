@@ -27,7 +27,7 @@ public abstract class ContainerMachine extends ContainerBase {
 
     @Override
     @Nonnull
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack result = super.transferStackInSlot(playerIn, index);
         tileEntity.markDirty();
         playerIn.inventory.markDirty(); // Not sure if this is necessary
@@ -35,7 +35,7 @@ public abstract class ContainerMachine extends ContainerBase {
     }
 
     @Override
-    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
+    public boolean canInteractWith(EntityPlayer playerIn) {
         BlockPos pos = tileEntity.getPos();
 
         // Don't allow player interaction if tileEntity has changed (e.g. been removed)

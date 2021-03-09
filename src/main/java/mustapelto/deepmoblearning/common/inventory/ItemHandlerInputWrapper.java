@@ -25,13 +25,13 @@ public class ItemHandlerInputWrapper extends ItemHandlerBase {
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    public void setStackInSlot(int slot, ItemStack stack) {
         internal.setStackInSlot(slot, stack);
     }
 
     @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         return internal.insertItem(slot, stack, simulate);
     }
 

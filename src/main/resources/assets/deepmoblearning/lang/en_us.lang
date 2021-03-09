@@ -1,6 +1,5 @@
 # Item Names
 item.deepmoblearning.polymer_clay.name=Polymer Clay
-item.deepmoblearning.data_model_blank.name=Blank Data Model
 item.deepmoblearning.deep_learner.name=Deep Learner
 item.deepmoblearning.creative_model_learner.name=Creative Model Learner
 item.deepmoblearning.trial_key.name=Trial Key
@@ -37,6 +36,7 @@ deepmoblearning.pristine_matter.display_name=Pristine %s Matter
 deepmoblearning.pristine_matter.loot_items=Available loot items:
 
 # Data Model
+deepmoblearning.data_model.blank=Blank
 deepmoblearning.data_model.display_name=%s Data Model
 deepmoblearning.data_model.type=Type: %s
 deepmoblearning.data_model.tier=Tier: %s
@@ -179,3 +179,16 @@ deepmoblearning.trial.message.player_left=You left the Trial!
 
 # Creative Tab
 itemGroup.deepmoblearning=DML Relearned
+
+# Legacy Items
+deepmoblearning.legacy.tooltip_1=Legacy DML item (unusable)
+deepmoblearning.legacy.tooltip_2=Right click to convert this item
+deepmoblearning.legacy.tooltip_3=or use the command '/dml convert' to convert
+deepmoblearning.legacy.tooltip_4=all items in loaded inventories
+deepmoblearning.legacy.data_model=%s Data Model
+deepmoblearning.legacy.living_matter=%s Living Matter
+deepmoblearning.legacy.pristine_matter=%s Pristine Matter
+
+# Commands
+deepmoblearning.commands.dml.usage=Use /dml <subcommand>
+deepmoblearning.commands.dml.convert.usage=Use /dml convert

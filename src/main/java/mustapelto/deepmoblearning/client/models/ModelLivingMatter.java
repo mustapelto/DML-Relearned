@@ -43,7 +43,7 @@ public class ModelLivingMatter implements IModel {
 
     @Override
     @Nonnull
-    public IBakedModel bake(@Nonnull IModelState state, @Nonnull VertexFormat format, @Nonnull Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         Optional<IModelState> itemGenerated = ForgeBlockStateV1.Transforms.get("forge:default-item");
         if (itemGenerated.isPresent())
             state = itemGenerated.get();
@@ -65,7 +65,7 @@ public class ModelLivingMatter implements IModel {
 
         @Override
         @Nonnull
-        public IModel loadModel(@Nonnull ResourceLocation modelLocation) throws Exception {
+        public IModel loadModel(ResourceLocation modelLocation) throws Exception {
             String livingMatterId = modelLocation.getResourcePath().substring("living_matter_".length());
 
             ModelLivingMatter model;
@@ -77,7 +77,7 @@ public class ModelLivingMatter implements IModel {
         }
 
         @Override
-        public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
+        public void onResourceManagerReload(IResourceManager resourceManager) {
             initTextureCache();
         }
 

@@ -1,13 +1,9 @@
 package mustapelto.deepmoblearning.common.events;
 
 import com.google.common.collect.ImmutableList;
-import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
-import mustapelto.deepmoblearning.common.items.ItemGlitchArmor;
-import mustapelto.deepmoblearning.common.items.ItemGlitchSword;
-import mustapelto.deepmoblearning.common.items.ItemTrialKey;
+import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,11 +67,11 @@ public class EntityDeathEventHandler {
 
         // Find deep learners and trial keys from inventory
         ImmutableList<ItemStack> deepLearners = inventory.stream()
-                .filter(ItemStackHelper::isDeepLearner)
+                .filter(stack -> stack.getItem() instanceof ItemDeepLearner)
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> trialKeys = inventory.stream()
-                .filter(key -> ItemStackHelper.isTrialKey(key) && !ItemTrialKey.isAttuned(key))
+                .filter(key -> key.getItem() instanceof ItemTrialKey && !ItemTrialKey.isAttuned(key))
                 .collect(ImmutableList.toImmutableList());
 
         ImmutableList<ItemStack> updatedModels = updateModels(deepLearners, player, target);
@@ -91,7 +87,7 @@ public class EntityDeathEventHandler {
             ItemGlitchArmor.dropPristineMatter(target.world, target.getPosition(), highestTierModel);
         }
 
-        if (ItemStackHelper.isGlitchSword(player.getHeldItemMainhand())) {
+        if (player.getHeldItemMainhand().getItem() instanceof ItemGlitchSword) {
             // TODO: Don't run if player in trial
             ItemStack sword = player.getHeldItemMainhand();
             if (ItemGlitchSword.canIncreaseDamage(sword)) {
@@ -121,11 +117,11 @@ public class EntityDeathEventHandler {
            NonNullList<ItemStack> containedItems = ItemDeepLearner.getContainedItems(deepLearner);
 
            containedItems.forEach(stack -> {
-               if (!ItemStackHelper.isDataModel(stack))
+               if (!ItemDataModel.isDataModel(stack))
                    return;
 
                MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(stack);
-               if (dataModelMetadata.isInvalid())
+               if (dataModelMetadata == null)
                    return;
 
                if (dataModelMetadata.isAssociatedMob(target)) {
@@ -155,11 +151,11 @@ public class EntityDeathEventHandler {
 
     private static void tryAttuneTrialKey(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
         // Don't have to test for isTrialKey - isAttuned takes care of that
-        if (ItemTrialKey.isAttuned(trialKey) || dataModel.isEmpty() || !ItemStackHelper.isDataModel(dataModel))
+        if (ItemTrialKey.isAttuned(trialKey) || dataModel.isEmpty() || !ItemDataModel.isDataModel(dataModel))
             return;
 
         MetadataDataModel metadataDataModel = DataModelHelper.getDataModelMetadata(dataModel);
-        if (metadataDataModel.isInvalid())
+        if (metadataDataModel == null)
             return;
 
         MetadataDataModel.TrialData trialData = metadataDataModel.getTrialData();

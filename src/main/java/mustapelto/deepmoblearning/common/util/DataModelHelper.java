@@ -6,6 +6,7 @@ import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
 import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
+import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -77,14 +78,9 @@ public class DataModelHelper {
     //
 
     @Nullable
-    public static ItemDataModel getDataModelItem(ItemStack stack) {
-        return ItemStackHelper.isDataModel(stack) ? (ItemDataModel) stack.getItem() : null;
-    }
-
-    @Nonnull
     public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
-        ItemDataModel stackItem = getDataModelItem(stack);
-        return stackItem != null ? stackItem.getDataModelMetadata() : MetadataDataModel.INVALID;
+        String metadataKey = NBTHelper.getString(stack, ItemDataModel.NBT_METADATA_KEY, "");
+        return MetadataManagerDataModels.INSTANCE.getByKey(metadataKey);
     }
 
     @Nonnull
@@ -142,7 +138,7 @@ public class DataModelHelper {
 
     public static int getSimulationEnergy(ItemStack stack) {
         MetadataDataModel data = getDataModelMetadata(stack);
-        return !data.isInvalid() ? data.getSimulationRFCost() : 0;
+        return (data != null) ? data.getSimulationRFCost() : 0;
     }
 
     public static int getPristineChance(ItemStack stack) {
@@ -158,9 +154,8 @@ public class DataModelHelper {
      */
     public static boolean getDataModelMatchesLivingMatter(ItemStack dataModel, ItemStack livingMatter) {
         MetadataDataModel data = getDataModelMetadata(dataModel);
-        if (data.isInvalid())
-            return false;
-        return data.getLivingMatter().isItemEqual(livingMatter);
+
+        return data != null && data.getLivingMatter().isItemEqual(livingMatter);
     }
 
     /** Test if Data Model type matches Pristine Matter type
@@ -171,9 +166,7 @@ public class DataModelHelper {
      */
     public static boolean getDataModelMatchesPristineMatter(ItemStack dataModel, ItemStack pristineMatter) {
         MetadataDataModel data = getDataModelMetadata(dataModel);
-        if (data.isInvalid())
-            return false;
-        return data.getPristineMatter().isItemEqual(pristineMatter);
+        return data != null && data.getPristineMatter().isItemEqual(pristineMatter);
     }
 
     /** Filter out non-data model stacks and return filtered list

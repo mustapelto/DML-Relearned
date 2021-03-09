@@ -1,7 +1,6 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -24,13 +23,13 @@ public class ItemPristineMatter extends ItemBase {
     }
 
     @Override
-    public boolean hasEffect(@Nonnull ItemStack stack) {
+    public boolean hasEffect(ItemStack stack) {
         return true; // Make items glow
     }
 
     @Override
     @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         if (FMLCommonHandler.instance().getSide() == Side.SERVER)
             return super.getItemStackDisplayName(stack); // Can't do localization on server side
 
@@ -39,7 +38,7 @@ public class ItemPristineMatter extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(TextFormatting.AQUA + I18n.format("deepmoblearning.pristine_matter.loot_items") + TextFormatting.RESET);
         for (ItemStack lootStack : metadata.getLootItems()) {
             tooltip.add(lootStack.getDisplayName());
@@ -50,9 +49,10 @@ public class ItemPristineMatter extends ItemBase {
         return metadata;
     }
 
+    @Nullable
     public static MetadataDataModel getDataModelMetadata(ItemStack stack) {
         if (!ItemStackHelper.isPristineMatter(stack))
-            return MetadataDataModel.INVALID;
+            return null;
 
         return ((ItemPristineMatter) stack.getItem()).getDataModelMetadata();
     }

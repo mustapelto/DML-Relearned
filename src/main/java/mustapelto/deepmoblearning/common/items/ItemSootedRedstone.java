@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class ItemSootedRedstone extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (DMLConfig.GENERAL_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
             String redstone = TextFormatting.RED + I18n.format("item.redstone.name") + TextFormatting.GRAY;
             String coal = TextFormatting.RESET + I18n.format("tile.blockCoal.name") + TextFormatting.GRAY;

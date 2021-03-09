@@ -10,7 +10,6 @@ import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,7 +70,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
         ItemStack dataModel = getDataModel();
 
         MetadataDataModel dataModelMetadata = DataModelHelper.getDataModelMetadata(dataModel);
-        if (dataModelMetadata.isInvalid())
+        if (dataModelMetadata == null)
             return;
 
         DataModelHelper.addSimulation(dataModel);
@@ -179,14 +178,14 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     //
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ||
                 super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
@@ -236,7 +235,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
     @Override
     @Nonnull
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
         NBTTagCompound inventory = new NBTTagCompound();
@@ -252,19 +251,12 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        if (NBTHelper.isLegacyNBT(compound)) {
-            // Original DML tag -> use old (non-nested) tag names
-            inputDataModel.deserializeNBT(compound.getCompoundTag(DATA_MODEL_OLD));
-            inputPolymer.deserializeNBT(compound.getCompoundTag(POLYMER_OLD));
-            outputLiving.deserializeNBT(compound.getCompoundTag(LIVING_OLD));
-            outputPristine.deserializeNBT(compound.getCompoundTag(PRISTINE_OLD));
-
-            pristineSuccess = NBTHelper.getBoolean(compound, PRISTINE_SUCCESS_OLD, false);
+        if (isLegacyNBT(compound)) {
+            readLegacyNBT(compound);
         } else {
-            // DML:Relearned tag -> use new (nested) tag names
             NBTTagCompound inventory = compound.getCompoundTag(INVENTORY);
             inputDataModel.deserializeNBT(inventory.getCompoundTag(INPUT_DATA_MODEL));
             inputPolymer.deserializeNBT(inventory.getCompoundTag(INPUT_POLYMER));
@@ -275,6 +267,22 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
         }
     }
 
+    @Override
+    protected boolean isLegacyNBT(NBTTagCompound compound) {
+        return compound.hasKey(LEGACY_DATA_MODEL) ||
+                compound.hasKey(LEGACY_POLYMER) ||
+                compound.hasKey(LEGACY_LIVING) ||
+                compound.hasKey(LEGACY_PRISTINE) ||
+                compound.hasKey(LEGACY_PRISTINE_SUCCESS);
+    }
+
+    @Override
+    protected void readLegacyNBT(NBTTagCompound compound) {
+
+
+        pristineSuccess = compound.getBoolean(LEGACY_PRISTINE_SUCCESS);
+    }
+
     // NBT Tag Names
     private static final String INPUT_DATA_MODEL = "inputDataModel";
     private static final String INPUT_POLYMER = "inputPolymer";
@@ -282,10 +290,10 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     private static final String OUTPUT_PRISTINE = "outputPristine";
     private static final String PRISTINE_SUCCESS = "pristineSuccess";
 
-    // Tag names from old mod, used for backwards compatibility
-    private static final String DATA_MODEL_OLD = "dataModel";
-    private static final String POLYMER_OLD = "polymer";
-    private static final String LIVING_OLD = "lOutput";
-    private static final String PRISTINE_OLD = "pOutput";
-    private static final String PRISTINE_SUCCESS_OLD = "craftSuccess";
+    // Tag names from old mod, for backwards compatibility
+    private static final String LEGACY_DATA_MODEL = "dataModel";
+    private static final String LEGACY_POLYMER = "polymer";
+    private static final String LEGACY_LIVING = "lOutput";
+    private static final String LEGACY_PRISTINE = "pOutput";
+    private static final String LEGACY_PRISTINE_SUCCESS = "craftSuccess";
 }

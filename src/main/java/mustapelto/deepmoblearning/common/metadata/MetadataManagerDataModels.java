@@ -64,7 +64,7 @@ public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel
 
         dataStore.forEach((k, v) -> {
             if (v.isModLoaded())
-                builder.add(v.getCraftingRecipe());
+                v.getCraftingRecipe().ifPresent(builder::add);
         });
 
         return builder.build();

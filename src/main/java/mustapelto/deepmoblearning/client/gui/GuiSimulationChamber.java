@@ -1,10 +1,9 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
-import mustapelto.deepmoblearning.common.inventory.ContainerSimulationChamber;
+import mustapelto.deepmoblearning.client.util.StringAnimator;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
-import mustapelto.deepmoblearning.client.util.StringAnimator;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -44,16 +43,8 @@ public class GuiSimulationChamber extends GuiMachine {
     //
 
     public GuiSimulationChamber(TileEntitySimulationChamber tileEntity, EntityPlayer player, World world) {
-        super(tileEntity,
-                player,
-                world,
-                new ContainerSimulationChamber(tileEntity, player.inventory),
-                WIDTH,
-                HEIGHT,
-                REDSTONE_BUTTON);
-
+        super(tileEntity, player, world, WIDTH, HEIGHT, REDSTONE_BUTTON);
         simulationChamber = tileEntity;
-
         dataModel = tileEntity.getDataModel();
         prepareStringAnimators();
     }

@@ -5,7 +5,6 @@ import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonPageSelect;
-import mustapelto.deepmoblearning.common.inventory.ContainerLootFabricator;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
@@ -47,13 +46,7 @@ public class GuiLootFabricator extends GuiMachine {
     //
 
     public GuiLootFabricator(TileEntityLootFabricator tileEntity, EntityPlayer player, World world) {
-        super(tileEntity,
-                player,
-                world,
-                new ContainerLootFabricator(tileEntity, player.inventory),
-                WIDTH,
-                HEIGHT,
-                REDSTONE_BUTTON);
+        super(tileEntity, player, world, WIDTH, HEIGHT, REDSTONE_BUTTON);
         lootFabricator = tileEntity;
     }
 

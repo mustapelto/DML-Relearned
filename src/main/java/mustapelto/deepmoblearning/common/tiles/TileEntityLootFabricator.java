@@ -3,14 +3,13 @@ package mustapelto.deepmoblearning.common.tiles;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerPristineMatter;
+import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -107,6 +106,12 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     //
     // INVENTORY
     //
+
+
+    @Override
+    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
+        return new ContainerLootFabricator(this, inventoryPlayer);
+    }
 
     /**
      * (Server only) Reset crafting state on pristine matter change.

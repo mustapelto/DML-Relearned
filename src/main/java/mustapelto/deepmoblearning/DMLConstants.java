@@ -16,8 +16,7 @@ public class DMLConstants {
 
     public static final class ModDependencies {
         public static final String PATCHOULI = "patchouli";
-        public static final String CRAFT_TWEAKER = "crafttweaker";
-        public static final String DEP_STRING = ""; //"";after:" + PATCHOULI + ";after:" + CRAFT_TWEAKER;
+        public static final String DEP_STRING = "required-after:" + PATCHOULI;
     }
 
     public static final class Crafting {

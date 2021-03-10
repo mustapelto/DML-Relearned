@@ -3,14 +3,12 @@ package mustapelto.deepmoblearning.common.tiles;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerDataModel;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerInputWrapper;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerOutput;
-import mustapelto.deepmoblearning.common.inventory.ItemHandlerPolymerClay;
+import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -116,6 +114,12 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     //
     // INVENTORY
     //
+
+
+    @Override
+    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
+        return new ContainerSimulationChamber(this, inventoryPlayer);
+    }
 
     /**
      * (Server only) Reset simulation state on data model change.

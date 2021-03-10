@@ -69,14 +69,13 @@ public abstract class BlockTileEntity extends BlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (worldIn.isRemote)
-            return false;
+        if (!worldIn.isRemote) {
+            ItemStack mainHand = playerIn.getHeldItemMainhand();
+            boolean isHoldingWrench = mainHand.getItem().getToolClasses(mainHand).contains("wrench");
 
-        ItemStack mainHand = playerIn.getHeldItemMainhand();
-        boolean isHoldingWrench = mainHand.getItem().getToolClasses(mainHand).contains("wrench");
-
-        if (!playerIn.isSneaking() && !isHoldingWrench)
-            playerIn.openGui(DMLRelearned.instance, GUI_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            if (!playerIn.isSneaking() && !isHoldingWrench)
+                playerIn.openGui(DMLRelearned.instance, GUI_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        }
 
         return true;
     }

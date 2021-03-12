@@ -12,10 +12,10 @@ import net.minecraft.util.ResourceLocation;
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataManagerDataModels extends MetadataManager<MetadataDataModel> {
-    public static MetadataManagerDataModels INSTANCE = new MetadataManagerDataModels("DataModels.json");
+    public static MetadataManagerDataModels INSTANCE = new MetadataManagerDataModels();
 
-    private MetadataManagerDataModels(String configFileName) {
-        super(configFileName);
+    private MetadataManagerDataModels() {
+        super("DataModels.json");
     }
 
     @Override

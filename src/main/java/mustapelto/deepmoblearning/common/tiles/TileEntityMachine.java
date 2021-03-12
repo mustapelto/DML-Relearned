@@ -111,11 +111,16 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         resetCrafting();
     }
 
-    protected void resetCrafting() {
+    protected void resetCrafting(boolean sendClientUpdate) {
         crafting = false;
         craftingProgress = 0;
-        sendUpdatePacketToClient();
+        if (sendClientUpdate)
+            sendUpdatePacketToClient();
         markDirty();
+    }
+
+    protected void resetCrafting() {
+        resetCrafting(true);
     }
 
     public float getRelativeCraftingProgress() {

@@ -9,10 +9,10 @@ import java.util.Optional;
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataManagerDataModelTiers extends MetadataManager<MetadataDataModelTier> {
-    public static MetadataManagerDataModelTiers INSTANCE = new MetadataManagerDataModelTiers("DataModelTiers.json");
+    public static MetadataManagerDataModelTiers INSTANCE = new MetadataManagerDataModelTiers();
 
-    private MetadataManagerDataModelTiers(String configFileName) {
-        super(configFileName);
+    private MetadataManagerDataModelTiers() {
+        super("DataModelTiers.json");
     }
 
     @Override

@@ -153,6 +153,7 @@ public class DMLRegistry {
         DMLRelearned.logger.info("Registering Dynamic Recipes...");
         IForgeRegistry<IRecipe> registry = event.getRegistry();
         registry.registerAll(MetadataManagerDataModels.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
+        registry.registerAll(MetadataManagerLivingMatter.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
     }
 
     public static ItemStack getLivingMatter(String id) {

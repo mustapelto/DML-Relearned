@@ -45,13 +45,9 @@ public class ItemPristineMatter extends ItemBase {
         }
     }
 
-    private MetadataDataModel getDataModelMetadata() {
-        return metadata;
-    }
-
     public static Optional<MetadataDataModel> getDataModelMetadata(ItemStack stack) {
         return ItemStackHelper.isPristineMatter(stack) ?
-               Optional.of(((ItemPristineMatter) stack.getItem()).getDataModelMetadata()) :
+               Optional.of(((ItemPristineMatter) stack.getItem()).metadata) :
                Optional.empty();
     }
 }

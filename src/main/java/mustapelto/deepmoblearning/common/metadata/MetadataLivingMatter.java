@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.metadata;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
@@ -21,7 +20,6 @@ public class MetadataLivingMatter extends Metadata {
     // Data from JSON
     private final String displayName; // Name shown in tooltips and GUI. Also used as item display name. Default: metadataID
     private final int xpValue; // XP received when single item is consumed. Default: 10
-    private final ImmutableList<String> craftingRecipeStrings; // Recipes using this item in JSON string format
 
     // Calculated data
     private final ResourceLocation livingMatterRegistryName;
@@ -38,7 +36,6 @@ public class MetadataLivingMatter extends Metadata {
             displayFormatting = TextFormatting.WHITE;
 
         xpValue = JsonHelper.getInt(data, "xpValue", 10, 0, 1000);
-        craftingRecipeStrings = JsonHelper.getStringListFromJsonArray(data, "craftingRecipes");
 
         livingMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "living_matter_" + metadataID);
         displayNameFormatted = StringHelper.getFormattedString(displayName, displayFormatting);

@@ -108,13 +108,13 @@ public class JsonHelper {
 
     public static JsonObject getJsonObject(JsonObject data, String key) {
         if (!data.has(key)) {
-            DMLRelearned.logger.warn("Could not find object with key \"{}\". Using default values.", key);
+            DMLRelearned.logger.warn(getMissingJsonWarning(true, key));
             return new JsonObject();
         }
 
         JsonElement element = data.get(key);
         if (!element.isJsonObject()) {
-            DMLRelearned.logger.warn("Invalid JSON entry with key \"{}\": not an object! Using default values.", key);
+            DMLRelearned.logger.warn(getInvalidJsonWarning(JsonElementType.OBJECT, true, key));
             return new JsonObject();
         }
 
@@ -217,4 +217,21 @@ public class JsonHelper {
     public static ResourceLocation getResourceLocation(JsonObject data, String key) {
         return getResourceLocation(data, key, "");
     }
+
+    private static String getInvalidJsonWarning(JsonElementType elementType, boolean usingDefault, String key) {
+        String elementString = "";
+        switch (elementType) {
+            case OBJECT: elementString = "object"; break;
+            case ARRAY: elementString = "array"; break;
+        }
+        String action = usingDefault ? "Using default values." : "Skipping.";
+        return String.format("Invalid JSON entry with key \"%s\": not an %s! %s.", key, elementString, action);
+    }
+
+    private static String getMissingJsonWarning(boolean usingDefault, String key) {
+        String action = usingDefault ? "Using default values." : "Skipping.";
+        return String.format("Could not find JSON entry with key \"%s\". %s", key, action);
+    }
+
+    private enum JsonElementType { OBJECT, ARRAY }
 }

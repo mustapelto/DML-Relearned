@@ -7,7 +7,6 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.util.FileHelper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,21 +27,11 @@ public abstract class MetadataManager<T extends Metadata> {
         if (!configFile.exists())
             FileHelper.copyFromJar("/settings/" + configFileName, configFile.toPath());
 
-        readConfigFile(configFile).ifPresent(this::populateDataStore);
+        FileHelper.readObject(configFile).ifPresent(this::populateDataStore);
     }
 
     public void finalizeData() {
         dataStore.values().forEach(Metadata::finalizeData);
-    }
-
-    private Optional<JsonObject> readConfigFile(File configFile) {
-        try {
-            return Optional.of(FileHelper.readObject(configFile));
-        } catch (IOException e) {
-            DMLRelearned.logger.error("Could not read config file! THis will cause the mod to malfunction." +
-                    "Error message: {}", e.getMessage());
-            return Optional.empty();
-        }
     }
 
     private void populateDataStore(JsonObject data) {

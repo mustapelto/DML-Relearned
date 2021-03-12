@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.*;
-import mustapelto.deepmoblearning.common.items.ItemPristineMatter;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.util.CraftingState;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
@@ -23,17 +22,18 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
         protected void onContentsChanged(int slot) {
-            if (slot != 0)
+            if (world.isRemote || slot != 0)
                 return;
 
-            ItemPristineMatter.getDataModelMetadata(getStackInSlot(slot)).ifPresent(metadata -> {
-                if (pristineMatterMetadata != metadata)
-                    onPristineTypeChanged();
-            });
+            MetadataDataModel newMetadata = getPristineMatterMetadata().orElse(null);
+            if (pristineMatterMetadata != newMetadata) {
+                pristineMatterMetadata = newMetadata;
+                outputItemIndex = -1;
+                resetCrafting();
+            }
         }
     };
     private final ItemHandlerInputWrapper pristineMatterWrapper = new ItemHandlerInputWrapper(inputPristineMatter);
-
     private final ItemHandlerOutput output = new ItemHandlerOutput(16);
 
     private MetadataDataModel pristineMatterMetadata;
@@ -111,15 +111,6 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     @Override
     public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
         return new ContainerLootFabricator(this, inventoryPlayer);
-    }
-
-    /**
-     * (Server only) Reset crafting state on pristine matter change.
-     */
-    private void onPristineTypeChanged() {
-        outputItemIndex = -1;
-        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
-        resetCrafting();
     }
 
     public boolean hasPristineMatter() {
@@ -204,7 +195,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     @Override
     public void handleUpdateData(ByteBuf buf) {
         super.handleUpdateData(buf);
-
+        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
         outputItemIndex = buf.readInt();
     }
 
@@ -236,18 +227,21 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
             // Old system stores ItemStack, too much hassle to read from that so we set to "nothing".
             // I.e. players will have to restart all their loot fabricators once after switching.
-            onPristineTypeChanged();
+            outputItemIndex = -1;
         } else {
             NBTTagCompound inventory = compound.getCompoundTag(NBT_INVENTORY);
             inputPristineMatter.deserializeNBT(inventory.getCompoundTag(NBT_PRISTINE_INPUT));
             output.deserializeNBT(inventory.getCompoundTag(NBT_OUTPUT));
 
-            pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
             outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(NBT_CRAFTING), NBT_OUTPUT_ITEM_INDEX, -1);
-
-            if (isInvalidOutputItemIndex()) // Invalid index, e.g. config changed between world loads, or something else went wrong
-                onPristineTypeChanged();
         }
+
+        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
+        if (isInvalidOutputItemIndex())
+            outputItemIndex = -1;
+
+        if (outputItemIndex == -1)
+            resetCrafting(false);
     }
 
     // NBT Tag Names

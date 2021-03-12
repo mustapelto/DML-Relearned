@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 
 /**
  * Helper methods for file reading
@@ -39,24 +41,24 @@ public class FileHelper {
         }
     }
 
-    public static JsonObject readObject(File file) throws IOException {
-        JsonReader reader = new JsonReader(new FileReader(file));
-        JsonParser parser = new JsonParser();
-        reader.setLenient(true);
-        JsonElement json;
-        try {
-            json = parser.parse(reader);
+    public static Optional<JsonObject> readObject(File file) {
+        return readRootElement(file).map(jsonElement -> jsonElement.isJsonObject() ? jsonElement.getAsJsonObject() : null);
+    }
+
+    public static Optional<JsonArray> readArray(File file) {
+        return readRootElement(file).map(jsonElement -> jsonElement.isJsonArray() ? jsonElement.getAsJsonArray() : null);
+    }
+
+    private static Optional<JsonElement> readRootElement(File file) {
+        JsonElement result;
+        try (JsonReader reader = new JsonReader(new FileReader(file))){
+            JsonParser parser = new JsonParser();
+            reader.setLenient(true);
+            result = parser.parse(reader);
         } catch (Exception e) {
             DMLRelearned.logger.error("Error reading JSON from file {}! Error message: {}", file.getName(), e.getMessage());
-            reader.close();
-            return null;
+            return Optional.empty();
         }
-
-        if (!json.isJsonObject()) {
-            DMLRelearned.logger.error("Invalid JSON data in file: {}", file.getName());
-            return null;
-        }
-
-        return json.getAsJsonObject();
+        return Optional.of(result);
     }
 }

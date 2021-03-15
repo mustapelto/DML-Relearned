@@ -1,4 +1,4 @@
-package mustapelto.deepmoblearning.common.util;
+package mustapelto.deepmoblearning.common.tiles;
 
 import net.minecraft.util.IStringSerializable;
 

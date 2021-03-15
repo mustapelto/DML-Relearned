@@ -5,7 +5,7 @@ import mustapelto.deepmoblearning.common.items.ItemDataModel;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
+import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -50,7 +50,7 @@ public class DataModelHelper {
         NBTHelper.setInteger(stack, NBT_DATA_COUNT, currentData);
     }
 
-    public static int getTierLevel(ItemStack stack) {
+    public static int getTier(ItemStack stack) {
         return ItemStackHelper.isDataModel(stack) ? NBTHelper.getInteger(stack, NBT_TIER) : 0;
     }
 
@@ -94,14 +94,13 @@ public class DataModelHelper {
                 Optional.empty();
     }
 
-    public static Optional<MetadataDataModelTier> getTierData(ItemStack stack) {
-        int level = getTierLevel(stack);
-        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(level);
+    public static Optional<MetadataDataModelTier> getTierData(ItemStack stack, boolean nextTier) {
+        int tier = getTier(stack) + (nextTier ? 1 : 0);
+        return MetadataManager.getDataModelTierDataByTier(tier);
     }
 
-    private static Optional<MetadataDataModelTier> getNextTierData(ItemStack stack) {
-        int level = getTierLevel(stack) + 1;
-        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(level);
+    public static Optional<MetadataDataModelTier> getTierData(ItemStack stack) {
+        return getTierData(stack, false);
     }
 
     /**
@@ -110,7 +109,7 @@ public class DataModelHelper {
      * @return true if Data Model tier is equal or greater than config-based max tier
      */
     public static boolean isMaxTier(ItemStack stack) {
-        return getTierLevel(stack) >= MetadataManagerDataModelTiers.INSTANCE.getMaxLevel();
+        return getTier(stack) >= MetadataManager.getMaxDataModelTier();
     }
 
     /**
@@ -130,14 +129,8 @@ public class DataModelHelper {
                 .orElse("");
     }
 
-    public static String getTierDisplayNameFormatted(ItemStack stack, String template) {
-        return getTierData(stack)
-                .map(metadata -> metadata.getDisplayNameFormatted(template))
-                .orElse("");
-    }
-
     public static String getNextTierDisplayNameFormatted(ItemStack stack) {
-        return getNextTierData(stack)
+        return getTierData(stack, true)
                 .map(MetadataDataModelTier::getDisplayNameFormatted)
                 .orElse("");
     }
@@ -194,7 +187,7 @@ public class DataModelHelper {
 
     public static ItemStack getHighestTierDataModelFromList(List<ItemStack> stackList) {
         return stackList.stream()
-                .max(Comparator.comparingInt(DataModelHelper::getTierLevel))
+                .max(Comparator.comparingInt(DataModelHelper::getTier))
                 .orElse(ItemStack.EMPTY);
     }
 
@@ -253,7 +246,7 @@ public class DataModelHelper {
 
         if (currentData >= requiredData) {
             setCurrentTierDataCount(stack, currentData - requiredData); // extra data carries over to higher tier
-            setTierLevel(stack, getTierLevel(stack) + 1);
+            setTierLevel(stack, getTier(stack) + 1);
 
             return true;
         }
@@ -270,7 +263,7 @@ public class DataModelHelper {
                 NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(inventoryStack);
                 for (ItemStack modelStack : deepLearnerContents) {
                     if (ItemStackHelper.isDataModel(modelStack)) {
-                        int tier = getTierLevel(modelStack);
+                        int tier = getTier(modelStack);
                         switch (action) {
                             case DECREASE_TIER:
                                 if (tier > 0)

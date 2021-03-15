@@ -8,13 +8,13 @@ public abstract class ItemBase extends Item {
     /**
      * @param name Item id (for internal use)
      * @param stackSize Item max stack size
-     * @param addToCreative Should this item be added to creative tab?
+     * @param addToCreative Should this item be added to the mod's Creative Tab?
      */
     public ItemBase(String name, int stackSize, boolean addToCreative) {
         setRegistryName(name);
         setUnlocalizedName(DMLConstants.ModInfo.ID + "." + name);
         setMaxStackSize(stackSize);
-        if (addToCreative) // only add item to creative tab if its associated mod is loaded (checked by subclass)
+        if (addToCreative) // only add mod-dependent item to creative tab if its associated mod is loaded (checked by subclass)
             setCreativeTab(DMLRelearned.creativeTab);
     }
 

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
+import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.client.resources.I18n;
@@ -38,7 +38,7 @@ public class ItemTrialKey extends ItemBase {
                 tooltip.add(StringHelper.getFormattedString(I18n.format("deepmoblearning.trial_key.tooltip.not_attuned"), TextFormatting.GRAY));
                 tooltip.add(StringHelper.getFormattedString(I18n.format("deepmoblearning.trial_key.tooltip.available_attunements"), TextFormatting.AQUA));
 
-                ImmutableList<String> availableTrials = MetadataManagerDataModels.INSTANCE.getAvailableTrials();
+                ImmutableList<String> availableTrials = MetadataManager.getAvailableTrials();
                 for (String trial : availableTrials)
                     tooltip.add(StringHelper.getFormattedString("  - " + trial, TextFormatting.WHITE));
             } else {

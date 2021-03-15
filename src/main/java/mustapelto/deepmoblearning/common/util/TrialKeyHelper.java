@@ -2,8 +2,7 @@ package mustapelto.deepmoblearning.common.util;
 
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModelTiers;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
+import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -18,8 +17,8 @@ public class TrialKeyHelper {
     public static void attune(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
         DataModelHelper.getDataModelMetadata(dataModel)
                 .ifPresent(metadata -> {
-                    NBTHelper.setString(trialKey, NBT_ATTUNEMENT, metadata.getMetadataID());
-                    NBTHelper.setInteger(trialKey, NBT_TIER, DataModelHelper.getTierLevel(dataModel));
+                    NBTHelper.setString(trialKey, NBT_ATTUNEMENT, metadata.getID());
+                    NBTHelper.setInteger(trialKey, NBT_TIER, DataModelHelper.getTier(dataModel));
 
                     player.sendMessage(new TextComponentTranslation("deepmoblearning.trial_key.attunement_message", trialKey.getDisplayName(), metadata.getDisplayName()));
                 });
@@ -45,16 +44,16 @@ public class TrialKeyHelper {
 
         String dataModelID = getAttunement(trialKey);
 
-        return MetadataManagerDataModels.INSTANCE.getByKey(dataModelID);
+        return MetadataManager.getDataModelMetadata(dataModelID);
     }
 
     public static Optional<MetadataDataModelTier> getAttunementTier(ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
             return Optional.empty();
 
-        int tierLevel = NBTHelper.getInteger(trialKey, NBT_TIER, -1);
+        int tier = NBTHelper.getInteger(trialKey, NBT_TIER, -1);
 
-        return MetadataManagerDataModelTiers.INSTANCE.getByLevel(tierLevel);
+        return MetadataManager.getDataModelTierDataByTier(tier);
     }
 
     private static void convertNBT(ItemStack stack) {

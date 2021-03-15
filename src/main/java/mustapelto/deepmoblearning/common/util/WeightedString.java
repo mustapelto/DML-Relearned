@@ -2,15 +2,15 @@ package mustapelto.deepmoblearning.common.util;
 
 import net.minecraft.util.WeightedRandom;
 
-public class WeightedItem<T> extends WeightedRandom.Item {
-    private final T value;
+public class WeightedString extends WeightedRandom.Item {
+    private final String value;
 
-    public WeightedItem(T value, int weight) {
+    public WeightedString(String value, int weight) {
         super(weight);
         this.value = value;
     }
 
-    public T getValue() {
+    public String getValue() {
         return value;
     }
 }

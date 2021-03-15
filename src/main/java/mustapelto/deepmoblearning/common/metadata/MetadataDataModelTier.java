@@ -2,7 +2,6 @@ package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.gson.JsonObject;
 import mustapelto.deepmoblearning.DMLRelearned;
-import mustapelto.deepmoblearning.common.util.JsonHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.util.text.TextFormatting;
 
@@ -10,44 +9,71 @@ import net.minecraft.util.text.TextFormatting;
  * Created by mustapelto on 2021-02-14
  */
 public class MetadataDataModelTier extends Metadata {
-    public static final MetadataDataModelTier INVALID = new MetadataDataModelTier();
+    // JSON Keys
+    private static final String TIER = "tier";
+    private static final String DISPLAY_NAME = "displayName";
+    private static final String DISPLAY_COLOR = "displayColor";
+    private static final String KILL_MULTIPLIER = "killMultiplier";
+    private static final String DATA_TO_NEXT = "dataToNext";
+    private static final String PRISTINE_CHANCE = "pristineChance";
+    private static final String CAN_SIMULATE = "canSimulate";
+    private static final String TRIAL = "trial";
+
+    // Validation
+    private static final String[] REQUIRED_KEYS = new String[] {
+            TIER
+    };
+
+    // Default Values
+    private static final int DEFAULT_TIER = -1;
+    private static final String DEFAULT_DISPLAY_NAME = "Tier %s";
+    private static final String DEFAULT_DISPLAY_COLOR = "white";
+    private static final int DEFAULT_KILL_MULTIPLIER = 1;
+    private static final int DEFAULT_DATA_TO_NEXT = 10;
+    private static final int DEFAULT_PRISTINE_CHANCE = 10;
+    private static final boolean DEFAULT_CAN_SIMULATE = true;
 
     // Data from JSON
+    private final int tier; // Integer value of tier (stored in ItemStack NBT)
     private final String displayName; // Name shown in tooltips and GUI (Default = "")
-    private final TextFormatting displayColor; // Color of name when displayed (Default = "white")
     private final int killMultiplier; // Amount of data gained from one kill at this tier (Range = 0 - 1000, Default = 1)
     private final int dataToNext; // Amount of data (through kills or simulations) required to reach next tier (Range = 0 - 10000, Default = 10)
     private final int pristineChance; // Chance (%) to get Pristine Matter on each iteration (Range = 0 - 100, Default = 10)
     private final boolean canSimulate; // Can a Data Model of this tier be used in a simulation chamber? (Default = true)
     private final TierTrialData tierTrialData; // Data about Trials at this tier
 
-    private MetadataDataModelTier() {
-        super("", "");
-        displayName = "INVALID";
-        displayColor = TextFormatting.WHITE;
-        killMultiplier = 0;
-        dataToNext = Integer.MAX_VALUE;
-        pristineChance = 0;
-        canSimulate = false;
-        tierTrialData = TierTrialData.INVALID;
-    }
+    // Calculated data
+    private final TextFormatting displayColor; // Display color
+    private final String displayNameFormatted; // Display name formatted with display color
 
-    public MetadataDataModelTier(JsonObject data, String level) {
-        super("", "");
+    public MetadataDataModelTier(JsonObject data) throws IllegalArgumentException {
+        if (isInvalidJson(data, REQUIRED_KEYS)) {
+            throw new IllegalArgumentException("Invalid Data Model Tier JSON entry!");
+        }
+        tier = getInt(data, TIER, 0, 100)
+                .orElse(DEFAULT_TIER);
+        displayName = getString(data, DISPLAY_NAME)
+                .orElse(String.format(DEFAULT_DISPLAY_NAME, tier));
 
-        displayName = JsonHelper.getString(data, "displayName", "Tier " + level);
-        String displayColorString = JsonHelper.getString(data, "displayColor", "white");
-        TextFormatting displayFormatting = TextFormatting.getValueByName(displayColorString);
-        displayColor = (displayFormatting != null) ? displayFormatting : TextFormatting.WHITE;
-        killMultiplier = JsonHelper.getInt(data, "killMultiplier", 1, 0, 1000);
-        dataToNext = JsonHelper.getInt(data, "dataToNext", 10, 0, 10000);
-        pristineChance = JsonHelper.getInt(data, "pristineChance", 10, 0, 100);
-        canSimulate = JsonHelper.getBoolean(data, "canSimulate", true);
+        String displayColorString = getString(data, DISPLAY_COLOR)
+                .orElse(DEFAULT_DISPLAY_COLOR);
+        displayColor = StringHelper.getValidFormatting(displayColorString);
+        displayNameFormatted = StringHelper.getFormattedString(displayName, displayColor);
 
-        JsonObject trialDataJSON = JsonHelper.getJsonObject(data, "trial");
-        if (trialDataJSON.size() == 0) {
-            tierTrialData = TierTrialData.INVALID;
-            DMLRelearned.logger.warn("Invalid Deep Learner display JSON object in tier entry {}", level);
+        killMultiplier = getInt(data, KILL_MULTIPLIER, 1, 1000)
+                .orElse(DEFAULT_KILL_MULTIPLIER);
+        dataToNext = getInt(data, DATA_TO_NEXT, 1, 10000)
+                .orElse(DEFAULT_DATA_TO_NEXT);
+        pristineChance = getInt(data, PRISTINE_CHANCE, 0, 100)
+                .orElse(DEFAULT_PRISTINE_CHANCE);
+        canSimulate = getBoolean(data, CAN_SIMULATE)
+                .orElse(DEFAULT_CAN_SIMULATE);
+
+        JsonObject trialDataJSON = getJsonObject(data, TRIAL)
+                .orElse(null);
+        if (trialDataJSON == null) {
+            tierTrialData = TierTrialData.DEFAULT;
+            DMLRelearned.logger.warn("Invalid Trial entry in Data Model Tier JSON. Using default values.");
         } else {
             tierTrialData = new TierTrialData(trialDataJSON);
         }
@@ -57,17 +83,24 @@ public class MetadataDataModelTier extends Metadata {
     public void finalizeData() {} // Nothing to do here
 
     @Override
-    public boolean isModLoaded() {
-        return true; // Irrelevant for Data Model Tiers
+    public String getID() {
+        return String.valueOf(tier);
     }
 
-    public String getDisplayNameFormatted(String template) {
-        String completeString = String.format(template, displayName);
-        return StringHelper.getFormattedString(completeString, displayColor);
+    public int getTier() {
+        return tier;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getDisplayNameFormatted() {
-        return getDisplayNameFormatted("%s");
+        return displayNameFormatted;
+    }
+
+    public TextFormatting getDisplayColor() {
+        return displayColor;
     }
 
     public int getKillMultiplier() {
@@ -91,7 +124,12 @@ public class MetadataDataModelTier extends Metadata {
     }
 
     public static class TierTrialData {
-        public static final TierTrialData INVALID = new TierTrialData();
+        public static final TierTrialData DEFAULT = new TierTrialData();
+
+        private static final int DEFAULT_PRISTINE = 2;
+        private static final int DEFAULT_MAX_WAVE = 10;
+        private static final int DEFAULT_AFFIXES = 0;
+        private static final int DEFAULT_GLITCH_CHANCE = 5;
 
         private final int pristine; // Amount of Pristine Matter gained when completing trial of this tier (Range = 0 - 64, Default = 2)
         private final int maxWave; // Highest possible wave of trial (Range = -1 - INT_MAX, Default = -1; -1 = as many as there are)
@@ -99,17 +137,21 @@ public class MetadataDataModelTier extends Metadata {
         private final int glitchChance; // Chance to produce a Glitch (Range = 0 - 100, Default = 5)
 
         private TierTrialData() {
-            pristine = 0;
-            maxWave = 0;
-            affixes = 0;
-            glitchChance = 0;
+            pristine = DEFAULT_PRISTINE;
+            maxWave = DEFAULT_MAX_WAVE;
+            affixes = DEFAULT_AFFIXES;
+            glitchChance = DEFAULT_GLITCH_CHANCE;
         }
 
         public TierTrialData(JsonObject data) {
-            pristine = JsonHelper.getInt(data, "pristine", 2, 0, 64);
-            maxWave = JsonHelper.getInt(data, "maxWave", -1, -1, Integer.MAX_VALUE);
-            affixes = JsonHelper.getInt(data, "affixes", 0, 0, 3);
-            glitchChance = JsonHelper.getInt(data, "glitchChance", 5, 0, 100);
+            pristine = getInt(data, "pristine", 0, 64)
+                    .orElse(DEFAULT_PRISTINE);
+            maxWave = getInt(data, "maxWave", 0, 100)
+                    .orElse(DEFAULT_MAX_WAVE);
+            affixes = getInt(data, "affixes", 0, 3)
+                    .orElse(DEFAULT_AFFIXES);
+            glitchChance = getInt(data, "glitchChance", 0, 100)
+                    .orElse(DEFAULT_GLITCH_CHANCE);
         }
 
         public int getPristine() {

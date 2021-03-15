@@ -4,6 +4,8 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
+import mustapelto.deepmoblearning.common.util.DMLRHelper;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.resources.I18n;
@@ -22,7 +24,7 @@ public class ItemDataModel extends ItemBase {
     private final MetadataDataModel metadata;
 
     public ItemDataModel(MetadataDataModel metadata) {
-        super(metadata.getDataModelRegistryName().getResourcePath(), 1, metadata.isModLoaded());
+        super(metadata.getDataModelRegistryName().getResourcePath(), 1, DMLRHelper.isModLoaded(metadata.getModID()));
         this.metadata = metadata;
     }
 
@@ -82,7 +84,15 @@ public class ItemDataModel extends ItemBase {
             return "";
 
         String name = DMLRelearned.proxy.getLocalizedString("deepmoblearning.data_model.display_name", metadata.get().getDisplayName());
-        String tier = DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME ? DataModelHelper.getTierDisplayNameFormatted(stack, " (%s)") : "";
+        String tier = "";
+        if (DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME) {
+            Optional<MetadataDataModelTier> tierData = DataModelHelper.getTierData(stack);
+            if (tierData.isPresent()) {
+                String tierName = tierData.get().getDisplayName();
+                TextFormatting tierColor = tierData.get().getDisplayColor();
+                tier = StringHelper.getFormattedString(String.format(" (%s)", tierName), tierColor);
+            }
+        }
         return StringHelper.getFormattedString(name + tier, TextFormatting.AQUA);
     }
 }

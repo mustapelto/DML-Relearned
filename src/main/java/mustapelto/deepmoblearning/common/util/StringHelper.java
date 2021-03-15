@@ -12,6 +12,11 @@ public class StringHelper {
         return TextFormatting.RESET + "" + pre + string + TextFormatting.RESET + "" + post;
     }
 
+    public static TextFormatting getValidFormatting(String formatting) {
+        TextFormatting result = TextFormatting.getValueByName(formatting);
+        return (result != null) ? result : TextFormatting.WHITE;
+    }
+
     public static String getDashedLine(int length) {
         return StringUtils.repeat('-', length);
     }
@@ -28,9 +33,5 @@ public class StringHelper {
 
     public static String uppercaseFirst(String original) {
         return original.substring(0, 1).toUpperCase() + original.substring(1);
-    }
-
-    public static String toRegistryName(String domain, String path) {
-        return String.format("%s:%s", domain, path);
     }
 }

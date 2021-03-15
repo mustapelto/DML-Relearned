@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.items;
 
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.util.DMLRHelper;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -19,7 +20,7 @@ public class ItemPristineMatter extends ItemBase {
     private final MetadataDataModel metadata;
 
     public ItemPristineMatter(MetadataDataModel metadata) {
-        super(metadata.getPristineMatterRegistryName().getResourcePath(), 64, metadata.isModLoaded());
+        super(metadata.getPristineMatterRegistryName().getResourcePath(), 64, DMLRHelper.isModLoaded(metadata.getModID()));
         this.metadata = metadata;
     }
 

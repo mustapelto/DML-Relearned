@@ -4,6 +4,7 @@ import mustapelto.deepmoblearning.client.util.KeyboardHelper;
 import mustapelto.deepmoblearning.common.metadata.MetadataLivingMatter;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageLivingMatterConsume;
+import mustapelto.deepmoblearning.common.util.DMLRHelper;
 import mustapelto.deepmoblearning.common.util.StringHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -25,7 +26,7 @@ public class ItemLivingMatter extends ItemBase {
     private final MetadataLivingMatter metadata;
 
     public ItemLivingMatter(MetadataLivingMatter metadata) {
-        super(metadata.getLivingMatterRegistryName().getResourcePath(), 64, metadata.isModLoaded());
+        super(metadata.getRegistryID(), 64, DMLRHelper.isModLoaded(metadata.getModID()));
         this.metadata = metadata;
     }
 

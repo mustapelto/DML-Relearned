@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.models;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
+import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -75,7 +75,7 @@ public class ModelPristineMatter implements IModel {
 
         private void initTextureCache() {
             textureCache.clear();
-            textureCache.putAll(MetadataManagerDataModels.INSTANCE.getPristineMatterTextures());
+            textureCache.putAll(MetadataManager.getPristineMatterTextures());
             modelCache.clear();
         }
     }

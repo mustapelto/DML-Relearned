@@ -2,7 +2,7 @@ package mustapelto.deepmoblearning.common.blocks;
 
 import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
-import mustapelto.deepmoblearning.common.util.CraftingState;
+import mustapelto.deepmoblearning.common.tiles.CraftingState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;

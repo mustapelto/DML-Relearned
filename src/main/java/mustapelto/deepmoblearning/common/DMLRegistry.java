@@ -6,8 +6,7 @@ import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.blocks.*;
 import mustapelto.deepmoblearning.common.entities.EntityItemGlitchFragment;
 import mustapelto.deepmoblearning.common.items.*;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerDataModels;
-import mustapelto.deepmoblearning.common.metadata.MetadataManagerLivingMatter;
+import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
@@ -109,20 +108,20 @@ public class DMLRegistry {
 
         DMLRelearned.logger.info("Registering Living Matter...");
         ImmutableMap.Builder<String, ItemLivingMatter> livingMatterBuilder = ImmutableMap.builder();
-        MetadataManagerLivingMatter.INSTANCE.getDataStore().forEach((key, value) -> livingMatterBuilder.put(key, new ItemLivingMatter(value)));
+        MetadataManager.getLivingMatterMetadataList().forEach(metadata -> livingMatterBuilder.put(metadata.getID(), new ItemLivingMatter(metadata)));
         registeredLivingMatter = livingMatterBuilder.build();
         registeredItems.addAll(registeredLivingMatter.values());
 
         DMLRelearned.logger.info("Registering Data Models and Pristine Matter...");
         ImmutableMap.Builder<String, ItemDataModel> dataModelBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<String, ItemPristineMatter> pristineMatterBuilder = ImmutableMap.builder();
-        MetadataManagerDataModels.INSTANCE.getDataStore().forEach((key, value) -> {
-            dataModelBuilder.put(key, new ItemDataModel(value));
-            pristineMatterBuilder.put(key, new ItemPristineMatter(value));
+        MetadataManager.getDataModelMetadataList().forEach(metadata -> {
+           dataModelBuilder.put(metadata.getID(), new ItemDataModel(metadata));
+           pristineMatterBuilder.put(metadata.getID(), new ItemPristineMatter(metadata));
         });
         registeredDataModels = dataModelBuilder.build();
-        registeredItems.addAll(registeredDataModels.values());
         registeredPristineMatter = pristineMatterBuilder.build();
+        registeredItems.addAll(registeredDataModels.values());
         registeredItems.addAll(registeredPristineMatter.values());
 
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -152,8 +151,7 @@ public class DMLRegistry {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         DMLRelearned.logger.info("Registering Dynamic Recipes...");
         IForgeRegistry<IRecipe> registry = event.getRegistry();
-        registry.registerAll(MetadataManagerDataModels.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
-        registry.registerAll(MetadataManagerLivingMatter.INSTANCE.getCraftingRecipes().toArray(new IRecipe[0]));
+        registry.registerAll(MetadataManager.getCraftingRecipes().toArray(new IRecipe[0]));
     }
 
     public static ItemStack getLivingMatter(String id) {

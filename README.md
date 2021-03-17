@@ -1,4 +1,4 @@
-## This mod is currently in beta!
+### This mod is currently in beta!
 This means **there will probably be bugs!** Do not use this on an important world that you don't have a backup of. **You have been warned!**
 
 Currently missing major features:
@@ -8,8 +8,8 @@ Currently missing major features:
   are completed, or you may encounter bugs.
     * This includes all Trial-specific entities, which Forge will complain about when loading a world saved with the original DML.
     * Don't update a world from the original DML that currently has a Trial running - things will break! 
-<br>
-<br>
+
+
 # Deep Mob Learning: Relearned
 This mod is a complete rewrite from scratch of [DeepMobLearning](https://www.curseforge.com/minecraft/mc-mods/deep-mob-learning)
 by xt9/IterationFunk. The purpose of this rewrite was to add several new features (see below) that would have been difficult,

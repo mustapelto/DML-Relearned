@@ -43,7 +43,7 @@ public class MetadataLivingMatter extends Metadata {
 
     public MetadataLivingMatter(JsonObject data) throws IllegalArgumentException {
         if (isInvalidJson(data, REQUIRED_KEYS)) {
-            throw new IllegalArgumentException("Invalid Data Model JSON entry!");
+            throw new IllegalArgumentException("Invalid Living Matter JSON entry!");
         }
 
         livingMatterID = getString(data, LIVING_MATTER_ID)

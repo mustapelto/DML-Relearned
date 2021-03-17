@@ -21,7 +21,7 @@ public class ItemSootedRedstone extends ItemBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        if (DMLConfig.GENERAL_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
+        if (DMLConfig.MISC_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
             String redstone = TextFormatting.RED + I18n.format("item.redstone.name") + TextFormatting.GRAY;
             String coal = TextFormatting.RESET + I18n.format("tile.blockCoal.name") + TextFormatting.GRAY;
             String leftClick = KeyboardHelper.getAttackKeyName();

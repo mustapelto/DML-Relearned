@@ -49,7 +49,7 @@ public class ItemDataModel extends ItemBase {
             String sneakString = StringHelper.getFormattedString(TextFormatting.ITALIC, KeyboardHelper.getSneakKeyName(), TextFormatting.GRAY);
             tooltip.add(TextFormatting.GRAY + I18n.format("deepmoblearning.general.more_info", sneakString) + TextFormatting.RESET);
         } else {
-            if (!DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME) {
+            if (!DMLConfig.MISC_SETTINGS.SHOW_TIER_IN_NAME) {
                 // Tier not shown in item name -> show in tooltip
                 String displayName = DataModelHelper.getTierDisplayNameFormatted(stack);
                 tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.data_model.tier", displayName) + TextFormatting.RESET);
@@ -85,7 +85,7 @@ public class ItemDataModel extends ItemBase {
 
         String name = DMLRelearned.proxy.getLocalizedString("deepmoblearning.data_model.display_name", metadata.get().getDisplayName());
         String tier = "";
-        if (DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME) {
+        if (DMLConfig.MISC_SETTINGS.SHOW_TIER_IN_NAME) {
             Optional<MetadataDataModelTier> tierData = DataModelHelper.getTierData(stack);
             if (tierData.isPresent()) {
                 String tierName = tierData.get().getDisplayName();

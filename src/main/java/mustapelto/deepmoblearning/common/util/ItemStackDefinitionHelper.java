@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.OreIngredient;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper methods to create an ItemStack or Ingredient from a String.
@@ -24,17 +25,19 @@ import java.util.List;
  */
 public class ItemStackDefinitionHelper {
     public static ItemStack itemStackFromString(String itemDefinitionString) {
-        ItemStackDefinition itemStackDefinition = itemDefinitionFromString(itemDefinitionString);
-        if (itemStackDefinition.isInvalid())
-            return ItemStack.EMPTY;
+        return itemDefinitionFromString(itemDefinitionString)
+                .flatMap(ItemStackDefinitionHelper::itemStackFromItemStackDefinition)
+                .orElse(ItemStack.EMPTY);
+    }
 
+    private static Optional<ItemStack> itemStackFromItemStackDefinition(ItemStackDefinition itemStackDefinition) {
         ItemStack result;
 
         if (itemStackDefinition.isOre) {
             String oreName = itemStackDefinition.registryName.substring(4);
             if (!OreDictionary.doesOreNameExist(oreName)) {
                 DMLRelearned.logger.warn("ItemStackBuilder: Ore with name \"{}\" does not exist", oreName);
-                return ItemStack.EMPTY;
+                return Optional.empty();
             }
             result = OreDictionary.getOres(oreName).get(0).copy(); // Set to first available item with this name
             result.setCount(itemStackDefinition.stackSize);
@@ -43,7 +46,7 @@ public class ItemStackDefinitionHelper {
             Item item = Item.getByNameOrId(itemStackDefinition.registryName);
             Block block = Block.getBlockFromName(itemStackDefinition.registryName);
             if (item == null && (block == null || block == Blocks.AIR))
-                return ItemStack.EMPTY;
+                return Optional.empty();
 
             if (item != null)
                 result = new ItemStack(item, itemStackDefinition.stackSize, itemStackDefinition.metadata);
@@ -52,7 +55,7 @@ public class ItemStackDefinitionHelper {
         }
 
         result.setTagCompound(itemStackDefinition.nbt);
-        return result;
+        return Optional.of(result);
     }
 
     public static ImmutableList<ItemStack> itemStackListFromStringList(List<String> inputList) {
@@ -68,9 +71,10 @@ public class ItemStackDefinitionHelper {
     }
 
     public static Ingredient ingredientFromString(String itemDefinitionString) {
-        ItemStackDefinition itemStackDefinition = itemDefinitionFromString(itemDefinitionString);
-        if (itemStackDefinition.isInvalid())
+        Optional<ItemStackDefinition> itemStackDefinitionOptional = itemDefinitionFromString(itemDefinitionString);
+        if (!itemStackDefinitionOptional.isPresent())
             return Ingredient.EMPTY;
+        ItemStackDefinition itemStackDefinition = itemStackDefinitionOptional.get();
 
         if (itemStackDefinition.isOre) {
             String oreName = itemStackDefinition.registryName.substring(4);
@@ -121,10 +125,10 @@ public class ItemStackDefinitionHelper {
      *
      * @param itemString The string which contains the item data.
      */
-    private static ItemStackDefinition itemDefinitionFromString(String itemString) {
+    private static Optional<ItemStackDefinition> itemDefinitionFromString(String itemString) {
         if (itemString.isEmpty()) {
             DMLRelearned.logger.warn("ItemStackBuilder: Input string empty");
-            return ItemStackDefinition.INVALID;
+            return Optional.empty();
         }
 
         // Split input string into separate strings for each value (item, amount, metadata, nbt)
@@ -136,7 +140,7 @@ public class ItemStackDefinitionHelper {
 
         if (!registryName.contains(":")) {
             DMLRelearned.logger.warn("ItemStackBuilder: Invalid item name: {}", registryName);
-            return ItemStackDefinition.INVALID;
+            return Optional.empty();
         }
 
         // Read stack size
@@ -174,7 +178,7 @@ public class ItemStackDefinitionHelper {
             }
         }
 
-        return new ItemStackDefinition(registryName, stackSize, metadata, nbt);
+        return Optional.of(new ItemStackDefinition(registryName, stackSize, metadata, nbt));
     }
 
     private static class ItemStackDefinition {
@@ -184,14 +188,6 @@ public class ItemStackDefinitionHelper {
         public final int metadata;
         public final NBTTagCompound nbt;
 
-        private ItemStackDefinition() {
-            registryName = "";
-            isOre = false;
-            stackSize = 0;
-            metadata = 0;
-            nbt = null;
-        }
-
         public ItemStackDefinition(String registryName, int stackSize, int metadata, @Nullable NBTTagCompound nbt) {
             this.registryName = registryName;
             isOre = registryName.startsWith("ore:");
@@ -199,11 +195,5 @@ public class ItemStackDefinitionHelper {
             this.metadata = metadata;
             this.nbt = nbt;
         }
-
-        public boolean isInvalid() {
-            return this.equals(INVALID);
-        }
-
-        public static final ItemStackDefinition INVALID = new ItemStackDefinition();
     }
 }

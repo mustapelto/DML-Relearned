@@ -128,9 +128,9 @@ public abstract class Metadata {
         if (!data.has(key))
             return Optional.empty();
 
-        JsonElement listElement = data.get(key);
-        if (listElement.isJsonArray()) {
-            JsonArray array = listElement.getAsJsonArray();
+        JsonElement element = data.get(key);
+        if (element.isJsonArray()) {
+            JsonArray array = element.getAsJsonArray();
 
             if (array.size() == 0)
                 return Optional.of(ImmutableList.of());
@@ -138,20 +138,20 @@ public abstract class Metadata {
             ImmutableList.Builder<WeightedString> builder = ImmutableList.builder();
 
             for (JsonElement itemElement : array) {
-                if (!itemElement.isJsonArray()) {
-                    DMLRelearned.logger.warn("Invalid weighted item entry, skipping!");
+                if (!itemElement.isJsonPrimitive() || !itemElement.getAsJsonPrimitive().isString()) {
+                    DMLRelearned.logger.warn("Invalid weighted entity entry, skipping!");
                     continue;
                 }
 
-                Optional<WeightedString> weightedItem = getWeightedItem(itemElement.getAsJsonArray());
+                Optional<WeightedString> weightedItem = getWeightedEntity(itemElement.getAsString());
                 weightedItem.ifPresent(builder::add);
             }
 
             return Optional.of(builder.build());
         }
 
-        if (listElement.isJsonPrimitive()) {
-            JsonPrimitive primitive = listElement.getAsJsonPrimitive();
+        if (element.isJsonPrimitive()) {
+            JsonPrimitive primitive = element.getAsJsonPrimitive();
             if (!primitive.isString()) {
                 DMLRelearned.logger.warn(getInvalidString(key));
                 return Optional.empty();
@@ -164,33 +164,29 @@ public abstract class Metadata {
         return Optional.empty();
     }
 
-    private static Optional<WeightedString> getWeightedItem(JsonArray itemJson) {
-        if (itemJson.size() == 0 || itemJson.size() > 2) {
-            DMLRelearned.logger.warn("Invalid weighted item entry, skipping!");
+    private static Optional<WeightedString> getWeightedEntity(String entityString) {
+        if (entityString.isEmpty()) {
+            DMLRelearned.logger.warn("Invalid weighted entity entry (empty string), skipping!");
             return Optional.empty();
         }
 
-        JsonElement valueElement = itemJson.get(0);
-
-        if (!valueElement.isJsonPrimitive() || !valueElement.getAsJsonPrimitive().isString()) {
-            DMLRelearned.logger.warn("Invalid weighted item entry, skipping!");
+        final String[] values = entityString.split(",");
+        String registryName = values[0];
+        if (!registryName.contains(":")) {
+            DMLRelearned.logger.warn("Invalid weighted entity entry (not a valid registry string), skipping!");
             return Optional.empty();
         }
 
-        String value = valueElement.getAsString();
         int weight = 100;
-
-        if (itemJson.size() == 2) {
-            JsonElement weightElement = itemJson.get(1);
-
-            if (!weightElement.isJsonPrimitive() || !weightElement.getAsJsonPrimitive().isNumber()) {
-                DMLRelearned.logger.warn("Invalid weighted item weight, using default!");
-            } else {
-                weight = weightElement.getAsInt();
+        if (values.length > 1) {
+            try {
+                weight = Integer.parseInt(values[1]);
+            } catch (NumberFormatException e) {
+                DMLRelearned.logger.warn("Invalid weighted entity entry (weight not an integer), using default weight!");
             }
         }
 
-        return Optional.of(new WeightedString(value, weight));
+        return Optional.of(new WeightedString(registryName, weight));
     }
 
     protected static Optional<ResourceLocation> getResourceLocation(JsonObject data, String key) {

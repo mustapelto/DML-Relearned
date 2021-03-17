@@ -1,10 +1,105 @@
-------------------------------
-|  GUIDE TO CUSTOM SETTINGS  |
-------------------------------
+--------------------------------
+|  CUSTOM JSON SETTINGS GUIDE  |
+--------------------------------
 
-DataModels.json:
-Defines which mobs have an associated Data Model, and all values associated with that Model.
-Models are grouped by mod id (or "minecraft" for vanilla).
+General
+-------
 
-Possible values:
+- All JSON files are structured as arrays of objects. Each object defines one entity (Data Model / Tier / etc.)
+- Item String: "modid:itemid,count,metadata,nbt"
+   * Count, metadata and NBT are optional, but using one requires the ones before it to be present
+     (i.e. you can't have metadata without count)
+   * NBT uses JSON object string format
+   * Example: "minecraft:skull,6,4" gives 6 vanilla skulls with metadata 4 (= Creeper heads)
+- Entity String: "modid:entityid", e.g. "thermalfoundation:blizz"
 
+
+DataModels.json
+---------------
+
+Define available Data Models and all settings related to them.
+
+Object structure:
+{
+    "id": String (REQUIRED). Unique ID of the Data Model. This is used for registering Data Model and Pristine Matter items.
+    "mod": String. ID of mod this Data Model belongs to. Recipe will not be registered and Data Model / Pristine Matter
+           won't appear in the Creative Tab if this mod is not loaded. Default: "minecraft"
+    "displayName": String. Name used for Data Model / Pristine Matter item names, and in GUIs. Default: id (first letter capitalized)
+    "displayNamePlural": String. Plural of name. Used in some GUIs. Default: displayName + "s"
+    "livingMatter": String (REQUIRED). ID of Living Matter that is produced by simulating this Model.
+                    If no Living Matter entry with this ID can be found, defaults to first registered Living Matter.
+    "simulationRFCost": Integer. RF/tick cost to simulate this Model. Default: 256
+    "extraTooltip": String. Extra tooltip to display for Data Model item. Default: none
+    "craftingIngredients": Array of Item Strings (REQUIRED). Ingredients for crafting this Model
+                           IN ADDITION to a single Blank Model.
+    "associatedMobs": Array of Entity Strings (REQUIRED). These entities will give the Model data when killed.
+    "lootItems": Array of Item Strings (REQUIRED). Items that can be produced from this Model's Pristine Matter.
+    "trial": Object. Describes everything Trial related. If missing, uses default values.
+    {
+        "entities": Entity String or array of Entity Strings with optional weight (comma-separated). Default weight: 100.
+                    Entities to spawn during a Trial will be randomly selected from this list, according to their weight.
+        "spawnDelay": Double. Delay between trial entity spawns. Default: 2.0
+        "rewards": Array of Item Strings. Rewards for completing a Trial.
+    }
+    "deepLearnerDisplay": Object. Describes what to display in the Deep Learner GUI when this Model is inserted.
+    {
+        "hearts": Integer. Number of Hearts to display. 0 will display obfuscated text (useful if this Model works with more
+                  than one mob, see the Twilight Forest Models as an example). Default: 0
+        "mobTrivia": Array of Strings. GUI "about" text. Default: "Nothing is known about this mob."
+        "entity": Entity String. Which entity to display in the GUI. Default: the first entry in associatedMobs.
+        "entityHeldItem": Item String. Item held by entity in the GUI. Default: none
+        "entityScale": Integer. Scale of displayed entity. Default: 40
+        "entityOffsetX": Integer. X offset of displayed entity. Default: 0
+        "entityOffsetY": Integer. Y offset of displayed entity. Default: 0
+        "extraEntityName": Entity String. Additional Entity to display in GUI. Default: none
+        "extraEntityIsChild": Boolean. Is the Extra Entity a child? Default: false
+        "extraEntityOffsetX": Integer. X offset of extra entity. Default: 0
+        "extraEntityOffsetY": Integer. Y offset of extra entity. Default: 0
+    }
+}
+
+
+DataModelTiers.json
+-------------------
+
+Define available Tiers for Data Model leveling.
+
+Object structure:
+{
+    "tier": Integer (REQUIRED). Numeric value of this tier. Tiers are automatically sorted from lowest to highest.
+    "displayName": String. Name to display in Data Model tooltip and GUIs. Default: "Tier " + tier
+    "displayColor": String. Color of displayed name. Must be one of Minecraft's standard colors. Default: "white"
+    "killMultiplier": Integer. How much data is gained from one kill. Default: 1
+    "dataToNext": Integer. How much data is needed to get to next tier. Default: 10
+    "pristineChance": Integer. Chance (%) to get Pristine Matter when simulating. Default: 10
+    "canSimulate": Boolean. Can a Data Model of this tier be used in a Simulation Chamber? Default: true
+    "trial": Object. Describes properties of Trials with this tier.
+    {
+        "pristine": Integer. Amount of Pristine Matter gained by completing a Trial. Default: 2
+        "maxWave": Integer. Highest wave a Trial will reach at this tier. Default: 10
+        "affixes": Integer. Number of random Affixes a Trial at this tier will get. Default: 0
+        "glitchChance": Integer. Chance (%) to spawn a Glitch.
+    }
+}
+
+
+LivingMatter.json
+-----------------
+
+Define available types of Living Matter (e.g. Overworldian / Hellish / etc.)
+
+Object structure:
+{
+    "id": String (REQUIRED). Unique ID of this Living Matter. Used for registering the Item and associating with Data Models.
+    "mod": String. Living Matter item won't appear in Creative tab if this mod is not loaded. Default: "minecraft"
+    "displayName": String. Name to display in item tooltips and GUIs. Default: id (first letter capitalized)
+    "displayColor": String. Color of displayed name. Must be one of Minecraft's standard colors. Default: "white"
+    "xpValue": Integer. XP gained by consuming one item of Living Matter. Default: 10
+}
+
+
+LivingMatterRecipes.json
+------------------------
+
+Recipes related to Living Matter. E.g. conversion between different types, crafting loot items.
+Recipes use standard Minecraft JSON format.

@@ -223,14 +223,8 @@
     ],
     "trial": {
       "entities": [
-        [
-          "minecraft:stray",
-          33
-        ],
-        [
-          "minecraft:skeleton",
-          67
-        ]
+        "minecraft:stray,33",
+        "minecraft:skeleton,67"
       ],
       "rewards": [
         "deepmoblearning:glitch_heart,3"
@@ -306,14 +300,8 @@
     ],
     "trial": {
       "entities": [
-        [
-          "deepmoblearning:trial_spider",
-          88
-        ],
-        [
-          "deepmoblearning:trial_cave_spider",
-          12
-        ]
+        "deepmoblearning:trial_spider,88",
+        "deepmoblearning:trial_cave_spider,12"
       ],
       "rewards": [
         "deepmoblearning:glitch_heart,4"
@@ -456,18 +444,9 @@
     ],
     "trial": {
       "entities": [
-        [
-          "minecraft:zombie",
-          45
-        ],
-        [
-          "minecraft:husk",
-          30
-        ],
-        [
-          "minecraft:zombie_villager",
-          25
-        ]
+        "minecraft:zombie,45",
+        "minecraft:husk,30",
+        "minecraft:zombie_villager,25"
       ],
       "rewards": [
         "deepmoblearning:glitch_heart,3"

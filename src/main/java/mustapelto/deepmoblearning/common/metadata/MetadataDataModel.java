@@ -128,17 +128,41 @@ public class MetadataDataModel extends Metadata {
 
     @Override
     public void finalizeData() {
+        if (!DMLRHelper.isModLoaded(modID))
+            return;
+
         ImmutableList.Builder<ResourceLocation> mobListBuilder = ImmutableList.builder();
-        associatedMobStrings.forEach(mob -> mobListBuilder.add(new ResourceLocation(mob)));
+        boolean hasValidMobs = false;
+        for (String entry : associatedMobStrings) {
+            if (DMLRHelper.isRegisteredEntity(entry)) {
+                mobListBuilder.add(new ResourceLocation(entry));
+                hasValidMobs = true;
+            } else
+                DMLRelearned.logger.warn("Invalid entry \"{}\" in Associated Mobs list for Data Model: {}. No registered entity of this name found!", entry, dataModelID);
+        }
+
+        if (!hasValidMobs) {
+            String defaultMob = DMLRHelper.getRegistryString(modID, dataModelID);
+            if (DMLRHelper.isRegisteredEntity(defaultMob)) {
+                mobListBuilder.add(new ResourceLocation(defaultMob));
+                DMLRelearned.logger.warn("No valid Associated Mob entries for Data Model: {}. Using default mob ({}).", dataModelID, defaultMob);
+            } else {
+                DMLRelearned.logger.error("No valid Associated Mob entries for Data Model: {}. Model will not be able to gain data!", dataModelID);
+            }
+        }
         associatedMobs = mobListBuilder.build();
+
         // Build loot item ItemStack list
         lootItems = ItemStackDefinitionHelper.itemStackListFromStringList(lootItemStrings);
+        if (lootItems.isEmpty())
+            DMLRelearned.logger.error("No valid Loot Items found for Data Model: {}. This Model's Pristine Matter won't be able to produce any loot!", dataModelID);
 
         // Get associated Living Matter
         livingMatter = DMLRegistry.getLivingMatter(livingMatterString);
         pristineMatter = DMLRegistry.getPristineMatter(dataModelID);
 
         trialData.finalizeData();
+        deepLearnerDisplayData.finalizeData();
     }
 
     @Override
@@ -423,6 +447,8 @@ public class MetadataDataModel extends Metadata {
         private final int extraEntityOffsetX; // X offset of additional entity. Default: 0
         private final int extraEntityOffsetY; // Y offset of additional entity. Default: 0
 
+        private ResourceLocation entityValidated;
+
         private final MetadataDataModel container;
 
         public DeepLearnerDisplayData(MetadataDataModel container) {
@@ -430,7 +456,7 @@ public class MetadataDataModel extends Metadata {
 
             hearts = 0;
             mobTrivia = ImmutableList.of();
-            entity = new ResourceLocation(this.container.modID, this.container.dataModelID);
+            entity = null;
             entityHeldItem = null;
             entityScale = 1;
             entityOffsetX = 0;
@@ -450,7 +476,7 @@ public class MetadataDataModel extends Metadata {
                     .orElse(ImmutableList.of(DEFAULT_MOB_TRIVIA));
 
             entity = getResourceLocation(data, ENTITY)
-                    .orElse(new ResourceLocation(container.defaultRegistryString));
+                    .orElse(null);
 
             entityHeldItem = getResourceLocation(data, ENTITY_HELD_ITEM)
                     .orElse(null);
@@ -470,6 +496,13 @@ public class MetadataDataModel extends Metadata {
                     .orElse(DEFAULT_EXTRA_ENTITY_OFFSET_Y);
         }
 
+        public void finalizeData() {
+            if (entity == null && !container.associatedMobs.isEmpty())
+                entityValidated = container.associatedMobs.get(0);
+            else
+                entityValidated = entity;
+        }
+
         public int getHearts() {
             return hearts;
         }
@@ -479,10 +512,10 @@ public class MetadataDataModel extends Metadata {
         }
 
         public Optional<Entity> getEntity(World world) {
-            if (!EntityList.isRegistered(entity))
+            if (!EntityList.isRegistered(entityValidated))
                 return Optional.empty();
 
-            Entity entity = EntityList.createEntityByIDFromName(this.entity, world);
+            Entity entity = EntityList.createEntityByIDFromName(entityValidated, world);
             if (entity instanceof EntityLiving && entityHeldItem != null) {
                 Item heldItem = Item.getByNameOrId(entityHeldItem.toString());
                 if (heldItem != null)

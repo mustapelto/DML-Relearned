@@ -44,15 +44,15 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        String pristineChance = DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE + "%";
-        String pristineCount = String.valueOf(DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_COUNT);
+        String pristineChance = DMLConfig.GLITCH_ARMOR_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE + "%";
+        String pristineCount = String.valueOf(DMLConfig.GLITCH_ARMOR_SETTINGS.GLITCH_ARMOR_PRISTINE_COUNT);
 
         tooltip.add(TextFormatting.RESET + I18n.format("deepmoblearning.glitch_armor.tooltip_1"));
         tooltip.add(I18n.format("deepmoblearning.glitch_armor.tooltip_2"));
         tooltip.add(TextFormatting.GOLD + I18n.format("deepmoblearning.glitch_armor.tooltip_3", pristineChance, pristineCount));
         tooltip.add(I18n.format("deepmoblearning.glitch_armor.tooltip_4") + TextFormatting.RESET);
 
-        if (DMLConfig.GENERAL_SETTINGS.GLITCH_CREATIVE_FLIGHT_ENABLED)
+        if (DMLConfig.GLITCH_ARMOR_SETTINGS.GLITCH_CREATIVE_FLIGHT_ENABLED)
             tooltip.add(TextFormatting.GOLD + I18n.format("deepmoblearning.glitch_armor.tooltip_5") + TextFormatting.RESET);
     }
 
@@ -71,7 +71,7 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     }
 
     public static void dropPristineMatter(World world, BlockPos position, ItemStack dataModel) {
-        if (ThreadLocalRandom.current().nextInt(1, 100) <= DMLConfig.GENERAL_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE) {
+        if (ThreadLocalRandom.current().nextInt(1, 100) <= DMLConfig.GLITCH_ARMOR_SETTINGS.GLITCH_ARMOR_PRISTINE_CHANCE) {
             DataModelHelper.getDataModelMetadata(dataModel).ifPresent(metadata -> {
                 EntityItem drop = new EntityItem(world, position.getX(), position.getY(), position.getZ(), metadata.getPristineMatter());
                 drop.setDefaultPickupDelay();

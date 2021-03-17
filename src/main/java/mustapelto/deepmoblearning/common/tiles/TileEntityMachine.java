@@ -3,6 +3,8 @@ package mustapelto.deepmoblearning.common.tiles;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
+import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
+import mustapelto.deepmoblearning.common.network.MessageCraftingStateToClient;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -64,7 +66,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
         CraftingState newCraftingState = updateCraftingState();
         if (craftingState != newCraftingState) {
             craftingState = newCraftingState;
-            sendUpdatePacketToClient();
+            DMLPacketHandler.sendToClient(new MessageCraftingStateToClient(this), world, pos);
             markDirty();
         }
     }
@@ -75,7 +77,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     protected void startCrafting() {
         crafting = true;
-        sendUpdatePacketToClient();
         markDirty();
     }
 
@@ -106,20 +107,12 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     protected abstract int getCraftingDuration();
 
-    protected void finishCrafting() {
-        resetCrafting();
-    }
-
-    protected void resetCrafting(boolean sendClientUpdate) {
-        crafting = false;
-        craftingProgress = 0;
-        if (sendClientUpdate)
-            sendUpdatePacketToClient();
-        markDirty();
-    }
+    protected abstract void finishCrafting();
 
     protected void resetCrafting() {
-        resetCrafting(true);
+        crafting = false;
+        craftingProgress = 0;
+        markDirty();
     }
 
     public float getRelativeCraftingProgress() {
@@ -158,6 +151,10 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     public CraftingState getCraftingState() {
         return craftingState;
+    }
+
+    public void setCraftingState(CraftingState newState) {
+        craftingState = newState;
     }
 
     //

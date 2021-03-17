@@ -57,7 +57,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
     @Override
     protected void finishCrafting() {
-        super.finishCrafting();
+        resetCrafting();
 
         ItemStack outputItem = getOutputItem();
         if (outputItem.isEmpty())
@@ -69,12 +69,12 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
     @Override
     protected int getCraftingDuration() {
-        return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_PROCESSING_TIME;
+        return DMLConfig.MACHINE_SETTINGS.LOOT_FABRICATOR_PROCESSING_TIME;
     }
 
     @Override
     public int getCraftingEnergyCost() {
-        return DMLConfig.GENERAL_SETTINGS.LOOT_FABRICATOR_RF_COST;
+        return DMLConfig.MACHINE_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
     
     @Nullable
@@ -161,7 +161,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
                         new CombinedInvWrapper(inputPristineMatter, output)
                 );
             } else {
-                if (!DMLConfig.GENERAL_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
+                if (!DMLConfig.MACHINE_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
                     return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
                             new CombinedInvWrapper(pristineMatterWrapper, output)
                     );
@@ -240,7 +240,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             outputItemIndex = -1;
 
         if (outputItemIndex == -1)
-            resetCrafting(false);
+            resetCrafting();
     }
 
     // NBT Tag Names

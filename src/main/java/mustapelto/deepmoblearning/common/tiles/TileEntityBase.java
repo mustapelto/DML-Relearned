@@ -16,6 +16,13 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 public abstract class TileEntityBase extends TileEntity {
+    @Override
+    public void onLoad() {
+        // Update client TileEntity on chunk load to properly set CraftingState
+        if (world.isRemote)
+            requestUpdatePacketFromServer();
+    }
+
     protected void requestUpdatePacketFromServer() {
         DMLPacketHandler.sendToServer(new MessageRequestUpdateTileEntity(this));
     }

@@ -14,10 +14,21 @@ import java.util.Map;
 @Config(modid = DMLConstants.ModInfo.ID, name = DMLConstants.ModInfo.CONFIG_PATH + "/dml_relearned", category = "")
 @EventBusSubscriber
 public class DMLConfig {
-    @Name("General Settings")
-    public static GeneralSettings GENERAL_SETTINGS = new GeneralSettings();
+    @Name("Misc Settings")
+    public static MiscSettings MISC_SETTINGS = new MiscSettings();
 
-    public static class GeneralSettings {
+    public static class MiscSettings {
+        @Name("Show Data Model tier in item name?")
+        public boolean SHOW_TIER_IN_NAME = true;
+
+        @Name("Is Soot-Covered Redstone Crafting Enabled?")
+        public boolean SOOT_COVERED_REDSTONE_CRAFTING_ENABLED = true;
+    }
+
+    @Name("Machine Settings")
+    public static MachineSettings MACHINE_SETTINGS = new MachineSettings();
+
+    public static class MachineSettings {
         @Name("Simulation Chamber Processing Time")
         @Comment("Time it takes for the Simulation Chamber to run one iteration (in ticks)")
         @RangeInt(min = 1, max = 1200)
@@ -36,10 +47,12 @@ public class DMLConfig {
         @Name("Legacy Machine Sidedness")
         @Comment("Use legacy sidedness (insert from top, output to all other sides)?")
         public boolean LEGACY_MACHINE_SIDEDNESS = false;
+    }
 
-        @Name("Show Data Model tier in item name?")
-        public boolean SHOW_TIER_IN_NAME = true;
+    @Name("Glitch Armor Settings")
+    public static GlitchArmorSettings GLITCH_ARMOR_SETTINGS = new GlitchArmorSettings();
 
+    public static class GlitchArmorSettings {
         @Name("Glitch Armor Pristine Chance")
         @Comment("Chance to drop Pristine Matter on Data Model mob kill with full Glitch Armor equipped")
         @RangeInt(min = 0, max = 100)
@@ -52,16 +65,12 @@ public class DMLConfig {
 
         @Name("Is Glitch Armor Creative Flight Enabled?")
         public boolean GLITCH_CREATIVE_FLIGHT_ENABLED = true;
-
-        @Name("Is Soot-Covered Redstone Crafting Enabled?")
-        public boolean SOOT_COVERED_REDSTONE_CRAFTING_ENABLED = true;
     }
 
-    @Name("GUI Overlay Settings")
-    @Comment("Configure the appearance of the Data Model experience overlay")
-    public static GuiOverlaySettings GUI_OVERLAY_SETTINGS = new GuiOverlaySettings();
+    @Name("Deep Learner GUI Overlay Settings")
+    public static DeepLearnerGuiOverlaySettings DEEP_LEARNER_GUI_OVERLAY_SETTINGS = new DeepLearnerGuiOverlaySettings();
 
-    public static class GuiOverlaySettings {
+    public static class DeepLearnerGuiOverlaySettings {
         @Name("Position")
         @Comment("Overlay screen position. Valid values: topleft / topright / bottomright / bottomleft")
         public String POSITION = "topleft";

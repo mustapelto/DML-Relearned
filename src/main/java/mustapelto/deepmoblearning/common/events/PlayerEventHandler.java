@@ -41,7 +41,7 @@ public class PlayerEventHandler {
         Block clickedBlock = world.getBlockState(event.getPos()).getBlock();
         Vec3d hitVector = event.getHitVec();
 
-        if (DMLConfig.GENERAL_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
+        if (DMLConfig.MISC_SETTINGS.SOOT_COVERED_REDSTONE_CRAFTING_ENABLED) {
             if (heldItem instanceof ItemRedstone && clickedBlock == Blocks.COAL_BLOCK) {
                 if (event.getSide() == Side.SERVER) {
                     spawnItemEntity(hitVector, world, DMLRegistry.ITEM_SOOTED_REDSTONE, DMLConstants.Crafting.SOOTED_REDSTONE_PER_REDSTONE);
@@ -90,7 +90,7 @@ public class PlayerEventHandler {
         if (event.phase != TickEvent.Phase.START)
             return;
 
-        if (!DMLConfig.GENERAL_SETTINGS.GLITCH_CREATIVE_FLIGHT_ENABLED || event.player.world.isRemote)
+        if (!DMLConfig.GLITCH_ARMOR_SETTINGS.GLITCH_CREATIVE_FLIGHT_ENABLED || event.player.world.isRemote)
             return;
 
         PlayerCapabilities capabilities = event.player.capabilities;

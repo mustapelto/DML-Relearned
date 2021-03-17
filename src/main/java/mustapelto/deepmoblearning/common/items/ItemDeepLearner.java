@@ -68,7 +68,7 @@ public class ItemDeepLearner extends ItemBase {
             } else {
                 tooltip.add(I18n.format("deepmoblearning.deep_learner.contains"));
                 containedDataModels.forEach(dataModel -> {
-                    if (DMLConfig.GENERAL_SETTINGS.SHOW_TIER_IN_NAME)
+                    if (DMLConfig.MISC_SETTINGS.SHOW_TIER_IN_NAME)
                         tooltip.add(dataModel.getDisplayName());
                     else
                         tooltip.add(DataModelHelper.getTierDisplayNameFormatted(dataModel) + " " + dataModel.getDisplayName());

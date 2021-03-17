@@ -77,7 +77,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
             }
         });
 
-        super.finishCrafting();
+        resetCrafting();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
     @Override
     protected int getCraftingDuration() {
-        return DMLConfig.GENERAL_SETTINGS.SIMULATION_CHAMBER_PROCESSING_TIME;
+        return DMLConfig.MACHINE_SETTINGS.SIMULATION_CHAMBER_PROCESSING_TIME;
     }
 
     public boolean isPristineSuccess() {
@@ -192,7 +192,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
                         new CombinedInvWrapper(inputDataModel, inputPolymer, outputLiving, outputPristine)
                 );
             } else {
-                if (!DMLConfig.GENERAL_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
+                if (!DMLConfig.MACHINE_SETTINGS.LEGACY_MACHINE_SIDEDNESS) {
                     return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(
                             new CombinedInvWrapper(dataModelWrapper, polymerWrapper, outputLiving, outputPristine)
                     );

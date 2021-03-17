@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.gui;
 import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.DMLConfig;
-import mustapelto.deepmoblearning.common.DMLConfig.GuiOverlaySettings.GuiPosition;
+import mustapelto.deepmoblearning.common.DMLConfig.DeepLearnerGuiOverlaySettings.GuiPosition;
 import mustapelto.deepmoblearning.common.items.ItemDeepLearner;
 import mustapelto.deepmoblearning.common.util.DataModelHelper;
 import mustapelto.deepmoblearning.common.util.PlayerHelper;
@@ -58,9 +58,9 @@ public class DataOverlay extends GuiScreen {
 
         ImmutableList<ItemStack> dataModels = DataModelHelper.getDataModelStacksFromList(ItemDeepLearner.getContainedItems(deepLearner));
 
-        int paddingHorizontal = DMLConfig.GUI_OVERLAY_SETTINGS.PADDING_HORIZONTAL;
-        int paddingVertical = DMLConfig.GUI_OVERLAY_SETTINGS.PADDING_VERTICAL;
-        GuiPosition position = DMLConfig.GUI_OVERLAY_SETTINGS.getGuiPosition();
+        int paddingHorizontal = DMLConfig.DEEP_LEARNER_GUI_OVERLAY_SETTINGS.PADDING_HORIZONTAL;
+        int paddingVertical = DMLConfig.DEEP_LEARNER_GUI_OVERLAY_SETTINGS.PADDING_VERTICAL;
+        GuiPosition position = DMLConfig.DEEP_LEARNER_GUI_OVERLAY_SETTINGS.getGuiPosition();
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int numberOfBars = dataModels.size();
         int x;

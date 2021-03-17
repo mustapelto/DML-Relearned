@@ -35,9 +35,6 @@ public class GuiSimulationChamber extends GuiMachine {
     private int currentIteration; // Saves data model's current iteration so we don't update display if iteration hasn't changed
     private boolean currentPristineSuccess; // Saves data model's current pristine success state so we don't update display if iteration hasn't changed
 
-    private int currentTick = 0; // Ticks since GUI was opened
-    private float lastPartial = 0; // Time when GUI was last drawn (ticks + partial tick)
-
     //
     // INIT
     //
@@ -56,7 +53,6 @@ public class GuiSimulationChamber extends GuiMachine {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        currentTick++; // Advance tick counter
         dataModel = simulationChamber.getDataModel(); // Update data model
 
         //
@@ -246,13 +242,8 @@ public class GuiSimulationChamber extends GuiMachine {
 
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
 
-        // Calculate delta time since last redraw (used to advance string animations)
-        float currentPartial = currentTick + partialTicks;
-        float advanceAmount = currentPartial - lastPartial;
-        lastPartial = currentPartial;
-
-        drawInfoboxText(advanceAmount, guiLeft + INFO_BOX.X, guiTop + INFO_BOX.Y);
-        drawConsoleText(advanceAmount, guiLeft + CONSOLE.X, guiTop + CONSOLE.Y);
+        drawInfoboxText(deltaTime, guiLeft + INFO_BOX.X, guiTop + INFO_BOX.Y);
+        drawConsoleText(deltaTime, guiLeft + CONSOLE.X, guiTop + CONSOLE.Y);
     }
 
     private void drawInfoboxText(float advanceAmount, int left, int top) {

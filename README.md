@@ -1,5 +1,13 @@
 ## This mod is currently in beta!
 This means **there will probably be bugs!** Do not use this on an important world that you don't have a backup of. **You have been warned!**
+
+Currently missing major features:
+- JEI integration (i.e. Loot Fabricator recipes in JEI)
+- Trials are only partially done. The blocks and items are there (so your old ones won't get deleted), but
+  not all functionality has been implemented yet. I recommend not to use any Trial-related stuff until they
+  are completed, or you may encounter bugs.
+    * This includes all Trial-specific entities, which Forge will complain about when loading a world saved with the original DML.
+    * Don't update a world from the original DML that currently has a Trial running - things will break! 
 <br>
 <br>
 # Deep Mob Learning: Relearned
@@ -49,7 +57,7 @@ into a Simulation Chamber to start producing Matter!
     * A config setting is available to revert to the original DML behavior
 - Machine blocks change appearance based on the current state of crafting (idle / running / error)
 - Several minor QoL improvements
-- Several under-the-hood performance improvements
+- Under-the-hood performance improvements
 
 *Users of [Deep Mob Learning - Blood Magic Addon](https://www.curseforge.com/minecraft/mc-mods/deep-mob-learning-blood-magic-addon):*
 The addon is not compatible with this mod. I haven't decided yet whether I'll make a new version of the addon. Unfortunately,
@@ -61,19 +69,27 @@ this means that you won't be able to use this mod for the time being.
 This mod uses the same item and block registry names as the original, so in-place updating should be possible as follows:
 - Always backup your world before changing mods!
 - Add the new mod jar and remove the old one
-- Run Minecraft once (don't open your world yet) to generate the new config files (in config/dml_relearned/)
+- Run Minecraft once (**don't load your world!**) to generate the new config files (config/dml_relearned/*)
 - Manually copy any changes you made to the original config (config/deepmoblearning.cfg) into the new files
 - The old config file can be deleted, it's not used by this mod
 - Restart Minecraft, load your world, and re-set all your Loot Fabricators' outputs once (this is necessary
-  because of internal changes in how the setting is stored on disk)
-- Enjoy!
+  after updating because of internal changes in how the setting is stored on disk)
+- You're done!
+
+**NOTE:** Because this mod uses the same mod ID ("deepmoblearning") as the original to enable in-place updating,
+Forge will complain on first world load that you "downgraded" your mod from a higher version. This warning can safely
+be ignored.
+
+### OmniFactory update guide
+Do the same as above, but also copy the custom config files from this repo into your config directory, and the
+modified SolarFlux.zs (the file that contains all DML related script stuff, e.g. changed recipes) into your scripts directory.
 
 ---
 
 ### Current out-of-the-box mod support
-Data Models for the following mods are defined in the default config:
+Data Models and Living Matter for the following mods are defined in the default config:
 - **Thermal Foundation** (one combined Data Model for Thermal Elementals, i.e. Blizz, Blitz and Basalz)
-- **Twilight Forest** (four categories of mobs: Forest, Swamp, Darkwood and Glacier)
+- **Twilight Forest** (Twilight Matter; four categories of mobs: Forest, Swamp, Darkwood and Glacier)
 - **Tinkers' Construct** (Blue Slime)
 - **Matter Overdrive** (Rogue Android)
 

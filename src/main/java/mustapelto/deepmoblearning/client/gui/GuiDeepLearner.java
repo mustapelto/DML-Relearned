@@ -44,6 +44,9 @@ public class GuiDeepLearner extends GuiContainerBase {
     private ButtonDeepLearnerSelect prevModelButton;
     private ButtonDeepLearnerSelect nextModelButton;
 
+    private float currentEntityRotation = 0;
+    private double currentEntityHeight = 0;
+
     //
     // INIT
     //
@@ -193,14 +196,24 @@ public class GuiDeepLearner extends GuiContainerBase {
         if (currentDisplayData == null)
             return;
 
+        // Draw metadata text
+        renderMetaData();
+
+        // Entity "bobbing" offset
+        currentEntityHeight = Math.sin(lastRedrawTime / 16) / 8;
+
+        // Entity rotating angle
+        currentEntityRotation += deltaTime * 3;
+
+        GlStateManager.pushAttrib();
+
         // Get and render main entity
         currentDisplayData.getEntity(world)
                 .ifPresent(entity -> renderEntity(
                         entity,
                         currentDisplayData.getEntityScale(),
                         guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getEntityOffsetX(),
-                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getEntityOffsetY(),
-                        partialTicks
+                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getEntityOffsetY()
                 ));
 
         // Get and render extra entity
@@ -209,12 +222,10 @@ public class GuiDeepLearner extends GuiContainerBase {
                         entity,
                         currentDisplayData.getEntityScale(),
                         guiLeft + MOB_DISPLAY_ENTITY.X + currentDisplayData.getExtraEntityOffsetX(),
-                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getExtraEntityOffsetY(),
-                        partialTicks
+                        guiTop + MOB_DISPLAY_ENTITY.Y + currentDisplayData.getExtraEntityOffsetY()
                 ));
 
-        // Draw metadata text
-        renderMetaData();
+        GlStateManager.popAttrib();
     }
 
     private void renderMetaData() {
@@ -296,7 +307,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         }
     }
 
-    private void renderEntity(Entity entity, int scale, int x, int y, float partialTicks) {
+    private void renderEntity(Entity entity, int scale, int x, int y) {
+        // TODO: Remove "magic numbers"
         EntityRenderer entityRenderer = mc.entityRenderer;
 
         // Don't need lightmap for GUI rendering
@@ -308,15 +320,9 @@ public class GuiDeepLearner extends GuiContainerBase {
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(180.0f, 0.0f, 0.0f, 1.0f);
 
-        // Mob "bobbing" offset
-        double heightOffset = Math.sin((world.getTotalWorldTime() + partialTicks) / 16.0) / 8.0;
-
-        // Mob rotating angle
-        float angle = (world.getTotalWorldTime() + partialTicks) * 3;
-
         // High z axis value to prevent clipping
-        GlStateManager.translate(0.2f, heightOffset, 15.0f);
-        GlStateManager.rotate(angle, 0.0f, 1.0f, 0.0f);
+        GlStateManager.translate(0.2f, currentEntityHeight, 15.0f);
+        GlStateManager.rotate(currentEntityRotation, 0.0f, 1.0f, 0.0f);
 
         // Render entity
         mc.getRenderManager().renderEntity(entity, 0.0f, 0.0f, 0.0f, 1.0f, 0, true);

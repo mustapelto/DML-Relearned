@@ -25,6 +25,10 @@ public abstract class GuiContainerBase extends GuiContainer {
     // which we can't do while iterating over it, so we change this variable and rebuild on next frame
     protected boolean buttonListNeedsRebuild = false;
 
+    protected int currentTick = 0; // Ticks since GUI was opened
+    protected float lastRedrawTime = 0; // Time when GUI was last drawn (= ticks + partial tick)
+    protected float deltaTime = 0; // Time since last redraw (partial ticks)
+
     //
     // INIT
     //
@@ -61,7 +65,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void updateScreen() {
         super.updateScreen();
-
+        currentTick++;
         if (buttonListNeedsRebuild)
             rebuildButtonList();
     }
@@ -107,6 +111,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
+        getDeltaTime(partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
     }
@@ -129,5 +134,11 @@ public abstract class GuiContainerBase extends GuiContainer {
                     drawHoveringText(tooltip, mouseX - guiLeft, mouseY - guiTop);
             }
         });
+    }
+
+    private void getDeltaTime(float partialTicks) {
+        float currentPartial = currentTick + partialTicks;
+        deltaTime = currentPartial - lastRedrawTime;
+        lastRedrawTime = currentPartial;
     }
 }

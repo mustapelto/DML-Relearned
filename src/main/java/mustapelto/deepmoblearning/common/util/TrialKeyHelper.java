@@ -53,7 +53,7 @@ public class TrialKeyHelper {
 
         int tier = NBTHelper.getInteger(trialKey, NBT_TIER, -1);
 
-        return MetadataManager.getDataModelTierDataByTier(tier);
+        return MetadataManager.getDataModelTierData(tier);
     }
 
     private static void convertNBT(ItemStack stack) {

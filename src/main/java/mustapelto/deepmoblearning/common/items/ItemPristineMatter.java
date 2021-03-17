@@ -20,7 +20,7 @@ public class ItemPristineMatter extends ItemBase {
     private final MetadataDataModel metadata;
 
     public ItemPristineMatter(MetadataDataModel metadata) {
-        super(metadata.getPristineMatterRegistryName().getResourcePath(), 64, DMLRHelper.isModLoaded(metadata.getModID()));
+        super(metadata.getPristineMatterRegistryID(), 64, DMLRHelper.isModLoaded(metadata.getModID()));
         this.metadata = metadata;
     }
 

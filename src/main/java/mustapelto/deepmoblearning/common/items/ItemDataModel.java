@@ -24,7 +24,7 @@ public class ItemDataModel extends ItemBase {
     private final MetadataDataModel metadata;
 
     public ItemDataModel(MetadataDataModel metadata) {
-        super(metadata.getDataModelRegistryName().getResourcePath(), 1, DMLRHelper.isModLoaded(metadata.getModID()));
+        super(metadata.getDataModelRegistryID(), 1, DMLRHelper.isModLoaded(metadata.getModID()));
         this.metadata = metadata;
     }
 

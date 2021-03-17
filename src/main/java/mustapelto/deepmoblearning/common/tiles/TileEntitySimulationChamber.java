@@ -61,8 +61,6 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
     @Override
     protected void finishCrafting() {
-        super.finishCrafting();
-
         ItemStack dataModel = getDataModel();
 
         DataModelHelper.getDataModelMetadata(dataModel).ifPresent(metadata -> {
@@ -78,6 +76,8 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
                 outputPristine.setStackInSlot(0, newPristineMatterOutput);
             }
         });
+
+        super.finishCrafting();
     }
 
     @Override

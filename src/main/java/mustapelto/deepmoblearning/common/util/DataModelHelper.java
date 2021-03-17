@@ -51,7 +51,20 @@ public class DataModelHelper {
     }
 
     public static int getTier(ItemStack stack) {
-        return ItemStackHelper.isDataModel(stack) ? NBTHelper.getInteger(stack, NBT_TIER) : 0;
+        if (!ItemStackHelper.isDataModel(stack))
+            return -1;
+
+        int tier = NBTHelper.getInteger(stack, NBT_TIER);
+        int minTier = MetadataManager.getMinDataModelTier();
+        int maxTier = MetadataManager.getMaxDataModelTier();
+        if (tier < minTier) {
+            tier = minTier;
+            setTierLevel(stack, tier);
+        } else if (tier > maxTier) {
+            tier = maxTier;
+            setTierLevel(stack, tier);
+        }
+        return tier;
     }
 
     public static void setTierLevel(ItemStack stack, int level) {
@@ -96,7 +109,7 @@ public class DataModelHelper {
 
     public static Optional<MetadataDataModelTier> getTierData(ItemStack stack, boolean nextTier) {
         int tier = getTier(stack) + (nextTier ? 1 : 0);
-        return MetadataManager.getDataModelTierDataByTier(tier);
+        return MetadataManager.getDataModelTierData(tier);
     }
 
     public static Optional<MetadataDataModelTier> getTierData(ItemStack stack) {
@@ -110,6 +123,10 @@ public class DataModelHelper {
      */
     public static boolean isMaxTier(ItemStack stack) {
         return getTier(stack) >= MetadataManager.getMaxDataModelTier();
+    }
+
+    private static boolean isMinTier(ItemStack stack) {
+        return getTier(stack) <= MetadataManager.getMinDataModelTier();
     }
 
     /**
@@ -246,12 +263,23 @@ public class DataModelHelper {
 
         if (currentData >= requiredData) {
             setCurrentTierDataCount(stack, currentData - requiredData); // extra data carries over to higher tier
-            setTierLevel(stack, getTier(stack) + 1);
-
+            increaseTier(stack);
             return true;
         }
 
         return false;
+    }
+
+    private static void increaseTier(ItemStack stack) {
+        int currentTier = getTier(stack);
+        int nextTier = MetadataManager.getNextDataModelTier(currentTier);
+        setTierLevel(stack, nextTier);
+    }
+
+    private static void decreaseTier(ItemStack stack) {
+        int currentTier = getTier(stack);
+        int prevTier = MetadataManager.getPrevDataModelTier(currentTier);
+        setTierLevel(stack, prevTier);
     }
 
     //
@@ -263,15 +291,14 @@ public class DataModelHelper {
                 NonNullList<ItemStack> deepLearnerContents = ItemDeepLearner.getContainedItems(inventoryStack);
                 for (ItemStack modelStack : deepLearnerContents) {
                     if (ItemStackHelper.isDataModel(modelStack)) {
-                        int tier = getTier(modelStack);
                         switch (action) {
                             case DECREASE_TIER:
-                                if (tier > 0)
-                                    setTierLevel(modelStack, tier - 1);
+                                if (!isMinTier(modelStack))
+                                    decreaseTier(modelStack);
                                 break;
                             case INCREASE_TIER:
                                 if (!isMaxTier(modelStack))
-                                    setTierLevel(modelStack, tier + 1);
+                                    increaseTier(modelStack);
                                 break;
                             case INCREASE_KILLS:
                                 if (!isMaxTier(modelStack))

@@ -73,8 +73,6 @@ public class MetadataDataModel extends Metadata {
 
     // Calculated data
     private final String defaultRegistryString; // [modID]:[metadataID]
-    private final ResourceLocation dataModelRegistryName; // deepmoblearning:data_model_[metadataID]
-    private final ResourceLocation pristineMatterRegistryName; // deepmoblearning:pristine_matter_[metadataID]
     private ImmutableList<ResourceLocation> associatedMobs; // List of mobs that increase Model data.
     private ImmutableList<ItemStack> lootItems; // List of actual ItemStacks that can be selected as "loot"
     private ItemStack livingMatter; // Living Matter data associated with this Data Model
@@ -91,8 +89,6 @@ public class MetadataDataModel extends Metadata {
                 .orElse(DEFAULT_MOD_ID);
 
         defaultRegistryString = DMLRHelper.getRegistryString(modID, dataModelID);
-        dataModelRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "data_model_" + dataModelID);
-        pristineMatterRegistryName = new ResourceLocation(DMLConstants.ModInfo.ID, "pristine_matter_" + dataModelID);
 
         displayName = getString(data, DISPLAY_NAME)
                 .orElse(StringHelper.uppercaseFirst(dataModelID));
@@ -140,7 +136,7 @@ public class MetadataDataModel extends Metadata {
 
         // Get associated Living Matter
         livingMatter = DMLRegistry.getLivingMatter(livingMatterString);
-        pristineMatter = DMLRegistry.getPristineMatter(pristineMatterRegistryName.getResourcePath());
+        pristineMatter = DMLRegistry.getPristineMatter(dataModelID);
 
         trialData.finalizeData();
     }
@@ -206,20 +202,12 @@ public class MetadataDataModel extends Metadata {
         return deepLearnerDisplayData;
     }
 
-    public ResourceLocation getDataModelRegistryName() {
-        return dataModelRegistryName;
-    }
-
-    public ResourceLocation getPristineMatterRegistryName() {
-        return pristineMatterRegistryName;
-    }
-
     public ResourceLocation getDataModelTexture() {
         try {
             // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
-            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + dataModelRegistryName.getResourcePath() + ".png");
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + getDataModelRegistryID() + ".png");
             Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
-            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + dataModelRegistryName.getResourcePath());
+            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + getDataModelRegistryID());
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Data Model texture not found for entry {}:{}. Using default texture.", modID, dataModelID);
@@ -230,9 +218,9 @@ public class MetadataDataModel extends Metadata {
     public ResourceLocation getPristineMatterTexture() {
         try {
             // Will throw FileNotFoundException if texture file doesn't exist in mod jar or resource packs
-            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + pristineMatterRegistryName.getResourcePath() + ".png");
+            ResourceLocation locationFromId = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/items/" + getPristineMatterRegistryID() + ".png");
             Minecraft.getMinecraft().getResourceManager().getAllResources(locationFromId);
-            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + pristineMatterRegistryName.getResourcePath());
+            return new ResourceLocation(DMLConstants.ModInfo.ID, "items/" + getPristineMatterRegistryID());
         } catch (IOException e) {
             // File not found -> use default model and output info
             DMLRelearned.logger.info("Pristine Matter texture not found for entry {}:{}. Using default texture.", modID, dataModelID);
@@ -293,7 +281,7 @@ public class MetadataDataModel extends Metadata {
         else
             result = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
 
-        result.setRegistryName(dataModelRegistryName);
+        result.setRegistryName(output.getItem().getRegistryName());
         return Optional.of(result);
     }
 

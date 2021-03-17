@@ -139,7 +139,7 @@ deepmoblearning.simulation_chamber.error_text.model_cannot_simulate_1=Invalid am
 deepmoblearning.simulation_chamber.error_text.model_cannot_simulate_2=Please insert valid model
 deepmoblearning.simulation_chamber.error_text.no_polymer=Missing polymer medium
 deepmoblearning.simulation_chamber.error_text.no_energy=System energy levels critical
-deepmoblearning.simulation_chamber.error_text.output_full=Living or Pristine Matter output buffer full
+deepmoblearning.simulation_chamber.error_text.output_full=Output buffer full
 
 deepmoblearning.simulation_chamber.redstone_deactivated_1=System deactivated
 deepmoblearning.simulation_chamber.redstone_deactivated_2=by redstone signal

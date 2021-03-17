@@ -2,6 +2,7 @@ package mustapelto.deepmoblearning.common.metadata;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import mustapelto.deepmoblearning.DMLConstants;
@@ -27,17 +28,11 @@ public class MetadataManager {
 
     private static File configDir;
 
-    private static final MetadataStore<MetadataDataModel> dataModelStore;
-    private static final MetadataStore<MetadataDataModelTier> dataModelTierStore;
-    private static final MetadataStore<MetadataLivingMatter> livingMatterStore;
+    private static ImmutableMap<String, MetadataDataModel> dataModelStore;
+    private static ImmutableSortedMap<Integer, MetadataDataModelTier> dataModelTierStore;
+    private static ImmutableMap<String, MetadataLivingMatter> livingMatterStore;
 
     private static ImmutableList<JsonObject> livingMatterRecipesJson;
-
-    static {
-        dataModelStore = new MetadataStore<>(MetadataDataModel.class);
-        dataModelTierStore = new MetadataStore<>(MetadataDataModelTier.class);
-        livingMatterStore = new MetadataStore<>(MetadataLivingMatter.class);
-    }
 
     public static void init(FMLPreInitializationEvent event) throws IOException {
         DMLRelearned.logger.info("Loading data from JSON config files...");
@@ -49,15 +44,15 @@ public class MetadataManager {
 
         copyConfigFile(DATA_MODEL_FILE)
                 .flatMap(MetadataManager::readConfigFile)
-                .ifPresent(dataModelStore::init);
+                .ifPresent(MetadataManager::initDataModelStore);
 
         copyConfigFile(DATA_MODEL_TIER_FILE)
                 .flatMap(MetadataManager::readConfigFile)
-                .ifPresent(dataModelTierStore::init);
+                .ifPresent(MetadataManager::initDataModelTierStore);
 
         copyConfigFile(LIVING_MATTER_FILE)
                 .flatMap(MetadataManager::readConfigFile)
-                .ifPresent(livingMatterStore::init);
+                .ifPresent(MetadataManager::initLivingMatterStore);
 
         copyConfigFile(LIVING_MATTER_RECIPES_FILE)
                 .flatMap(MetadataManager::readConfigFile)
@@ -66,9 +61,9 @@ public class MetadataManager {
 
     public static void finalizeData() {
         DMLRelearned.logger.info("Finalizing config data...");
-        dataModelStore.finalizeData();
-        dataModelTierStore.finalizeData();
-        livingMatterStore.finalizeData();
+        dataModelStore.values().forEach(MetadataDataModel::finalizeData);
+        dataModelTierStore.values().forEach(MetadataDataModelTier::finalizeData);
+        livingMatterStore.values().forEach(MetadataLivingMatter::finalizeData);
     }
 
     //
@@ -122,6 +117,101 @@ public class MetadataManager {
     }
 
     //
+    // JSON parse
+    //
+
+    private static void initDataModelStore(JsonArray json) {
+        ImmutableMap.Builder<String, MetadataDataModel> builder = ImmutableMap.builder();
+
+        for (int i = 0; i < json.size(); i++) {
+            JsonElement entry = json.get(i);
+            if (!entry.isJsonObject()) {
+                DMLRelearned.logger.warn(getInvalidEntryString(i, "Data Model"));
+                continue;
+            }
+
+            MetadataDataModel metadata;
+            try {
+                metadata = new MetadataDataModel(entry.getAsJsonObject());
+            } catch (IllegalArgumentException e) {
+                DMLRelearned.logger.warn(getInvalidObjectString(i, "Data Model"));
+                continue;
+            }
+            builder.put(metadata.getID(), metadata);
+        }
+
+        dataModelStore = builder.build();
+    }
+
+    private static void initDataModelTierStore(JsonArray json) {
+        ImmutableSortedMap.Builder<Integer, MetadataDataModelTier> builder = ImmutableSortedMap.naturalOrder();
+
+        for (int i = 0; i < json.size(); i++) {
+            JsonElement entry = json.get(i);
+            if (!entry.isJsonObject()) {
+                DMLRelearned.logger.warn(getInvalidEntryString(i, "Data Model Tier"));
+                continue;
+            }
+
+            MetadataDataModelTier metadata;
+            try {
+                metadata = new MetadataDataModelTier(entry.getAsJsonObject());
+            } catch (IllegalArgumentException e) {
+                DMLRelearned.logger.warn(getInvalidObjectString(i, "Data Model Tier"));
+                continue;
+            }
+            builder.put(metadata.getTier(), metadata);
+        }
+
+        dataModelTierStore = builder.build();
+    }
+
+    private static void initLivingMatterStore(JsonArray json) {
+        ImmutableMap.Builder<String, MetadataLivingMatter> builder = ImmutableMap.builder();
+
+        for (int i = 0; i < json.size(); i++) {
+            JsonElement entry = json.get(i);
+            if (!entry.isJsonObject()) {
+                DMLRelearned.logger.warn(getInvalidEntryString(i, "Living Matter"));
+                continue;
+            }
+
+            MetadataLivingMatter metadata;
+            try {
+                metadata = new MetadataLivingMatter(entry.getAsJsonObject());
+            } catch (IllegalArgumentException e) {
+                DMLRelearned.logger.warn(getInvalidObjectString(i, "Living Matter"));
+                continue;
+            }
+            builder.put(metadata.getID(), metadata);
+        }
+
+        livingMatterStore = builder.build();
+    }
+
+    private static void readLivingMatterRecipes(JsonArray array) {
+        ImmutableList.Builder<JsonObject> builder = ImmutableList.builder();
+
+        for (int i = 0; i < array.size(); i++) {
+            JsonElement entry = array.get(i);
+            if (entry.isJsonObject())
+                builder.add(entry.getAsJsonObject());
+            else
+                DMLRelearned.logger.warn(getInvalidEntryString(i, "Living Matter Recipe"));
+        }
+
+        livingMatterRecipesJson = builder.build();
+    }
+
+    private static String getInvalidEntryString(int index, String configName) {
+        return String.format("Invalid entry at index %s in %s config (root array elements must be objects)", index, configName);
+    }
+
+    private static String getInvalidObjectString(int index, String configName) {
+        return String.format("Invalid object structure at index %s in %s config (invalid or missing keys)", index, configName);
+    }
+
+    //
     // Data access (General)
     //
 
@@ -129,9 +219,9 @@ public class MetadataManager {
         ImmutableList.Builder<IRecipe> builder = ImmutableList.builder();
 
         // Get Data Model recipes from metadata
-        dataModelStore.data.forEach((k, v) -> {
-            if (DMLRHelper.isModLoaded(v.getModID()))
-                v.getCraftingRecipe().ifPresent(builder::add);
+        dataModelStore.values().forEach(entry -> {
+            if (DMLRHelper.isModLoaded(entry.getModID()))
+                entry.getCraftingRecipe().ifPresent(builder::add);
         });
 
         // Construct Living Matter recipes from JSON data
@@ -159,17 +249,18 @@ public class MetadataManager {
     //
 
     public static ImmutableList<MetadataDataModel> getDataModelMetadataList() {
-        return dataModelStore.getMetadataList();
+        return dataModelStore.values().asList();
     }
 
     public static Optional<MetadataDataModel> getDataModelMetadata(String id) {
-        return dataModelStore.get(id);
+        MetadataDataModel entry = dataModelStore.get(id);
+        return (entry != null) ? Optional.of(entry) : Optional.empty();
     }
 
     public static ImmutableMap<String, ResourceLocation> getDataModelTextures() {
         ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 
-        dataModelStore.data.forEach((k, v) -> {
+        dataModelStore.forEach((k, v) -> {
             ResourceLocation dataModelTexture = v.getDataModelTexture();
             if (!dataModelTexture.equals(DMLConstants.DefaultModels.DATA_MODEL))
                 builder.put(k, dataModelTexture);
@@ -181,7 +272,7 @@ public class MetadataManager {
     public static ImmutableMap<String, ResourceLocation> getPristineMatterTextures() {
         ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 
-        dataModelStore.data.forEach((k, v) -> {
+        dataModelStore.forEach((k, v) -> {
             ResourceLocation pristineMatterTexture = v.getPristineMatterTexture();
             if (!pristineMatterTexture.equals(DMLConstants.DefaultModels.PRISTINE_MATTER))
                 builder.put(k, pristineMatterTexture);
@@ -193,9 +284,9 @@ public class MetadataManager {
     public static ImmutableList<String> getAvailableTrials() {
         ImmutableList.Builder<String> builder = ImmutableList.builder();
 
-        dataModelStore.data.forEach((k, v) -> {
-            if (v.getTrialData().hasEntity())
-                builder.add(v.getDisplayName());
+        dataModelStore.values().forEach(entry -> {
+            if (entry.getTrialData().hasEntity())
+                builder.add(entry.getDisplayName());
         });
 
         return builder.build();
@@ -205,12 +296,35 @@ public class MetadataManager {
     // Data Access (Data Model Tiers)
     //
 
-    public static Optional<MetadataDataModelTier> getDataModelTierDataByTier(int tier) {
-        return dataModelTierStore.get(String.valueOf(tier));
+    public static Optional<MetadataDataModelTier> getDataModelTierData(int tier) {
+        MetadataDataModelTier entry = dataModelTierStore.get(tier);
+        return (entry != null) ? Optional.of(entry) : Optional.empty();
+    }
+
+    public static int getMinDataModelTier() {
+        return (!dataModelTierStore.isEmpty()) ?
+                dataModelTierStore.firstKey() :
+                -1;
     }
 
     public static int getMaxDataModelTier() {
-        return dataModelTierStore.size() - 1;
+        return (!dataModelTierStore.isEmpty()) ?
+                dataModelTierStore.lastKey() :
+                -1;
+    }
+
+    public static int getNextDataModelTier(int current) {
+        if (dataModelTierStore.isEmpty())
+            return -1;
+        Integer next = dataModelTierStore.higherKey(current);
+        return (next != null) ? next : dataModelTierStore.lastKey();
+    }
+
+    public static int getPrevDataModelTier(int current) {
+        if (dataModelTierStore.isEmpty())
+            return -1;
+        Integer next = dataModelTierStore.lowerKey(current);
+        return (next != null) ? next : dataModelTierStore.firstKey();
     }
 
     //
@@ -218,36 +332,18 @@ public class MetadataManager {
     //
 
     public static ImmutableList<MetadataLivingMatter> getLivingMatterMetadataList() {
-        return livingMatterStore.getMetadataList();
-    }
-
-    public static Optional<MetadataLivingMatter> getLivingMatterMetadata(String id) {
-        return livingMatterStore.get(id);
+        return livingMatterStore.values().asList();
     }
 
     public static ImmutableMap<String, ResourceLocation> getLivingMatterTextures() {
         ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 
-        livingMatterStore.data.forEach((k, v) -> {
+        livingMatterStore.forEach((k, v) -> {
             ResourceLocation livingMatterTexture = v.getLivingMatterTexture();
             if (!livingMatterTexture.equals(DMLConstants.DefaultModels.LIVING_MATTER))
                 builder.put(k, livingMatterTexture);
         });
 
         return builder.build();
-    }
-
-    private static void readLivingMatterRecipes(JsonArray array) {
-        ImmutableList.Builder<JsonObject> builder = ImmutableList.builder();
-
-        for (int i = 0; i < array.size(); i++) {
-            JsonElement entry = array.get(i);
-            if (entry.isJsonObject())
-                builder.add(entry.getAsJsonObject());
-            else
-                DMLRelearned.logger.warn("Invalid entry at index {} in Data Model config (root array elements must be objects)", i);
-        }
-
-        livingMatterRecipesJson = builder.build();
     }
 }

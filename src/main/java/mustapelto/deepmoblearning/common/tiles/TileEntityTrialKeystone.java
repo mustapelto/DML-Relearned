@@ -2,28 +2,45 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.common.inventory.ContainerTileEntity;
+import mustapelto.deepmoblearning.common.inventory.ContainerTrialKeystone;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerTrialKey;
+import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
+import mustapelto.deepmoblearning.common.network.MessageStartTrial;
+import mustapelto.deepmoblearning.common.trials.AttunementData;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.PlayerHelper;
 import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public class TileEntityTrialKeystone extends TileEntityBase implements ITickable {
+public class TileEntityTrialKeystone extends TileEntityContainer implements ITickable {
     private final ItemHandlerTrialKey trialKey = new ItemHandlerTrialKey();
     private final Set<EntityPlayerMP> participants = Collections.newSetFromMap(new WeakHashMap<>());
 
     private ItemStack activeTrialKey = ItemStack.EMPTY;
+    private AttunementData activeTrialData;
+    private int currentWave;
+    private int mobsDefeated;
+    private int mobsSpawned;
+
 
     @Override
     public void update() {
@@ -40,28 +57,44 @@ public class TileEntityTrialKeystone extends TileEntityBase implements ITickable
     // GUI called functions
     //
 
-    public void tryStartTrial() {
-        if (!hasTrialKey() || !isTrialAreaClear())
+    public void startTrial() {
+        if (!canStartTrial())
             return;
 
-        activeTrialKey = getTrialKey();
-        if (!TrialKeyHelper.isAttuned(activeTrialKey))
-            return;
+        if (world.isRemote)
+            DMLPacketHandler.sendToServer(new MessageStartTrial(this));
+        else {
+            markDirty();
+            activeTrialKey = getTrialKey().copy();
+            trialKey.setStackInSlot(0, ItemStack.EMPTY);
+            activeTrialData = TrialKeyHelper.getAttunement(activeTrialKey).orElse(null);
+            if (activeTrialData == null) // Invalid Trial Key -> abort Trial
+                stopTrial();
 
-        participants.addAll(
-                PlayerHelper.getLivingPlayersInArea(
-                        world,
-                        pos,
-                        DMLConstants.TrialKeystone.TRIAL_AREA_RADIUS,
-                        DMLConstants.TrialKeystone.TRIAL_AREA_HEIGHT,
-                        0
-                )
-        );
+            participants.addAll(
+                    PlayerHelper.getLivingPlayersInArea(
+                            world,
+                            pos,
+                            DMLConstants.TrialKeystone.TRIAL_AREA_RADIUS,
+                            DMLConstants.TrialKeystone.TRIAL_AREA_HEIGHT,
+                            0
+                    )
+            );
+        }
+    }
+
+    public void stopTrial() {
+        setDefaultTrialState();
     }
 
     //
     // Inventory
     //
+
+    @Override
+    public ContainerTileEntity getContainer(InventoryPlayer inventoryPlayer) {
+        return new ContainerTrialKeystone(this, inventoryPlayer);
+    }
 
     public ItemStack getTrialKey() {
         return trialKey.getStackInSlot(0);
@@ -72,7 +105,7 @@ public class TileEntityTrialKeystone extends TileEntityBase implements ITickable
     }
 
     //
-    // Trial conditions
+    // Trial state and conditions
     //
 
     public boolean isTrialAreaClear() {
@@ -110,6 +143,18 @@ public class TileEntityTrialKeystone extends TileEntityBase implements ITickable
         return !activeTrialKey.isEmpty();
     }
 
+    private boolean canStartTrial() {
+        return hasTrialKey() && TrialKeyHelper.isAttuned(getTrialKey()) && !isTrialActive() && isTrialAreaClear();
+    }
+
+    public int getCurrentWave() {
+        return currentWave;
+    }
+
+    public int getLastWave() {
+        return activeTrialData != null ? activeTrialData.getMaxWave() : 0;
+    }
+
     //
     // Trial actions
     //
@@ -138,11 +183,112 @@ public class TileEntityTrialKeystone extends TileEntityBase implements ITickable
     }
 
     //
-    // Server/Client sync
+    // RENDER
     //
 
     @Override
-    public void handleUpdateData(ByteBuf buf) {
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(getPos(), getPos().add(1, 2, 1));
+    }
 
+
+    //
+    // SERVER/CLIENT SYNC
+    //
+
+
+    @Override
+    public ByteBuf getUpdateData() {
+        return super.getUpdateData();
+    }
+
+    //
+    // CAPABILITIES
+    //
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) ||
+                super.hasCapability(capability, facing);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(trialKey);
+
+        return super.getCapability(capability, facing);
+    }
+
+    //
+    // NBT WRITE/READ
+    //
+
+    // NBT Tag Names
+    private static final String NBT_TRIAL_KEY = "trialKey";
+    private static final String NBT_TRIAL_STATE = "trialState";
+    private static final String NBT_ACTIVE_TRIAL_KEY = "activeTrialKey";
+    private static final String NBT_CURRENT_WAVE = "currentWave";
+    private static final String NBT_MOBS_DEFEATED = "mobsDefeated";
+
+    // Legacy NBT Tag Names
+    private static final String NBT_LEGACY_TRIAL_KEY = "inventory";
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+
+        NBTTagCompound inventory = new NBTTagCompound();
+        inventory.setTag(NBT_TRIAL_KEY, trialKey.serializeNBT());
+        compound.setTag(NBT_INVENTORY, inventory);
+
+        NBTTagCompound trialState = new NBTTagCompound();
+        NBTTagCompound activeTrialKeyNBT = new NBTTagCompound();
+        activeTrialKey.writeToNBT(activeTrialKeyNBT);
+        trialState.setTag(NBT_ACTIVE_TRIAL_KEY, activeTrialKeyNBT);
+        compound.setTag(NBT_TRIAL_STATE, trialState);
+
+        return compound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+
+        if (isLegacyNBT(compound)) {
+            // Original DML tag -> read Trial Key from legacy inventory tag and set Trial State to default values
+            trialKey.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_TRIAL_KEY));
+            setDefaultTrialState();
+        } else {
+            // DML:Relearned tag -> use new (nested) tag names
+            NBTTagCompound inventory = compound.getCompoundTag(NBT_INVENTORY);
+            trialKey.deserializeNBT(inventory.getCompoundTag(NBT_TRIAL_KEY));
+            readTrialStateFromNBT(compound.getCompoundTag(NBT_TRIAL_STATE));
+        }
+    }
+
+    private void readTrialStateFromNBT(NBTTagCompound compound) {
+        currentWave = compound.getInteger(NBT_CURRENT_WAVE);
+        mobsDefeated = compound.getInteger(NBT_MOBS_DEFEATED);
+        // If world is closed while Trial is running, already spawned but not defeated mobs will despawn. We can get them back by resetting the count to the number of defeated mobs.
+        mobsSpawned = mobsDefeated;
+
+        activeTrialKey = new ItemStack(compound.getCompoundTag(NBT_ACTIVE_TRIAL_KEY));
+        activeTrialData = TrialKeyHelper.getAttunement(activeTrialKey).orElse(null);
+        if (activeTrialData == null)
+            stopTrial();
+    }
+
+    private void setDefaultTrialState() {
+        activeTrialKey = ItemStack.EMPTY;
+        activeTrialData = null;
+        currentWave = -1;
+        mobsDefeated = 0;
+        mobsSpawned = 0;
+    }
+
+    private static boolean isLegacyNBT(NBTTagCompound nbt) {
+        return !nbt.hasKey(NBT_TRIAL_STATE);
     }
 }

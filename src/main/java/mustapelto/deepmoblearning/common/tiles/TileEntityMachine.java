@@ -2,12 +2,10 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
-import mustapelto.deepmoblearning.common.inventory.ContainerMachine;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageCraftingStateToClient;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -16,7 +14,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nullable;
 
-public abstract class TileEntityMachine extends TileEntityBase implements ITickable {
+public abstract class TileEntityMachine extends TileEntityContainer implements ITickable {
     // Energy
     protected final DMLEnergyStorage energyStorage;
 
@@ -122,12 +120,6 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     public boolean isCrafting() {
         return crafting;
     }
-
-    //
-    // Inventory
-    //
-
-    public abstract ContainerMachine getContainer(InventoryPlayer inventoryPlayer);
 
     //
     // Energy
@@ -266,6 +258,19 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
     // NBT Write / Read
     //
 
+    private static final String NBT_REDSTONE = "redstone"; // Redstone state subtag
+    private static final String NBT_REDSTONE_LEVEL = "level";
+    private static final String NBT_REDSTONE_POWERED = "powered";
+    private static final String NBT_REDSTONE_MODE = "mode";
+
+    protected static final String NBT_CRAFTING = "crafting"; // Crafting state subtag
+    private static final String NBT_IS_CRAFTING = "isCrafting"; // Old system uses same tag, only not nested
+    private static final String NBT_CRAFTING_PROGRESS = "progress";
+
+    // Tag names from old mod, used for backwards compatibility
+    private static final String NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER = "simulationProgress";
+    private static final String NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB = "crafingProgress"; // SIC!
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
@@ -317,19 +322,4 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
                 nbt.hasKey(NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB) ||
                 nbt.hasKey(NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER);
     }
-
-    private static final String NBT_REDSTONE = "redstone"; // Redstone state subtag
-    private static final String NBT_REDSTONE_LEVEL = "level";
-    private static final String NBT_REDSTONE_POWERED = "powered";
-    private static final String NBT_REDSTONE_MODE = "mode";
-
-    protected static final String NBT_CRAFTING = "crafting"; // Crafting state subtag
-    private static final String NBT_IS_CRAFTING = "isCrafting"; // Old system uses same tag, only not nested
-    private static final String NBT_CRAFTING_PROGRESS = "progress";
-
-    protected static final String NBT_INVENTORY = "inventory"; // Inventory contents subtag (only used by subclasses)
-
-    // Tag names from old mod, used for backwards compatibility
-    private static final String NBT_LEGACY_CRAFTING_PROGRESS_SIM_CHAMBER = "simulationProgress";
-    private static final String NBT_LEGACY_CRAFTING_PROGRESS_LOOT_FAB = "crafingProgress"; // SIC!
 }

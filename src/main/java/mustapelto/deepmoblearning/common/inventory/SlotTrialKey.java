@@ -1,6 +1,6 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -12,7 +12,7 @@ public class SlotTrialKey extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return ItemStackHelper.isTrialKey(stack);
+        return TrialKeyHelper.isAttuned(stack);
     }
 
     @Override

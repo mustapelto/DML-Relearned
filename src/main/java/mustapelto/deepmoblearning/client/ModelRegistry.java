@@ -19,16 +19,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Objects;
+
 @Mod.EventBusSubscriber(Side.CLIENT)
-public class RenderRegistry {
+public class ModelRegistry {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         DMLRelearned.logger.info("Registering Models...");
         ModelLoaderRegistry.registerLoader(ModelDataModel.LoaderDataModel.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelPristineMatter.LoaderPristineMatter.INSTANCE);
         ModelLoaderRegistry.registerLoader(ModelLivingMatter.LoaderLivingMatter.INSTANCE);
-        DMLRegistry.registeredItems.forEach(RenderRegistry::registerModel);
-        DMLRegistry.registeredBlocks.forEach(block -> registerModel(Item.getItemFromBlock(block), block.getRegistryName()));
+        DMLRegistry.registeredItems.forEach(ModelRegistry::registerModel);
+        DMLRegistry.registeredBlocks.forEach(block -> registerModel(Item.getItemFromBlock(block), Objects.requireNonNull(block.getRegistryName())));
     }
 
     private static void registerModel(Item item) {

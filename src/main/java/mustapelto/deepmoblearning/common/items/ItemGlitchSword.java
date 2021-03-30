@@ -49,7 +49,7 @@ public class ItemGlitchSword extends ItemSword {
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_2"));
         tooltip.add(TextFormatting.GOLD + I18n.format("deepmoblearning.glitch_sword.tooltip_3"));
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_4"));
-        tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_5" + TextFormatting.RESET));
+        tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_5") + TextFormatting.RESET);
 
         String damage = TextFormatting.AQUA + String.valueOf(getPermanentWeaponDamage(stack)) + TextFormatting.RESET;
         tooltip.add(I18n.format("deepmoblearning.glitch_sword.tooltip_6", damage, DMLConstants.GlitchSword.DAMAGE_BONUS_MAX));

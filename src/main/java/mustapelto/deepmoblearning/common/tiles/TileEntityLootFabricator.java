@@ -108,7 +108,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
 
     @Override
-    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
+    public ContainerTileEntity getContainer(InventoryPlayer inventoryPlayer) {
         return new ContainerLootFabricator(this, inventoryPlayer);
     }
 

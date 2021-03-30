@@ -1,8 +1,7 @@
 package mustapelto.deepmoblearning.common.blocks;
 
-import mustapelto.deepmoblearning.DMLConstants;
-import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import mustapelto.deepmoblearning.common.tiles.CraftingState;
+import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -17,7 +16,7 @@ public abstract class BlockMachine extends BlockTileEntity {
     private static final PropertyEnum<CraftingState> CRAFTING_STATE = PropertyEnum.create("state", CraftingState.class);
 
     public BlockMachine(String name) {
-        super(name, Material.ROCK, DMLConstants.Gui.IDs.MACHINE);
+        super(name, Material.ROCK);
         setHardness(4f);
         setResistance(10f);
         setDefaultState(super.getDefaultState().withProperty(CRAFTING_STATE, CraftingState.IDLE));

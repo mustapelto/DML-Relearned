@@ -4,15 +4,18 @@ import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.LootFabricator.*;
+import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.PLAYER_INVENTORY;
+import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.INPUT_SLOT;
+import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.OUTPUT_FIRST_SLOT;
+import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.OUTPUT_SLOT_SIDE_LENGTH;
 
-public class ContainerLootFabricator extends ContainerMachine {
+public class ContainerLootFabricator extends ContainerTileEntity {
     public ContainerLootFabricator(TileEntityLootFabricator tileEntity, InventoryPlayer inventoryPlayer) {
         super(tileEntity, inventoryPlayer, PLAYER_INVENTORY.X, PLAYER_INVENTORY.Y);
     }
 
     @Override
-    protected void addMachineInventory(IItemHandler inventory) {
+    protected void addTileEntityInventory(IItemHandler inventory) {
         addSlotToContainer(new SlotPristineMatter(inventory, 0, INPUT_SLOT.X, INPUT_SLOT.Y));
 
         for (int row = 0; row < 4; row++) {

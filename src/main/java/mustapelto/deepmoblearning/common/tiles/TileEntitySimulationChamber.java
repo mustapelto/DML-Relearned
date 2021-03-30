@@ -116,7 +116,7 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
 
 
     @Override
-    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
+    public ContainerTileEntity getContainer(InventoryPlayer inventoryPlayer) {
         return new ContainerSimulationChamber(this, inventoryPlayer);
     }
 
@@ -233,6 +233,20 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
     // NBT WRITE/READ
     //
 
+    // NBT Tag Names
+    private static final String NBT_INPUT_DATA_MODEL = "inputDataModel";
+    private static final String NBT_INPUT_POLYMER = "inputPolymer";
+    private static final String NBT_OUTPUT_LIVING = "outputLiving";
+    private static final String NBT_OUTPUT_PRISTINE = "outputPristine";
+    private static final String NBT_PRISTINE_SUCCESS = "pristineSuccess";
+
+    // Tag names from old mod, used for backwards compatibility
+    private static final String NBT_LEGACY_INPUT_DATA_MODEL = "dataModel";
+    private static final String NBT_LEGACY_INPUT_POLYMER = "polymer";
+    private static final String NBT_LEGACY_OUTPUT_LIVING = "lOutput";
+    private static final String NBT_LEGACY_OUTPUT_PRISTINE = "pOutput";
+    private static final String NBT_LEGACY_PRISTINE_SUCCESS = "craftSuccess";
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
@@ -280,18 +294,4 @@ public class TileEntitySimulationChamber extends TileEntityMachine {
                 nbt.hasKey(NBT_LEGACY_OUTPUT_PRISTINE) ||
                 nbt.hasKey(NBT_LEGACY_PRISTINE_SUCCESS);
     }
-
-    // NBT Tag Names
-    private static final String NBT_INPUT_DATA_MODEL = "inputDataModel";
-    private static final String NBT_INPUT_POLYMER = "inputPolymer";
-    private static final String NBT_OUTPUT_LIVING = "outputLiving";
-    private static final String NBT_OUTPUT_PRISTINE = "outputPristine";
-    private static final String NBT_PRISTINE_SUCCESS = "pristineSuccess";
-
-    // Tag names from old mod, used for backwards compatibility
-    private static final String NBT_LEGACY_INPUT_DATA_MODEL = "dataModel";
-    private static final String NBT_LEGACY_INPUT_POLYMER = "polymer";
-    private static final String NBT_LEGACY_OUTPUT_LIVING = "lOutput";
-    private static final String NBT_LEGACY_OUTPUT_PRISTINE = "pOutput";
-    private static final String NBT_LEGACY_PRISTINE_SUCCESS = "craftSuccess";
 }

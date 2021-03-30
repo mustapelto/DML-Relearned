@@ -1,8 +1,8 @@
 package mustapelto.deepmoblearning.common.util;
 
-import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
-import mustapelto.deepmoblearning.common.metadata.MetadataDataModelTier;
-import mustapelto.deepmoblearning.common.metadata.MetadataManager;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import mustapelto.deepmoblearning.common.trials.AttunementData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -13,6 +13,8 @@ public class TrialKeyHelper {
     private static final String NBT_ATTUNEMENT = "attunement";
     private static final String NBT_TIER = "tier";
     private static final String NBT_LEGACY_MOB_KEY = "mobKey";
+
+    private static final Table<String, Integer, AttunementData> attunementDataCache = HashBasedTable.create();
 
     public static void attune(ItemStack trialKey, ItemStack dataModel, EntityPlayerMP player) {
         DataModelHelper.getDataModelMetadata(dataModel)
@@ -25,35 +27,30 @@ public class TrialKeyHelper {
     }
 
     public static boolean isAttuned(ItemStack trialKey) {
-        return !getAttunement(trialKey).isEmpty();
+        return getAttunement(trialKey).isPresent();
     }
 
-    public static String getAttunement(ItemStack trialKey) {
+    private static Optional<String> getAttunementString(ItemStack trialKey) {
         if (!ItemStackHelper.isTrialKey(trialKey))
-            return "";
+            return Optional.empty();
 
         if (NBTHelper.hasKey(trialKey, NBT_LEGACY_MOB_KEY))
             convertNBT(trialKey);
 
-        return NBTHelper.getString(trialKey, NBT_ATTUNEMENT, "");
+        String attunement = NBTHelper.getString(trialKey, NBT_ATTUNEMENT);
+        return !attunement.isEmpty() ? Optional.of(attunement) : Optional.empty();
     }
 
-    public static Optional<MetadataDataModel> getAttunementMetadata(ItemStack trialKey) {
-        if (!ItemStackHelper.isTrialKey(trialKey))
-            return Optional.empty();
-
-        String dataModelID = getAttunement(trialKey);
-
-        return MetadataManager.getDataModelMetadata(dataModelID);
-    }
-
-    public static Optional<MetadataDataModelTier> getAttunementTier(ItemStack trialKey) {
-        if (!ItemStackHelper.isTrialKey(trialKey))
-            return Optional.empty();
-
+    public static Optional<AttunementData> getAttunement(ItemStack trialKey) {
+        String mob = getAttunementString(trialKey).orElse("");
         int tier = NBTHelper.getInteger(trialKey, NBT_TIER, -1);
 
-        return MetadataManager.getDataModelTierData(tier);
+        if (!attunementDataCache.contains(mob, tier))
+            AttunementData.create(mob, tier)
+                    .ifPresent(data -> attunementDataCache.put(mob, tier, data));
+
+        AttunementData result = attunementDataCache.get(mob, tier);
+        return (result != null) ? Optional.of(result) : Optional.empty();
     }
 
     private static void convertNBT(ItemStack stack) {

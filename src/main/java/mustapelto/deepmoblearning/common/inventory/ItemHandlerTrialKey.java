@@ -1,6 +1,6 @@
 package mustapelto.deepmoblearning.common.inventory;
 
-import mustapelto.deepmoblearning.common.util.ItemStackHelper;
+import mustapelto.deepmoblearning.common.util.TrialKeyHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
@@ -15,6 +15,6 @@ public class ItemHandlerTrialKey extends ItemHandlerBase {
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        return ItemStackHelper.isTrialKey(stack) ? super.insertItem(slot, stack, simulate) : stack;
+        return TrialKeyHelper.isAttuned(stack) ? super.insertItem(slot, stack, simulate) : stack;
     }
 }

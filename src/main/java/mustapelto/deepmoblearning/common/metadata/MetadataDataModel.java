@@ -299,11 +299,12 @@ public class MetadataDataModel extends Metadata {
             ingredients.add(ingredient);
         }
 
+        ResourceLocation recipeGroup = new ResourceLocation(DMLConstants.ModInfo.ID, "data_models");
         IRecipe result;
         if (isOreRecipe)
-            result = new ShapelessOreRecipe(DMLConstants.Recipes.Groups.DATA_MODELS, output, ingredients);
+            result = new ShapelessOreRecipe(recipeGroup, output, ingredients);
         else
-            result = new ShapelessRecipes(DMLConstants.Recipes.Groups.DATA_MODELS.toString(), output, ingredients);
+            result = new ShapelessRecipes(recipeGroup.toString(), output, ingredients);
 
         result.setRegistryName(output.getItem().getRegistryName());
         return Optional.of(result);
@@ -403,13 +404,6 @@ public class MetadataDataModel extends Metadata {
             if (rewards == null)
                 return ImmutableList.of();
             return rewards;
-        }
-
-        public ItemStack getRewardItem(int index) {
-            if (index >= 0 && index < rewards.size())
-                return rewards.get(index).copy();
-
-            return ItemStack.EMPTY;
         }
     }
 

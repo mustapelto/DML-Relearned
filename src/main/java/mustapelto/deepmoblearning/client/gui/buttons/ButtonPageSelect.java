@@ -3,12 +3,15 @@ package mustapelto.deepmoblearning.client.gui.buttons;
 import com.google.common.collect.ImmutableList;
 import mustapelto.deepmoblearning.DMLConstants;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 
 public class ButtonPageSelect extends ButtonBase {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/buttons/button_page_select.png");
+
     private final Direction direction;
 
     public ButtonPageSelect(int buttonId, int x, int y, Direction direction) {
-        super(buttonId, x, y, 31, 12, DMLConstants.Gui.ButtonTextures.PAGE_SELECT);
+        super(buttonId, x, y, 31, 12, TEXTURE);
         this.direction = direction;
     }
 

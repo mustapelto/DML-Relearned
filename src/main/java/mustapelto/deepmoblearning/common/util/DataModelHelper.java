@@ -122,11 +122,11 @@ public class DataModelHelper {
      * @return true if Data Model tier is equal or greater than config-based max tier
      */
     public static boolean isMaxTier(ItemStack stack) {
-        return getTier(stack) >= MetadataManager.getMaxDataModelTier();
+        return MetadataManager.isMaxDataModelTier(getTier(stack));
     }
 
     private static boolean isMinTier(ItemStack stack) {
-        return getTier(stack) <= MetadataManager.getMinDataModelTier();
+        return MetadataManager.isMinDataModelTier(getTier(stack));
     }
 
     /**

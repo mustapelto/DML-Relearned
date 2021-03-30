@@ -22,6 +22,7 @@ tile.deepmoblearning.infused_ingot_block.name=Glitch Infused Block
 tile.deepmoblearning.machine_casing.name=Soot-covered Machine Casing
 tile.deepmoblearning.simulation_chamber.name=Simulation Chamber
 tile.deepmoblearning.extraction_chamber.name=Loot Fabricator
+tile.deepmoblearning.trial_keystone.name=Trial Keystone
 
 # General
 deepmoblearning.general.more_info=- hold %s for more info
@@ -163,6 +164,26 @@ deepmoblearning.loot_fabricator.error.redstone=Machine disabled by redstone sign
 deepmoblearning.loot_fabricator.error.no_pristine=No Pristine Matter in input buffer
 deepmoblearning.loot_fabricator.error.no_output_selected=No output item selected
 deepmoblearning.loot_fabricator.error.output_full=Output buffer full
+
+# Trial Keystone
+deepmoblearning.trial_keystone.start_button.tooltip=Start Trial
+
+deepmoblearning.trial_keystone.trial_active_1=Trial is currently active
+deepmoblearning.trial_keystone.trial_active_2=Rewards will drop upon completion
+deepmoblearning.trial_keystone.trial_active_3=Current wave: %d/%d
+deepmoblearning.trial_keystone.area_blocked_1=Something is blocking the Trial area
+deepmoblearning.trial_keystone.area_blocked_2=Make sure a 15x15x10 area around
+deepmoblearning.trial_keystone.area_blocked_3=and above the Trial Keystone is
+deepmoblearning.trial_keystone.area_blocked_4=clear and the floor below the
+deepmoblearning.trial_keystone.area_blocked_5=area is made up of full blocks.
+deepmoblearning.trial_keystone.no_trial_key_1=Please insert an attuned Trial Key
+deepmoblearning.trial_keystone.no_trial_key_2=to start a Trial!
+
+deepmoblearning.trial_keystone.trial_type=Trial type:
+deepmoblearning.trial_keystone.tier=Tier:
+deepmoblearning.trial_keystone.waves=Waves:
+deepmoblearning.trial_keystone.rewards=Rewards:
+deepmoblearning.trial_keystone.affixes=Affixes:
 
 # Redstone Mode Button
 deepmoblearning.redstone_mode.always_on=Always on

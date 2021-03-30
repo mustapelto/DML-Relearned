@@ -1,5 +1,6 @@
 package mustapelto.deepmoblearning.common.blocks;
 
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import net.minecraft.block.Block;
@@ -21,20 +22,18 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public abstract class BlockTileEntity extends BlockBase {
     protected static final PropertyDirection FACING = BlockHorizontal.FACING;
-    private final int GUI_ID;
+    private static final int GUI_ID = DMLConstants.Gui.IDs.TILE_ENTITY;
 
     /**
      * @param name     Block id (for internal use)
      * @param material Material the block behaves like
      */
-    protected BlockTileEntity(String name, Material material, int guiId) {
+    protected BlockTileEntity(String name, Material material) {
         super(name, material);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        GUI_ID = guiId;
     }
 
     //
@@ -52,15 +51,20 @@ public abstract class BlockTileEntity extends BlockBase {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileEntity tileEntity = Objects.requireNonNull(worldIn.getTileEntity(pos));
-        IItemHandler inventory = Objects.requireNonNull(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                EntityItem item = new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
-                item.setDefaultPickupDelay();
-                worldIn.spawnEntity(item);
+        if (tileEntity != null) {
+            IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+
+            if (inventory != null) {
+                for (int i = 0; i < inventory.getSlots(); i++) {
+                    ItemStack stack = inventory.getStackInSlot(i);
+                    if (!stack.isEmpty()) {
+                        EntityItem item = new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
+                        item.setDefaultPickupDelay();
+                        worldIn.spawnEntity(item);
+                    }
+                }
             }
         }
 

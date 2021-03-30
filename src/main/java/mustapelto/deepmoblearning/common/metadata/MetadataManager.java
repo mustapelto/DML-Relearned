@@ -301,16 +301,22 @@ public class MetadataManager {
         return (entry != null) ? Optional.of(entry) : Optional.empty();
     }
 
-    public static int getMinDataModelTier() {
-        return (!dataModelTierStore.isEmpty()) ?
-                dataModelTierStore.firstKey() :
-                -1;
+    public static int getMaxDataModelTier() {
+        return dataModelTierStore.isEmpty() ? -1 : dataModelTierStore.lastKey();
     }
 
-    public static int getMaxDataModelTier() {
-        return (!dataModelTierStore.isEmpty()) ?
-                dataModelTierStore.lastKey() :
-                -1;
+    public static boolean isMaxDataModelTier(int tier) {
+        int maxTier = getMaxDataModelTier();
+        return maxTier == -1 || tier >= maxTier;
+    }
+
+    public static int getMinDataModelTier() {
+        return dataModelTierStore.isEmpty() ? -1 : dataModelTierStore.firstKey();
+    }
+
+    public static boolean isMinDataModelTier(int tier) {
+        int minTier = getMinDataModelTier();
+        return minTier == -1 || tier <= minTier;
     }
 
     public static int getNextDataModelTier(int current) {

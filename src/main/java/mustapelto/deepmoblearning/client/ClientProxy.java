@@ -1,20 +1,24 @@
 package mustapelto.deepmoblearning.client;
 
-import mustapelto.deepmoblearning.client.gui.DataOverlay;
+import mustapelto.deepmoblearning.client.gui.GuiDeepLearnerOverlay;
 import mustapelto.deepmoblearning.client.particles.ParticleScalableSmoke;
+import mustapelto.deepmoblearning.client.renderers.TESRTrialKeystone;
 import mustapelto.deepmoblearning.common.ServerProxy;
+import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientProxy extends ServerProxy {
     @Override
     public void registerGuiRenderers() {
-        MinecraftForge.EVENT_BUS.register(new DataOverlay(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(new GuiDeepLearnerOverlay(Minecraft.getMinecraft()));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTrialKeystone.class, new TESRTrialKeystone());
     }
 
     public void spawnSmokeParticle(World world, double x, double y, double z, double mx, double my, double mz, SmokeType type) {

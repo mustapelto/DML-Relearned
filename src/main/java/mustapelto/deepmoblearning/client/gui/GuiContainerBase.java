@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.common.inventory.ContainerBase;
 import net.minecraft.client.Minecraft;
@@ -8,13 +9,15 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.io.IOException;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.PLAYER_INVENTORY_TEXTURE;
-
 public abstract class GuiContainerBase extends GuiContainer {
+    protected static final ResourceLocation PLAYER_INVENTORY_TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/player_inventory.png");
+
     protected final Minecraft mc;
     protected final TextureManager textureManager;
     protected final FontRenderer fontRenderer;
@@ -102,7 +105,7 @@ public abstract class GuiContainerBase extends GuiContainer {
      * @param button GUI button that was pressed.
      * @param mouseButton Mouse button that was pressed.
      */
-    protected void handleButtonPress(ButtonBase button, int mouseButton) {}
+    protected abstract void handleButtonPress(ButtonBase button, int mouseButton);
 
     //
     // DRAWING
@@ -140,5 +143,17 @@ public abstract class GuiContainerBase extends GuiContainer {
         float currentPartial = currentTick + partialTicks;
         deltaTime = currentPartial - lastRedrawTime;
         lastRedrawTime = currentPartial;
+    }
+
+    protected void drawItemStackWithOverlay(ItemStack stack, int x, int y) {
+        int count = stack.getCount();
+        itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+        itemRender.renderItemOverlayIntoGUI(
+                fontRenderer,
+                stack,
+                x,
+                y,
+                count > 1 ? String.valueOf(count) : ""
+        );
     }
 }

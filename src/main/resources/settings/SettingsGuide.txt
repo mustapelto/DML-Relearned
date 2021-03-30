@@ -39,7 +39,7 @@ Object structure:
         "entities": Entity String or array of Entity Strings with optional weight (comma-separated). Default weight: 100.
                     Entities to spawn during a Trial will be randomly selected from this list, according to their weight.
         "spawnDelay": Double. Delay between trial entity spawns. Default: 2.0
-        "rewards": Array of Item Strings. Rewards for completing a Trial.
+        "rewards": Array of Item Strings. Rewards for completing a Trial at max tier.
     }
     "deepLearnerDisplay": Object. Describes what to display in the Deep Learner GUI when this Model is inserted.
     {

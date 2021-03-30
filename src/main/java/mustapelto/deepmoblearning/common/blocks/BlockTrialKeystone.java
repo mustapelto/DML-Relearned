@@ -1,6 +1,5 @@
 package mustapelto.deepmoblearning.common.blocks;
 
-import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -16,9 +15,10 @@ public class BlockTrialKeystone extends BlockTileEntity {
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1d, 0.5d, 1d);
 
     public BlockTrialKeystone() {
-        super("trial_keystone", Material.ROCK, DMLConstants.Gui.IDs.TRIAL_KEYSTONE);
+        super("trial_keystone", Material.ROCK);
         setHardness(4f);
         setResistance(3000f);
+        fullBlock = false;
     }
 
     @SuppressWarnings("deprecation")
@@ -31,5 +31,27 @@ public class BlockTrialKeystone extends BlockTileEntity {
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileEntityTrialKeystone();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+
+        if (tileEntity instanceof TileEntityTrialKeystone)
+            ((TileEntityTrialKeystone) tileEntity).stopTrial();
+
+        super.breakBlock(worldIn, pos, state);
     }
 }

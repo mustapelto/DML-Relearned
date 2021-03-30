@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import mustapelto.deepmoblearning.DMLConstants;
 import mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.DMLConfig.DeepLearnerGuiOverlaySettings.GuiPosition;
@@ -15,21 +16,31 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.DataOverlay.*;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 @EventBusSubscriber(Side.CLIENT)
-public class DataOverlay extends GuiScreen {
+public class GuiDeepLearnerOverlay extends GuiScreen {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_overlay.png");
+
+    private static final int COMPONENT_HEIGHT = 26;
+    private static final int DATA_MODEL_WIDTH = 18;
+    private static final int EXP_BAR_MAX_WIDTH = 89;
+    private static final int EXP_BAR_INNER_HEIGHT = 11;
+    private static final int EXP_BAR_OUTER_HEIGHT = 12;
+    private static final int PADDING_BASE_HORIZONTAL = 5;
+    private static final int PADDING_BASE_VERTICAL = 5;
+
     private final Minecraft mc;
     private final FontRenderer fontRenderer;
 
-    public DataOverlay(Minecraft mc) {
+    public GuiDeepLearnerOverlay(Minecraft mc) {
         this.mc = mc;
         fontRenderer = mc.fontRenderer;
         itemRender = mc.getRenderItem();

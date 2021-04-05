@@ -75,24 +75,8 @@ public abstract class Metadata {
     }
 
     protected static Optional<ImmutableList<String>> getStringList(JsonObject data, String key) {
-        if (!data.has(key))
-            return Optional.empty();
-
-        JsonElement element = data.get(key);
-        if (!element.isJsonArray()) {
-            DMLRelearned.logger.warn(getInvalidString(key));
-            return Optional.empty();
-        }
-
-        JsonArray array = element.getAsJsonArray();
-        if (array.size() == 0)
-            return Optional.of(ImmutableList.of());
-
-        ImmutableList<String> stringList = getStringList(array);
-        if (stringList.isEmpty())
-            return Optional.of(ImmutableList.of());
-        else
-            return Optional.of(stringList);
+        JsonArray array = getArray(data, key).orElse(null);
+        return (array != null) ? Optional.of(getStringList(array)) : Optional.empty();
     }
 
     private static ImmutableList<String> getStringList(JsonArray data) {
@@ -107,6 +91,49 @@ public abstract class Metadata {
         }
 
         return builder.build();
+    }
+
+    protected static Optional<ImmutableList<Integer>> getIntList(JsonObject data, String key) {
+        JsonArray array = getArray(data, key).orElse(null);
+        return (array != null) ? Optional.of(getIntList(array)) : Optional.empty();
+    }
+
+    private static ImmutableList<Integer> getIntList(JsonArray data) {
+        ImmutableList.Builder<Integer> builder = ImmutableList.builder();
+        for (JsonElement element : data) {
+            if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+                DMLRelearned.logger.warn("Invalid entry in JSON array: not a number!");
+                continue;
+            }
+
+            int elementAsInt;
+            try {
+                elementAsInt = element.getAsInt();
+            } catch (ClassCastException e) {
+                DMLRelearned.logger.warn("Invalid entry in JSON array: not an integer!");
+                continue;
+            }
+            builder.add(elementAsInt);
+        }
+
+        return builder.build();
+    }
+
+    private static Optional<JsonArray> getArray(JsonObject data, String key) {
+        if (!data.has(key))
+            return Optional.empty();
+
+        JsonElement element = data.get(key);
+        if (!element.isJsonArray()) {
+            DMLRelearned.logger.warn(getInvalidString(key));
+            return Optional.empty();
+        }
+
+        JsonArray array = element.getAsJsonArray();
+        if (array.size() == 0)
+            return Optional.empty();
+
+        return Optional.of(array);
     }
 
     protected static Optional<JsonObject> getJsonObject(JsonObject data, String key) {

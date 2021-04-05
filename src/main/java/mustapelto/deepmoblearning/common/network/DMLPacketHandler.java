@@ -1,6 +1,7 @@
 package mustapelto.deepmoblearning.common.network;
 
 import mustapelto.deepmoblearning.DMLConstants;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -19,10 +20,12 @@ public class DMLPacketHandler {
         network.registerMessage(MessageLevelUpModel.Handler.class, MessageLevelUpModel.class, id++, Side.SERVER);
         network.registerMessage(MessageUpdateTileEntity.Handler.class, MessageUpdateTileEntity.class, id++, Side.CLIENT);
         network.registerMessage(MessageRequestUpdateTileEntity.Handler.class, MessageRequestUpdateTileEntity.class, id++, Side.SERVER);
-        network.registerMessage(MessageRedstoneModeToServer.Handler.class, MessageRedstoneModeToServer.class, id++, Side.SERVER);
-        network.registerMessage(MessageLootFabOutputItemToServer.Handler.class, MessageLootFabOutputItemToServer.class, id++, Side.SERVER);
-        network.registerMessage(MessageCraftingStateToClient.Handler.class, MessageCraftingStateToClient.class, id++, Side.CLIENT);
+        network.registerMessage(MessageRedstoneMode.Handler.class, MessageRedstoneMode.class, id++, Side.SERVER);
+        network.registerMessage(MessageLootFabOutputItem.Handler.class, MessageLootFabOutputItem.class, id++, Side.SERVER);
+        network.registerMessage(MessageCraftingState.Handler.class, MessageCraftingState.class, id++, Side.CLIENT);
         network.registerMessage(MessageStartTrial.Handler.class, MessageStartTrial.class, id++, Side.SERVER);
+        network.registerMessage(MessageTrialCapabilityData.Handler.class, MessageTrialCapabilityData.class, id++, Side.CLIENT);
+        network.registerMessage(MessageTrialOverlayMessage.Handler.class, MessageTrialOverlayMessage.class, id++, Side.CLIENT);
     }
 
     public static void sendToClient(IMessage message, World world, BlockPos pos) {
@@ -31,5 +34,9 @@ public class DMLPacketHandler {
 
     public static void sendToServer(IMessage message) {
         network.sendToServer(message);
+    }
+
+    public static void sendToClientPlayer(IMessage message, EntityPlayerMP player) {
+        network.sendTo(message, player);
     }
 }

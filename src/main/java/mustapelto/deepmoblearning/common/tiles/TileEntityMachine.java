@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.common.tiles;
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.common.energy.DMLEnergyStorage;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageCraftingStateToClient;
+import mustapelto.deepmoblearning.common.network.MessageCraftingState;
 import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,7 +64,7 @@ public abstract class TileEntityMachine extends TileEntityContainer implements I
         CraftingState newCraftingState = updateCraftingState();
         if (craftingState != newCraftingState) {
             craftingState = newCraftingState;
-            DMLPacketHandler.sendToClient(new MessageCraftingStateToClient(this), world, pos);
+            DMLPacketHandler.sendToClient(new MessageCraftingState(this), world, pos);
             markDirty();
         }
     }

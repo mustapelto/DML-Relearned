@@ -9,11 +9,11 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("ConstantConditions") // IDE complains about PLAYER_TRIAL_CAPABILITY being always null
-public class PlayerTrialProvider implements ICapabilitySerializable<NBTBase> {
-    @CapabilityInject(IPlayerTrial.class)
-    public static final Capability<IPlayerTrial> PLAYER_TRIAL_CAPABILITY = null;
+public class CapabilityPlayerTrialProvider implements ICapabilitySerializable<NBTBase> {
+    @CapabilityInject(ICapabilityPlayerTrial.class)
+    public static final Capability<ICapabilityPlayerTrial> PLAYER_TRIAL_CAPABILITY = null;
 
-    private final IPlayerTrial instance = PLAYER_TRIAL_CAPABILITY.getDefaultInstance();
+    private final ICapabilityPlayerTrial instance = PLAYER_TRIAL_CAPABILITY.getDefaultInstance();
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {

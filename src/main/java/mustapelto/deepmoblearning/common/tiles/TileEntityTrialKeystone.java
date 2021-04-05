@@ -2,11 +2,13 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.client.gui.GuiTrialOverlay;
 import mustapelto.deepmoblearning.common.inventory.ContainerTileEntity;
 import mustapelto.deepmoblearning.common.inventory.ContainerTrialKeystone;
 import mustapelto.deepmoblearning.common.inventory.ItemHandlerTrialKey;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import mustapelto.deepmoblearning.common.network.MessageStartTrial;
+import mustapelto.deepmoblearning.common.network.MessageTrialOverlayMessage;
 import mustapelto.deepmoblearning.common.trials.AttunementData;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import mustapelto.deepmoblearning.common.util.PlayerHelper;
@@ -65,11 +67,15 @@ public class TileEntityTrialKeystone extends TileEntityContainer implements ITic
             DMLPacketHandler.sendToServer(new MessageStartTrial(this));
         else {
             markDirty();
+
             activeTrialKey = getTrialKey().copy();
-            trialKey.setStackInSlot(0, ItemStack.EMPTY);
+            // trialKey.setStackInSlot(0, ItemStack.EMPTY);
             activeTrialData = TrialKeyHelper.getAttunement(activeTrialKey).orElse(null);
-            if (activeTrialData == null) // Invalid Trial Key -> abort Trial
+            if (activeTrialData == null) {
+                // Invalid Trial Key -> abort Trial
                 stopTrial();
+                return;
+            }
 
             participants.addAll(
                     PlayerHelper.getLivingPlayersInArea(
@@ -80,6 +86,11 @@ public class TileEntityTrialKeystone extends TileEntityContainer implements ITic
                             0
                     )
             );
+            participants.forEach(player -> DMLPacketHandler.sendToClientPlayer(
+                    new MessageTrialOverlayMessage(GuiTrialOverlay.OverlayMessage.COMPLETED),
+                    player
+            ));
+            setDefaultTrialState();
         }
     }
 
@@ -153,6 +164,14 @@ public class TileEntityTrialKeystone extends TileEntityContainer implements ITic
 
     public int getLastWave() {
         return activeTrialData != null ? activeTrialData.getMaxWave() : 0;
+    }
+
+    public int getMobsDefeated() {
+        return mobsDefeated;
+    }
+
+    public int getWaveMobTotal() {
+        return activeTrialData != null ? activeTrialData.getCurrentWaveMobTotal(currentWave) : 0;
     }
 
     //
@@ -281,6 +300,7 @@ public class TileEntityTrialKeystone extends TileEntityContainer implements ITic
     }
 
     private void setDefaultTrialState() {
+        participants.clear();
         activeTrialKey = ItemStack.EMPTY;
         activeTrialData = null;
         currentWave = -1;

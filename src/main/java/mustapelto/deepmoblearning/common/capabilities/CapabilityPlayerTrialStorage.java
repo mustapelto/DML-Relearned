@@ -8,7 +8,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
-public class PlayerTrialStorage implements Capability.IStorage<IPlayerTrial> {
+public class CapabilityPlayerTrialStorage implements Capability.IStorage<ICapabilityPlayerTrial> {
     // NBT Tags
     private static final String CURRENT_WAVE = "currentWave";
     private static final String LAST_WAVE = "lastWave";
@@ -19,7 +19,7 @@ public class PlayerTrialStorage implements Capability.IStorage<IPlayerTrial> {
 
     @Nullable
     @Override
-    public NBTBase writeNBT(Capability<IPlayerTrial> capability, IPlayerTrial instance, EnumFacing side) {
+    public NBTBase writeNBT(Capability<ICapabilityPlayerTrial> capability, ICapabilityPlayerTrial instance, EnumFacing side) {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(CURRENT_WAVE, instance.getCurrentWave());
         compound.setInteger(LAST_WAVE, instance.getLastWave());
@@ -32,7 +32,7 @@ public class PlayerTrialStorage implements Capability.IStorage<IPlayerTrial> {
     }
 
     @Override
-    public void readNBT(Capability<IPlayerTrial> capability, IPlayerTrial instance, EnumFacing side, NBTBase nbt) {
+    public void readNBT(Capability<ICapabilityPlayerTrial> capability, ICapabilityPlayerTrial instance, EnumFacing side, NBTBase nbt) {
         if (!(nbt instanceof NBTTagCompound))
             return;
 

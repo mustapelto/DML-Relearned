@@ -11,20 +11,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
 
-public class MessageLootFabOutputItemToServer implements IMessage {
+public class MessageLootFabOutputItem implements IMessage {
     private BlockPos pos;
     private int dimension;
     private int outputItemIndex;
 
-    public MessageLootFabOutputItemToServer() {}
+    public MessageLootFabOutputItem() {}
 
-    public MessageLootFabOutputItemToServer(BlockPos pos, int dimension, int outputItemIndex) {
+    public MessageLootFabOutputItem(BlockPos pos, int dimension, int outputItemIndex) {
         this.pos = pos;
         this.dimension = dimension;
         this.outputItemIndex = outputItemIndex;
     }
 
-    public MessageLootFabOutputItemToServer(TileEntityLootFabricator target, int outputItemIndex) {
+    public MessageLootFabOutputItem(TileEntityLootFabricator target, int outputItemIndex) {
         this(target.getPos(), target.getWorld().provider.getDimension(), outputItemIndex);
     }
 
@@ -42,10 +42,10 @@ public class MessageLootFabOutputItemToServer implements IMessage {
         outputItemIndex = buf.readInt();
     }
 
-    public static class Handler implements IMessageHandler<MessageLootFabOutputItemToServer, IMessage> {
+    public static class Handler implements IMessageHandler<MessageLootFabOutputItem, IMessage> {
         @Override
         @Nullable
-        public IMessage onMessage(MessageLootFabOutputItemToServer message, MessageContext ctx) {
+        public IMessage onMessage(MessageLootFabOutputItem message, MessageContext ctx) {
             WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             world.addScheduledTask(() -> {
                 TileEntityLootFabricator te = (TileEntityLootFabricator) world.getTileEntity(message.pos);

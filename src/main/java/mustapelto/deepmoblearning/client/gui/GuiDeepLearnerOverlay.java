@@ -27,6 +27,8 @@ import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 @EventBusSubscriber(Side.CLIENT)
 public class GuiDeepLearnerOverlay extends GuiScreen {
+    public static GuiDeepLearnerOverlay INSTANCE = new GuiDeepLearnerOverlay();
+
     private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner_overlay.png");
 
     private static final int COMPONENT_HEIGHT = 26;
@@ -40,8 +42,8 @@ public class GuiDeepLearnerOverlay extends GuiScreen {
     private final Minecraft mc;
     private final FontRenderer fontRenderer;
 
-    public GuiDeepLearnerOverlay(Minecraft mc) {
-        this.mc = mc;
+    private GuiDeepLearnerOverlay() {
+        mc = Minecraft.getMinecraft();
         fontRenderer = mc.fontRenderer;
         itemRender = mc.getRenderItem();
         setGuiSize(EXP_BAR_MAX_WIDTH, EXP_BAR_OUTER_HEIGHT);
@@ -55,10 +57,7 @@ public class GuiDeepLearnerOverlay extends GuiScreen {
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void renderOverlay(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE)
-            return;
-
-        if (!mc.inGameHasFocus)
+        if (!mc.inGameHasFocus || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE)
             return;
 
         EntityPlayer player = mc.player;

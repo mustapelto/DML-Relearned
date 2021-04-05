@@ -12,20 +12,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
 
-public class MessageRedstoneModeToServer implements IMessage {
+public class MessageRedstoneMode implements IMessage {
     private BlockPos pos;
     private int dimension;
     private RedstoneMode redstoneMode;
 
-    public MessageRedstoneModeToServer() {}
+    public MessageRedstoneMode() {}
 
-    public MessageRedstoneModeToServer(BlockPos pos, int dimension, RedstoneMode redstoneMode) {
+    public MessageRedstoneMode(BlockPos pos, int dimension, RedstoneMode redstoneMode) {
         this.pos = pos;
         this.dimension = dimension;
         this.redstoneMode = redstoneMode;
     }
 
-    public MessageRedstoneModeToServer(TileEntityMachine target, RedstoneMode redstoneMode) {
+    public MessageRedstoneMode(TileEntityMachine target, RedstoneMode redstoneMode) {
         this(target.getPos(), target.getWorld().provider.getDimension(), redstoneMode);
     }
 
@@ -43,10 +43,10 @@ public class MessageRedstoneModeToServer implements IMessage {
         redstoneMode = RedstoneMode.byIndex(buf.readInt());
     }
 
-    public static class Handler implements IMessageHandler<MessageRedstoneModeToServer, IMessage> {
+    public static class Handler implements IMessageHandler<MessageRedstoneMode, IMessage> {
         @Override
         @Nullable
-        public IMessage onMessage(MessageRedstoneModeToServer message, MessageContext ctx) {
+        public IMessage onMessage(MessageRedstoneMode message, MessageContext ctx) {
             WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dimension);
             world.addScheduledTask(() -> {
                 TileEntityMachine te = (TileEntityMachine) world.getTileEntity(message.pos);

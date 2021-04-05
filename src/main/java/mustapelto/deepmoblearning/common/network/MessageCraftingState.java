@@ -11,20 +11,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
 
-public class MessageCraftingStateToClient implements IMessage {
+public class MessageCraftingState implements IMessage {
     private BlockPos pos;
     private CraftingState craftingState;
 
-    public MessageCraftingStateToClient() {
+    public MessageCraftingState() {
         craftingState = CraftingState.IDLE;
     }
 
-    public MessageCraftingStateToClient(BlockPos pos, CraftingState craftingState) {
+    public MessageCraftingState(BlockPos pos, CraftingState craftingState) {
         this.pos = pos;
         this.craftingState = craftingState;
     }
 
-    public MessageCraftingStateToClient(TileEntityMachine te) {
+    public MessageCraftingState(TileEntityMachine te) {
         this(te.getPos(), te.getCraftingState());
     }
 
@@ -40,10 +40,10 @@ public class MessageCraftingStateToClient implements IMessage {
         craftingState = CraftingState.byIndex(buf.readInt());
     }
 
-    public static class Handler implements IMessageHandler<MessageCraftingStateToClient, IMessage> {
+    public static class Handler implements IMessageHandler<MessageCraftingState, IMessage> {
         @Override
         @Nullable
-        public IMessage onMessage(MessageCraftingStateToClient message, MessageContext ctx) {
+        public IMessage onMessage(MessageCraftingState message, MessageContext ctx) {
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(() -> {
                 TileEntityMachine te = (TileEntityMachine) mc.world.getTileEntity(message.pos);

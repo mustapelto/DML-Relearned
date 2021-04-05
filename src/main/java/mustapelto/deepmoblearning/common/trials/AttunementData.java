@@ -93,4 +93,8 @@ public class AttunementData {
             DMLRelearned.logger.warn("Could not create Trial entity!");
         return result;
     }
+
+    public int getCurrentWaveMobTotal(int currentWave) {
+        return modelTrialData.getMobsPerWave(currentWave);
+    }
 }

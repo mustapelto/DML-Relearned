@@ -312,14 +312,17 @@ public class MetadataDataModel extends Metadata {
 
     public static class TrialData {
         private static final String ENTITIES = "entities";
+        private static final String MOBS_PER_WAVE = "mobsPerWave";
         private static final String SPAWN_DELAY = "spawnDelay";
         private static final String REWARDS = "rewards";
 
+        private static final int DEFAULT_MOBS_PER_WAVE = 4;
         private static final double DEFAULT_SPAWN_DELAY = 2d;
 
         private final MetadataDataModel container;
 
         private final ImmutableList<WeightedString> entityStrings; // Unvalidated list of entities to spawn for trial
+        private final ImmutableList<Integer> mobsPerWave; // How many mobs to spawn each wave. Default: 4
         private final double spawnDelay; // Time between wave spawns. Default: 2
         private final ImmutableList<String> rewardStrings; // List of rewards for a Trial with this mob. Default: []
 
@@ -334,6 +337,7 @@ public class MetadataDataModel extends Metadata {
             this.container = container;
 
             entityStrings = ImmutableList.of();
+            mobsPerWave = ImmutableList.of();
             spawnDelay = 2;
             rewardStrings = ImmutableList.of();
         }
@@ -343,6 +347,8 @@ public class MetadataDataModel extends Metadata {
 
             entityStrings = getWeightedStringList(data, ENTITIES)
                     .orElse(ImmutableList.of());
+            mobsPerWave = getIntList(data, MOBS_PER_WAVE)
+                    .orElse(ImmutableList.of(DEFAULT_MOBS_PER_WAVE));
             spawnDelay = getDouble(data, SPAWN_DELAY, 0, 20)
                     .orElse(DEFAULT_SPAWN_DELAY);
             rewardStrings = getStringList(data, REWARDS)
@@ -404,6 +410,15 @@ public class MetadataDataModel extends Metadata {
             if (rewards == null)
                 return ImmutableList.of();
             return rewards;
+        }
+
+        public int getMobsPerWave(int wave) {
+            if (wave < 0)
+                return 0;
+            else if (wave >= mobsPerWave.size())
+                return mobsPerWave.get(mobsPerWave.size() - 1);
+            else
+                return mobsPerWave.get(wave);
         }
     }
 

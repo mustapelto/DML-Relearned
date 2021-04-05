@@ -3,7 +3,7 @@ package mustapelto.deepmoblearning.client.gui;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonBase;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonRedstoneMode;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageRedstoneModeToServer;
+import mustapelto.deepmoblearning.common.network.MessageRedstoneMode;
 import mustapelto.deepmoblearning.common.tiles.TileEntityMachine;
 import mustapelto.deepmoblearning.common.util.Point;
 import mustapelto.deepmoblearning.common.util.Rect;
@@ -66,7 +66,7 @@ public abstract class GuiMachine extends GuiContainerBase {
             else if (mouseButton == 1)
                 redstoneModeButton.setRedstoneMode(redstoneModeButton.getRedstoneMode().prev());
 
-            DMLPacketHandler.sendToServer(new MessageRedstoneModeToServer(tileEntity, redstoneModeButton.getRedstoneMode()));
+            DMLPacketHandler.sendToServer(new MessageRedstoneMode(tileEntity, redstoneModeButton.getRedstoneMode()));
         }
     }
 

@@ -1,8 +1,13 @@
 package mustapelto.deepmoblearning.common.capabilities;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 
-public interface IPlayerTrial {
+public interface ICapabilityPlayerTrial {
+    BlockPos getTrialKeystonePos();
+    void setTrialKeystonePos(BlockPos trialKeystonePos);
+
     int getCurrentWave();
     void setCurrentWave(int currentWave);
 
@@ -15,9 +20,14 @@ public interface IPlayerTrial {
     int getWaveMobTotal();
     void setWaveMobTotal(int waveMobTotal);
 
-    BlockPos getTrialKeystonePos();
-    void setTrialKeystonePos(BlockPos trialKeystonePos);
-
     boolean isTrialActive();
     void setTrialActive(boolean trialActive);
+
+    void reset();
+    void copy(ICapabilityPlayerTrial original);
+
+    void toBytes(ByteBuf buf);
+    void fromBytes(ByteBuf buf);
+
+    void syncToClient(EntityPlayerMP player);
 }

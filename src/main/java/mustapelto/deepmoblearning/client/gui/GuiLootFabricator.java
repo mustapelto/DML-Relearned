@@ -8,7 +8,7 @@ import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonPageSelect;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
+import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItem;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.util.MathHelper;
 import mustapelto.deepmoblearning.common.util.Point;
@@ -199,7 +199,7 @@ public class GuiLootFabricator extends GuiMachine {
         for (int i = 0; i < outputSelectButtons.size(); i++) {
             outputSelectButtons.get(i).setSelected(index != -1 && (i == (index % ITEMS_PER_PAGE)));
         }
-        DMLPacketHandler.sendToServer(new MessageLootFabOutputItemToServer(lootFabricator, index));
+        DMLPacketHandler.sendToServer(new MessageLootFabOutputItem(lootFabricator, index));
     }
 
     private void setOutputItemIndex(int index) {

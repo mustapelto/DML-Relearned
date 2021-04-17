@@ -21,29 +21,26 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.TrialKeystone.*;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.Colors;
 
 public class GuiTrialKeystone extends GuiContainerBase {
     // TEXTURE
     private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/trial_keystone.png");
+    private static final class TextureCoords {
+        private static final Point MAIN_GUI = new Point(0, 0);
+        private static final Point TRIAL_INFO_OVERLAY = new Point(18, 100);
+        private static final Point TRIAL_KEY_SLOT = new Point(0, 100);
+    }
 
     // DIMENSIONS
     private static final int WIDTH = 200;
     private static final int HEIGHT = 178;
     private static final Rect MAIN_GUI = new Rect(0, 0, 200, 100);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
 
     // TRIAL INFO OVERLAY
     private static final Rect TRIAL_INFO_OVERLAY = new Rect(109, 0, 91, 100);
-    private static final Point TRIAL_INFO_OVERLAY_TEXTURE_LOCATION = new Point(18, 100);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(12, 106);
-
-    // ITEM SLOTS
-    public static final Rect TRIAL_KEY_SLOT = new Rect(-20, 0, 18, 18);
-    public static final Point TRIAL_KEY_SLOT_TEXTURE_LOCATION = new Point(0, 100);
 
     // BUTTONS
     private static final Point START_TRIAL_BUTTON = new Point(114, 76);
@@ -185,8 +182,8 @@ public class GuiTrialKeystone extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
-                MAIN_GUI_TEXTURE_LOCATION.X,
-                MAIN_GUI_TEXTURE_LOCATION.Y,
+                TextureCoords.MAIN_GUI.X,
+                TextureCoords.MAIN_GUI.Y,
                 MAIN_GUI.WIDTH,
                 MAIN_GUI.HEIGHT
         );
@@ -195,8 +192,8 @@ public class GuiTrialKeystone extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + TRIAL_KEY_SLOT.LEFT,
                 guiTop + TRIAL_KEY_SLOT.TOP,
-                TRIAL_KEY_SLOT_TEXTURE_LOCATION.X,
-                TRIAL_KEY_SLOT_TEXTURE_LOCATION.Y,
+                TextureCoords.TRIAL_KEY_SLOT.X,
+                TextureCoords.TRIAL_KEY_SLOT.Y,
                 TRIAL_KEY_SLOT.WIDTH,
                 TRIAL_KEY_SLOT.HEIGHT
         );
@@ -228,8 +225,8 @@ public class GuiTrialKeystone extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + TRIAL_INFO_OVERLAY.LEFT,
                 guiTop + TRIAL_INFO_OVERLAY.TOP,
-                TRIAL_INFO_OVERLAY_TEXTURE_LOCATION.X,
-                TRIAL_INFO_OVERLAY_TEXTURE_LOCATION.Y,
+                TextureCoords.TRIAL_INFO_OVERLAY.X,
+                TextureCoords.TRIAL_INFO_OVERLAY.Y,
                 TRIAL_INFO_OVERLAY.WIDTH,
                 TRIAL_INFO_OVERLAY.HEIGHT
         );

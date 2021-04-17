@@ -20,19 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.SimulationChamber.*;
 
 public class GuiSimulationChamber extends GuiMachine {
-    // TEXTURE
+    // TEXTURES
     private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/simulation_chamber.png");
+    private static final class TextureCoords {
+        private static final Point MAIN_GUI = new Point(0, 0);
+        private static final Point DATA_BAR = new Point(18, 141);
+        private static final Point ENERGY_BAR = new Point(25, 141);
+        private static final Point DATA_MODEL_SLOT = new Point(0, 141);
+    }
 
     // DIMENSIONS
     private static final int WIDTH = 232;
     private static final int HEIGHT = 230;
     private static final Rect MAIN_GUI = new Rect(8, 0, 216, 141);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(28, 145);
 
     // STATUS DISPLAY
     private static final Point INFO_BOX = new Point(18, 9);
@@ -42,16 +45,7 @@ public class GuiSimulationChamber extends GuiMachine {
 
     // XP / ENERGY BAR LOCATIONS
     private static final Rect DATA_BAR = new Rect(14, 47, 7,87);
-    private static final Point DATA_BAR_TEXTURE_LOCATION = new Point(18, 141);
     private static final Rect ENERGY_BAR = new Rect(211, 47, 7, 87);
-    private static final Point ENERGY_BAR_TEXTURE_LOCATION = new Point(25, 141);
-
-    // ITEM SLOT LOCATIONS
-    public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
-    private static final Point DATA_MODEL_SLOT_TEXTURE_LOCATION = new Point(0, 141);
-    public static final Point POLYMER_SLOT = new Point(192, 7);
-    public static final Point LIVING_MATTER_SLOT = new Point(182, 27);
-    public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
 
     // BUTTON LOCATIONS
     private static final Point REDSTONE_BUTTON = new Point(-14, 24);
@@ -238,8 +232,8 @@ public class GuiSimulationChamber extends GuiMachine {
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
-                MAIN_GUI_TEXTURE_LOCATION.X,
-                MAIN_GUI_TEXTURE_LOCATION.Y,
+                TextureCoords.MAIN_GUI.X,
+                TextureCoords.MAIN_GUI.Y,
                 MAIN_GUI.WIDTH,
                 MAIN_GUI.HEIGHT
         );
@@ -248,8 +242,8 @@ public class GuiSimulationChamber extends GuiMachine {
         drawTexturedModalRect(
                 guiLeft + DATA_MODEL_SLOT.LEFT,
                 guiTop + DATA_MODEL_SLOT.TOP,
-                DATA_MODEL_SLOT_TEXTURE_LOCATION.X,
-                DATA_MODEL_SLOT_TEXTURE_LOCATION.Y,
+                TextureCoords.DATA_MODEL_SLOT.X,
+                TextureCoords.DATA_MODEL_SLOT.Y,
                 DATA_MODEL_SLOT.WIDTH,
                 DATA_MODEL_SLOT.HEIGHT
         );
@@ -268,14 +262,14 @@ public class GuiSimulationChamber extends GuiMachine {
             drawTexturedModalRect(
                     guiLeft + DATA_BAR.LEFT,
                     guiTop + DATA_BAR.TOP + dataBarOffset,
-                    DATA_BAR_TEXTURE_LOCATION.X,
-                    DATA_BAR_TEXTURE_LOCATION.Y,
+                    TextureCoords.DATA_BAR.X,
+                    TextureCoords.DATA_BAR.Y,
                     DATA_BAR.WIDTH,
                     dataBarHeight
             );
         }
 
-        drawEnergyBar(ENERGY_BAR, ENERGY_BAR_TEXTURE_LOCATION);
+        drawEnergyBar(ENERGY_BAR, TextureCoords.ENERGY_BAR);
 
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
 

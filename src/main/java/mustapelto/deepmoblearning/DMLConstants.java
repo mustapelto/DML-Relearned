@@ -1,5 +1,8 @@
 package mustapelto.deepmoblearning;
 
+import com.google.common.collect.ImmutableList;
+import mustapelto.deepmoblearning.common.util.Point;
+import mustapelto.deepmoblearning.common.util.Rect;
 import net.minecraft.util.ResourceLocation;
 
 public class DMLConstants {
@@ -64,6 +67,36 @@ public class DMLConstants {
             public static final int LIME = 0x00FFC0;
             public static final int BRIGHT_LIME = 0x33EFDC;
             public static final int BRIGHT_PURPLE = 0xC768DB;
+        }
+
+        public static final class DeepLearner {
+            public static final Point PLAYER_INVENTORY = new Point(81, 145);
+            public static final ImmutableList<Point> DATA_MODEL_SLOTS = ImmutableList.of(
+                    new Point(257, 100),
+                    new Point(275, 100),
+                    new Point(257, 118),
+                    new Point(275, 118)
+            );
+        }
+
+        public static final class SimulationChamber {
+            public static final Point PLAYER_INVENTORY = new Point(28, 145);
+            public static final Rect DATA_MODEL_SLOT = new Rect(-14, 0, 18, 18);
+            public static final Point POLYMER_SLOT = new Point(192, 7);
+            public static final Point LIVING_MATTER_SLOT = new Point(182, 27);
+            public static final Point PRISTINE_MATTER_SLOT = new Point(202, 27);
+        }
+
+        public static final class LootFabricator {
+            public static final Point PLAYER_INVENTORY = new Point(0, 88);
+            public static final Point INPUT_SLOT = new Point(79, 62);
+            public static final Point OUTPUT_FIRST_SLOT = new Point(101, 7);
+            public static final int OUTPUT_SLOT_SIDE_LENGTH = 18;
+        }
+
+        public static final class TrialKeystone {
+            public static final Point PLAYER_INVENTORY = new Point(12, 106);
+            public static final Rect TRIAL_KEY_SLOT = new Rect(-20, 0, 18, 18);
         }
     }
 }

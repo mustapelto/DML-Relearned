@@ -4,8 +4,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-import static mustapelto.deepmoblearning.client.gui.GuiTrialKeystone.PLAYER_INVENTORY;
-import static mustapelto.deepmoblearning.client.gui.GuiTrialKeystone.TRIAL_KEY_SLOT;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.TrialKeystone.*;
 
 public class ContainerTrialKeystone extends ContainerTileEntity {
     public ContainerTrialKeystone(TileEntityTrialKeystone tileEntity, InventoryPlayer inventoryPlayer) {

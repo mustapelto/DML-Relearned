@@ -4,10 +4,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.PLAYER_INVENTORY;
-import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.INPUT_SLOT;
-import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.OUTPUT_FIRST_SLOT;
-import static mustapelto.deepmoblearning.client.gui.GuiLootFabricator.OUTPUT_SLOT_SIDE_LENGTH;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.LootFabricator.*;
 
 public class ContainerLootFabricator extends ContainerTileEntity {
     public ContainerLootFabricator(TileEntityLootFabricator tileEntity, InventoryPlayer inventoryPlayer) {

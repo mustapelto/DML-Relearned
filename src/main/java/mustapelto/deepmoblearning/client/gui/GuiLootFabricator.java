@@ -25,23 +25,22 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.LootFabricator.*;
+
 public class GuiLootFabricator extends GuiMachine {
     // TEXTURE
     private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/loot_fabricator.png");
+    private static final class TextureCoords {
+        private static final Point MAIN_GUI = new Point(0, 0);
+        private static final Point ENERGY_BAR = new Point(0, 83);
+        private static final Point PROGRESS_BAR = new Point(7, 83);
+        private static final Point ERROR_BAR = new Point(13, 83);
+    }
 
     // DIMENSIONS
     private static final int WIDTH = 177;
     private static final int HEIGHT = 230;
     private static final Rect MAIN_GUI = new Rect(0, 0, 177, 83);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(0, 88);
-
-    // ITEM SLOT LOCATIONS
-    public static final Point INPUT_SLOT = new Point(79, 62);
-    public static final Point OUTPUT_FIRST_SLOT = new Point(101, 7);
-    public static final int OUTPUT_SLOT_SIDE_LENGTH = 18;
 
     // BUTTONS
     private static final Point REDSTONE_BUTTON = new Point(-20, 0);
@@ -63,10 +62,7 @@ public class GuiLootFabricator extends GuiMachine {
 
     // PROGRESS AND ENERGY BAR
     private static final Rect ENERGY_BAR = new Rect(4, 6, 7, 71);
-    private static final Point ENERGY_BAR_TEXTURE_LOCATION = new Point(0, 83);
     private static final Rect PROGRESS_BAR = new Rect(84, 22, 6,36);
-    private static final Point PROGRESS_BAR_TEXTURE_LOCATION = new Point(7, 83);
-    private static final Point ERROR_BAR_TEXTURE_LOCATION = new Point(13, 83);
     private static final long ERROR_BAR_CYCLE = 20; // Duration of one on-off cycle (ticks)
 
     // STATE VARIABLES
@@ -332,8 +328,8 @@ public class GuiLootFabricator extends GuiMachine {
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
-                MAIN_GUI_TEXTURE_LOCATION.X,
-                MAIN_GUI_TEXTURE_LOCATION.Y,
+                TextureCoords.MAIN_GUI.X,
+                TextureCoords.MAIN_GUI.Y,
                 MAIN_GUI.WIDTH,
                 MAIN_GUI.HEIGHT
         );
@@ -344,8 +340,8 @@ public class GuiLootFabricator extends GuiMachine {
         drawTexturedModalRect(
                 guiLeft + PROGRESS_BAR.LEFT,
                 guiTop + PROGRESS_BAR.TOP + progressBarOffset,
-                PROGRESS_BAR_TEXTURE_LOCATION.X,
-                PROGRESS_BAR_TEXTURE_LOCATION.Y,
+                TextureCoords.PROGRESS_BAR.X,
+                TextureCoords.PROGRESS_BAR.Y,
                 PROGRESS_BAR.WIDTH,
                 progressBarHeight
         );
@@ -355,14 +351,14 @@ public class GuiLootFabricator extends GuiMachine {
             drawTexturedModalRect(
                     guiLeft + PROGRESS_BAR.LEFT,
                     guiTop + PROGRESS_BAR.TOP + 1,
-                    ERROR_BAR_TEXTURE_LOCATION.X,
-                    ERROR_BAR_TEXTURE_LOCATION.Y,
+                    TextureCoords.ERROR_BAR.X,
+                    TextureCoords.ERROR_BAR.Y,
                     PROGRESS_BAR.WIDTH,
                     PROGRESS_BAR.HEIGHT
             );
         }
 
-        drawEnergyBar(ENERGY_BAR, ENERGY_BAR_TEXTURE_LOCATION);
+        drawEnergyBar(ENERGY_BAR, TextureCoords.ENERGY_BAR);
 
         drawPlayerInventory(guiLeft + PLAYER_INVENTORY.X, guiTop + PLAYER_INVENTORY.Y);
     }

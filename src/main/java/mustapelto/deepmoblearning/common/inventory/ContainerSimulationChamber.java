@@ -4,11 +4,7 @@ import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.PLAYER_INVENTORY;
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.DATA_MODEL_SLOT;
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.POLYMER_SLOT;
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.LIVING_MATTER_SLOT;
-import static mustapelto.deepmoblearning.client.gui.GuiSimulationChamber.PRISTINE_MATTER_SLOT;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.SimulationChamber.*;
 
 public class ContainerSimulationChamber extends ContainerTileEntity {
     public ContainerSimulationChamber(TileEntitySimulationChamber tileEntity, InventoryPlayer inventoryPlayer) {

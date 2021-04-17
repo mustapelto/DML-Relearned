@@ -7,8 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 
-import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.DATA_MODEL_SLOTS;
-import static mustapelto.deepmoblearning.client.gui.GuiDeepLearner.PLAYER_INVENTORY;
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.*;
 
 public class ContainerDeepLearner extends ContainerBase {
     public static final int INTERNAL_SLOTS = DATA_MODEL_SLOTS.size();

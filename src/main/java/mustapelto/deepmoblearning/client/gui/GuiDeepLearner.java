@@ -26,40 +26,32 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.annotation.Nullable;
 
+import static mustapelto.deepmoblearning.DMLConstants.Gui.DeepLearner.PLAYER_INVENTORY;
 import static mustapelto.deepmoblearning.DMLConstants.Gui.ROW_SPACING;
 
 public class GuiDeepLearner extends GuiContainerBase {
     // TEXTURE
     private static final ResourceLocation TEXTURE = new ResourceLocation(DMLConstants.ModInfo.ID, "textures/gui/deep_learner.png");
+    private static final class TextureCoords {
+        private static final Point MAIN_GUI = new Point(0, 0);
+        private static final Point MOB_DISPLAY = new Point(0, 140);
+        private static final Point HEART_ICON = new Point(75, 140);
+    }
 
     // DIMENSIONS
     private static final int WIDTH = 338;
     private static final int HEIGHT = 235;
     private static final Rect MAIN_GUI = new Rect(41, 0, 256, 140);
-    private static final Point MAIN_GUI_TEXTURE_LOCATION = new Point(0, 0);
-
-    // PLAYER INVENTORY
-    public static final Point PLAYER_INVENTORY = new Point(81, 145);
 
     // MOB DISPLAY
     private static final Rect MOB_DISPLAY = new Rect(-41, 0, 75, 101);
-    private static final Point MOB_DISPLAY_TEXTURE_LOCATION = new Point(0, 140);
     private static final Point MOB_DISPLAY_ENTITY = new Point(0, 80);
 
     // MAIN DISPLAY
     private static final Point TEXT_START = new Point(49, 8);
     private static final Rect HEART_ICON = new Rect(228, 2 * ROW_SPACING - 6, 9, 9);
-    private static final Point HEART_ICON_TEXTURE_LOCATION = new Point(75, 140);
-    private static final Point HEALTH_POINTS_HEADER_LOCATION = new Point(228, ROW_SPACING - 4);
-    private static final Point HEALTH_POINTS_TEXT_LOCATION = new Point(239, 2 * ROW_SPACING - 4);
-
-    // ITEM SLOTS
-    public static final ImmutableList<Point> DATA_MODEL_SLOTS = ImmutableList.of(
-            new Point(257, 100),
-            new Point(275, 100),
-            new Point(257, 118),
-            new Point(275, 118)
-    );
+    private static final Point HEALTH_POINTS_HEADER = new Point(228, ROW_SPACING - 4);
+    private static final Point HEALTH_POINTS_TEXT = new Point(239, 2 * ROW_SPACING - 4);
 
     // BUTTONS
     private static final Point PREV_MODEL_BUTTON = new Point(-27, 105);
@@ -205,8 +197,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + MAIN_GUI.LEFT,
                 guiTop + MAIN_GUI.TOP,
-                MAIN_GUI_TEXTURE_LOCATION.X,
-                MAIN_GUI_TEXTURE_LOCATION.Y,
+                TextureCoords.MAIN_GUI.X,
+                TextureCoords.MAIN_GUI.Y,
                 MAIN_GUI.WIDTH,
                 MAIN_GUI.HEIGHT
         );
@@ -219,8 +211,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + MOB_DISPLAY.LEFT,
                 guiTop + MOB_DISPLAY.TOP,
-                MOB_DISPLAY_TEXTURE_LOCATION.X,
-                MOB_DISPLAY_TEXTURE_LOCATION.Y,
+                TextureCoords.MOB_DISPLAY.X,
+                TextureCoords.MOB_DISPLAY.Y,
                 MOB_DISPLAY.WIDTH,
                 MOB_DISPLAY.HEIGHT
         );
@@ -306,8 +298,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         drawTexturedModalRect(
                 guiLeft + HEART_ICON.LEFT,
                 guiTop + HEART_ICON.TOP,
-                HEART_ICON_TEXTURE_LOCATION.X,
-                HEART_ICON_TEXTURE_LOCATION.Y,
+                TextureCoords.HEART_ICON.X,
+                TextureCoords.HEART_ICON.Y,
                 HEART_ICON.WIDTH,
                 HEART_ICON.HEIGHT
         );
@@ -315,8 +307,8 @@ public class GuiDeepLearner extends GuiContainerBase {
         drawString(
                 fontRenderer,
                 I18n.format("deepmoblearning.deep_learner.health_points"),
-                guiLeft + HEALTH_POINTS_HEADER_LOCATION.X,
-                guiTop + HEALTH_POINTS_HEADER_LOCATION.Y,
+                guiLeft + HEALTH_POINTS_HEADER.X,
+                guiTop + HEALTH_POINTS_HEADER.Y,
                 Colors.AQUA
         );
 
@@ -326,8 +318,8 @@ public class GuiDeepLearner extends GuiContainerBase {
                 numHearts == 0 ?
                         TextFormatting.OBFUSCATED + "10" + TextFormatting.RESET :
                         Integer.toString(numHearts),
-                guiLeft + HEALTH_POINTS_TEXT_LOCATION.X,
-                guiTop + HEALTH_POINTS_TEXT_LOCATION.Y,
+                guiLeft + HEALTH_POINTS_TEXT.X,
+                guiTop + HEALTH_POINTS_TEXT.Y,
                 Colors.WHITE
         );
     }

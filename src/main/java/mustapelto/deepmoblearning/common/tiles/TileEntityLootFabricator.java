@@ -26,8 +26,10 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
             MetadataDataModel newMetadata = getPristineMatterMetadata().orElse(null);
             if (pristineMatterMetadata != newMetadata) {
-                pristineMatterMetadata = newMetadata;
-                outputItemIndex = -1;
+                if (newMetadata != null) {
+                    pristineMatterMetadata = newMetadata;
+                    outputItemIndex = -1;
+                }
                 resetCrafting();
             }
         }
@@ -194,7 +196,6 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     @Override
     public void handleUpdateData(ByteBuf buf) {
         super.handleUpdateData(buf);
-        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
         outputItemIndex = buf.readInt();
     }
 

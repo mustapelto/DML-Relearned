@@ -24,6 +24,10 @@ public class ItemStackHelper {
         return stack.getItem() instanceof ItemLivingMatter;
     }
 
+    public static boolean isTrialKey(ItemStack stack) {
+        return stack.getItem() instanceof ItemTrialKey;
+    }
+
     public static boolean isGlitchSword(ItemStack stack) {
         return stack.getItem() instanceof ItemGlitchSword;
     }

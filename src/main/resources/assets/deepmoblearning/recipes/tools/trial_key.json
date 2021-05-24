@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    "EDD",
+    " NN"
+  ],
+  "key": {
+    "E": { "type": "forge:ore_dict", "ore": "enderpearl" },
+    "D": { "type": "forge:ore_dict", "ore": "gemDiamond" },
+    "N": { "type": "forge:ore_dict", "ore": "nuggetIron" }
+  },
+  "result": {
+    "item": "deepmoblearning:trial_key"
+  }
+}

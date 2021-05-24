@@ -277,6 +277,26 @@ public class MetadataDataModel extends Metadata {
         return ItemStack.EMPTY;
     }
 
+    public boolean hasLootItem(ItemStack item) {
+        for (ItemStack lootItem : lootItems) {
+            if (ItemStack.areItemStacksEqual(item, lootItem))
+                return true;
+        }
+        return false;
+    }
+
+    public int getLootItemIndex(ItemStack item) {
+        if (lootItems.isEmpty() || !hasLootItem(item))
+            return -1;
+
+        for (int i = 0; i < lootItems.size(); i++) {
+            if (ItemStack.areItemStacksEqual(lootItems.get(i), item))
+                return i;
+        }
+
+        return -1;
+    }
+
     public Optional<IRecipe> getCraftingRecipe() {
         ItemStack output = DMLRegistry.getDataModel(dataModelID);
         if (output.isEmpty())

@@ -147,6 +147,7 @@ public abstract class TileEntityMachine extends TileEntityContainer implements I
 
     public void setCraftingState(CraftingState newState) {
         craftingState = newState;
+        sendBlockUpdate();
     }
 
     //

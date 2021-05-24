@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -17,7 +16,7 @@ apply plugin: 'maven-publish'
 def mc_version = '1.12.2'
 def jei_version = '4.16.1.302'
 
-version = '1.12.2-0.9.0-beta'
+version = '1.12.2-0.8.1-beta'
 group = 'mustapelto.dml-relearned' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'dml-relearned'
 

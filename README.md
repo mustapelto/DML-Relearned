@@ -9,6 +9,9 @@ Currently missing major features:
     * This includes all Trial-specific entities, which Forge will complain about when loading a world saved with the original DML.
     * Don't update a world from the original DML that currently has a Trial running - things will break! 
 
+### NOTE: Updating from 0.8.0 to later versions
+The Loot Fabricator internals have been changed back to something resembling the original DML. This means that when updating
+from DML, you won't have to re-set Loot Fabricator outputs anymore! However, you *will* have to if you update from 0.8.0.
 
 # Deep Mob Learning: Relearned
 This mod is a complete rewrite from scratch of [DeepMobLearning](https://www.curseforge.com/minecraft/mc-mods/deep-mob-learning)
@@ -72,9 +75,7 @@ This mod uses the same item and block registry names as the original, so in-plac
 - Run Minecraft once (**don't load your world!**) to generate the new config files (config/dml_relearned/*)
 - Manually copy any changes you made to the original config (config/deepmoblearning.cfg) into the new files
 - The old config file can be deleted, it's not used by this mod
-- Restart Minecraft, load your world, and re-set all your Loot Fabricators' outputs once (this is necessary
-  after updating because of internal changes in how the setting is stored on disk)
-- You're done!
+- Now you can restart Minecraft and load your world - you're done!
 
 **NOTE:** Because this mod uses the same mod ID ("deepmoblearning") as the original to enable in-place updating,
 Forge will complain on first world load that you "downgraded" your mod from a higher version. This warning can safely

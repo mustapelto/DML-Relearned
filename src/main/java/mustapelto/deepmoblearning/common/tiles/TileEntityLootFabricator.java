@@ -2,16 +2,19 @@ package mustapelto.deepmoblearning.common.tiles;
 
 import io.netty.buffer.ByteBuf;
 import mustapelto.deepmoblearning.DMLConstants;
+import mustapelto.deepmoblearning.DMLRelearned;
 import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
+import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
+import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
-import mustapelto.deepmoblearning.common.util.NBTHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
@@ -20,23 +23,17 @@ import javax.annotation.Nullable;
 public class TileEntityLootFabricator extends TileEntityMachine {
     private final ItemHandlerPristineMatter inputPristineMatter = new ItemHandlerPristineMatter() {
         @Override
-        protected void onContentsChanged(int slot) {
-            if (world.isRemote || slot != 0)
-                return;
+        protected void onMetadataChanged() {
+            if (this.pristineMatterMetadata != null && !isValidOutputItem())
+                outputItem = ItemStack.EMPTY; // Don't reset output item if stack empties or refills with same item
 
-            MetadataDataModel newMetadata = getPristineMatterMetadata().orElse(null);
-            if (pristineMatterMetadata != newMetadata) {
-                pristineMatterMetadata = newMetadata;
-                outputItemIndex = -1;
-                resetCrafting();
-            }
+            resetCrafting();
         }
     };
     private final ItemHandlerInputWrapper pristineMatterWrapper = new ItemHandlerInputWrapper(inputPristineMatter);
     private final ItemHandlerOutput output = new ItemHandlerOutput(16);
 
-    private MetadataDataModel pristineMatterMetadata;
-    private int outputItemIndex = -1; // index of selected output item in Pristine Matter's associated item list. -1 = no item selected
+    private ItemStack outputItem = ItemStack.EMPTY;
 
     public TileEntityLootFabricator() {
         super(DMLConstants.LootFabricator.ENERGY_CAPACITY, DMLConstants.LootFabricator.ENERGY_IN_MAX);
@@ -46,9 +43,16 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     // CRAFTING
     //
 
-    // Loot Fabricator consumes Pristine Matter only when crafting is finished
-    // This allows to change output when crafting has already started
-    // without losing Pristine Matter
+
+    @Override
+    public void update() {
+        if (!inputPristineMatter.getStackInSlot(0).isEmpty() && !isValidOutputItem()) {
+            outputItem = ItemStack.EMPTY;
+            resetCrafting();
+        }
+
+        super.update();
+    }
 
     @Override
     protected boolean canStartCrafting() {
@@ -57,13 +61,27 @@ public class TileEntityLootFabricator extends TileEntityMachine {
 
     @Override
     protected void finishCrafting() {
+        // Loot Fabricator consumes Pristine Matter only when crafting is finished
+        // This allows to change output when crafting has already started
+        // without losing Pristine Matter
+        // (same behavior as vanilla furnace)
+
         resetCrafting();
 
-        ItemStack outputItem = getOutputItem();
-        if (outputItem.isEmpty())
-            return; // Crafting without selected output (shouldn't happen) i.e. something went wrong -> don't do anything
+        if (outputItem.isEmpty()) {
+            // Crafting without selected output. Shouldn't happen i.e. something went wrong.
+            DMLRelearned.logger.warn("Loot Fabricator at {} crafted without selected output!", pos.toString());
+            return;
+        }
 
-        output.addItemToAvailableSlots(outputItem);
+        if (!isValidOutputItem()) {
+            // Crafting with invalid output item selected. Shouldn't happen i.e. something went wrong.
+            DMLRelearned.logger.warn("Loot Fabricator at {} crafted with invalid output selection!", pos.toString());
+            outputItem = ItemStack.EMPTY;
+            return;
+        }
+
+        output.addItemToAvailableSlots(outputItem.copy());
         inputPristineMatter.voidItem();
     }
 
@@ -76,21 +94,6 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     public int getCraftingEnergyCost() {
         return DMLConfig.MACHINE_SETTINGS.LOOT_FABRICATOR_RF_COST;
     }
-    
-    @Nullable
-    public MetadataDataModel getPristineMatterMetadata() {
-        return pristineMatterMetadata;
-    }
-
-    private ItemStack getOutputItem() {
-        if (outputItemIndex == -1)
-            return ItemStack.EMPTY;
-
-        if (pristineMatterMetadata == null)
-            return ItemStack.EMPTY;
-
-        return pristineMatterMetadata.getLootItem(outputItemIndex);
-    }
 
     @Override
     protected CraftingState updateCraftingState() {
@@ -102,10 +105,33 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         return CraftingState.RUNNING;
     }
 
+    private boolean isValidOutputItem() {
+        MetadataDataModel pristineMatterMetadata = getPristineMatterMetadata();
+        return !outputItem.isEmpty() && pristineMatterMetadata != null && pristineMatterMetadata.hasLootItem(outputItem);
+    }
+
+    @Nullable
+    public MetadataDataModel getPristineMatterMetadata() {
+        return inputPristineMatter.getPristineMatterMetadata();
+    }
+
+    public ItemStack getOutputItem() {
+        return outputItem;
+    }
+
+    public void setOutputItem(ItemStack outputItem) {
+        this.outputItem = outputItem;
+
+        if (!isValidOutputItem())
+            this.outputItem = ItemStack.EMPTY;
+
+        if (world.isRemote)
+            DMLPacketHandler.sendToServer(new MessageLootFabOutputItemToServer(this, this.outputItem));
+    }
+
     //
     // INVENTORY
     //
-
 
     @Override
     public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
@@ -117,35 +143,13 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     }
 
     public boolean hasRoomForOutput() {
-        return output.hasRoomForItem(getOutputItem());
-    }
-
-    public void setOutputItemIndex(int index) {
-        if (outputItemIndex == index)
-            return; // Index didn't change -> do nothing
-
-        outputItemIndex = index;
-        if (isInvalidOutputItemIndex())
-            outputItemIndex = -1;
-
-        resetCrafting(); // resetCrafting takes care of updating output index to client
-    }
-
-    public int getOutputItemIndex() {
-        return outputItemIndex;
-    }
-
-    private boolean isInvalidOutputItemIndex() {
-        return outputItemIndex != -1 && !isValidOutputItem();
-    }
-
-    private boolean isValidOutputItem() {
-        return !getOutputItem().isEmpty();
+        return output.hasRoomForItem(outputItem);
     }
 
     //
     // CAPABILITIES
     //
+
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
@@ -153,6 +157,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
                 super.hasCapability(capability, facing);
     }
 
+    @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -166,11 +171,10 @@ public class TileEntityLootFabricator extends TileEntityMachine {
                             new CombinedInvWrapper(pristineMatterWrapper, output)
                     );
                 } else {
-                    if (facing == EnumFacing.UP) {
+                    if (facing == EnumFacing.UP)
                         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inputPristineMatter);
-                    } else {
+                    else
                         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(output);
-                    }
                 }
             }
         }
@@ -185,17 +189,14 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     @Override
     public ByteBuf getUpdateData() {
         ByteBuf buf = super.getUpdateData();
-
-        buf.writeInt(outputItemIndex);
-
+        ByteBufUtils.writeItemStack(buf, outputItem);
         return buf;
     }
 
     @Override
     public void handleUpdateData(ByteBuf buf) {
         super.handleUpdateData(buf);
-        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
-        outputItemIndex = buf.readInt();
+        outputItem = ByteBufUtils.readItemStack(buf);
     }
 
     //
@@ -211,7 +212,9 @@ public class TileEntityLootFabricator extends TileEntityMachine {
         inventory.setTag(NBT_OUTPUT, output.serializeNBT());
         compound.setTag(NBT_INVENTORY, inventory);
 
-        compound.getCompoundTag(NBT_CRAFTING).setInteger(NBT_OUTPUT_ITEM_INDEX, outputItemIndex);
+        NBTTagCompound crafting = compound.getCompoundTag(NBT_CRAFTING);
+        crafting.setTag(NBT_OUTPUT_ITEM, outputItem.serializeNBT());
+        compound.setTag(NBT_CRAFTING, crafting);
 
         return compound;
     }
@@ -220,33 +223,29 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
+        NBTTagCompound outputItemNBT;
+
         if (compound.hasKey(NBT_LEGACY_PRISTINE)) {
             inputPristineMatter.deserializeNBT(compound.getCompoundTag(NBT_LEGACY_PRISTINE));
             output.deserializeNBT(compound.getCompoundTag(NBT_OUTPUT));
-
-            // Old system stores ItemStack, too much hassle to read from that so we set to "nothing".
-            // I.e. players will have to restart all their loot fabricators once after switching.
-            outputItemIndex = -1;
+            outputItemNBT = compound.getCompoundTag(NBT_LEGACY_OUTPUT_ITEM);
         } else {
             NBTTagCompound inventory = compound.getCompoundTag(NBT_INVENTORY);
             inputPristineMatter.deserializeNBT(inventory.getCompoundTag(NBT_PRISTINE_INPUT));
             output.deserializeNBT(inventory.getCompoundTag(NBT_OUTPUT));
 
-            outputItemIndex = NBTHelper.getInteger(compound.getCompoundTag(NBT_CRAFTING), NBT_OUTPUT_ITEM_INDEX, -1);
+            NBTTagCompound crafting = compound.getCompoundTag(NBT_CRAFTING);
+            outputItemNBT = crafting.getCompoundTag(NBT_OUTPUT_ITEM);
         }
 
-        pristineMatterMetadata = inputPristineMatter.getPristineMatterMetadata().orElse(null);
-        if (isInvalidOutputItemIndex())
-            outputItemIndex = -1;
-
-        if (outputItemIndex == -1)
-            resetCrafting();
+        outputItem = new ItemStack(outputItemNBT);
     }
 
     // NBT Tag Names
     private static final String NBT_PRISTINE_INPUT = "inputPristine";
     private static final String NBT_OUTPUT = "output";
-    private static final String NBT_OUTPUT_ITEM_INDEX = "outputItemIndex";
+    private static final String NBT_OUTPUT_ITEM = "outputItem";
 
     private static final String NBT_LEGACY_PRISTINE = "pristine";
+    private static final String NBT_LEGACY_OUTPUT_ITEM = "resultingItem";
 }

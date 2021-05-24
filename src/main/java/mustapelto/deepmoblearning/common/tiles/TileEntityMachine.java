@@ -155,6 +155,7 @@ public abstract class TileEntityMachine extends TileEntityBase implements ITicka
 
     public void setCraftingState(CraftingState newState) {
         craftingState = newState;
+        sendBlockUpdate();
     }
 
     //

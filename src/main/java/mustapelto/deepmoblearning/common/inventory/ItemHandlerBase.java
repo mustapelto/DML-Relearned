@@ -30,10 +30,6 @@ public abstract class ItemHandlerBase extends ItemStackHandler {
         return amount - toVoid;
     }
 
-    public int voidItem(int amount) {
-        return voidItem(0, amount);
-    }
-
     public int voidItem() {
         return voidItem(0, 1);
     }

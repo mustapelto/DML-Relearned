@@ -21,6 +21,9 @@ public class ButtonItemDeselect extends ButtonBase {
 
     @Override
     public ImmutableList<String> getTooltip() {
-        return ImmutableList.of(displayStack == ItemStack.EMPTY ? "" : I18n.format("deepmoblearning.loot_fabricator.tooltip.deselect"));
+        if (displayStack.isEmpty())
+            return ImmutableList.of();
+
+        return ImmutableList.of(I18n.format("deepmoblearning.loot_fabricator.tooltip.deselect"));
     }
 }

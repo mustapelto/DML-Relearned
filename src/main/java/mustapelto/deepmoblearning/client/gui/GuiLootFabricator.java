@@ -6,8 +6,6 @@ import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemDeselect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonItemSelect;
 import mustapelto.deepmoblearning.client.gui.buttons.ButtonPageSelect;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
-import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.util.MathHelper;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,11 +25,12 @@ public class GuiLootFabricator extends GuiMachine {
     // STATE VARIABLES
     private final TileEntityLootFabricator lootFabricator;
 
-    private MetadataDataModel currentDataModelMetadata;
+    @Nullable
+    private MetadataDataModel pristineMatterMetadata;
     private ImmutableList<ItemStack> lootItemList;
     private int currentOutputItemPage = -1;
     private int totalOutputItemPages = 0;
-    private int currentOutputItemIndex = -1; // Index of output item in list of all available outputs
+    private ItemStack outputItem = ItemStack.EMPTY;
 
     private final List<ButtonItemSelect> outputSelectButtons = new ArrayList<>();
     private ButtonPageSelect nextPageButton;
@@ -53,11 +52,8 @@ public class GuiLootFabricator extends GuiMachine {
     @Override
     public void initGui() {
         super.initGui();
-
-        currentOutputItemIndex = lootFabricator.getOutputItemIndex();
-        currentOutputItemPage = currentOutputItemIndex / ITEMS_PER_PAGE;
-
-        resetOutputData(lootFabricator.getPristineMatterMetadata(), true);
+        pristineMatterMetadata = lootFabricator.getPristineMatterMetadata();
+        resetOutputData();
     }
 
     //
@@ -72,14 +68,16 @@ public class GuiLootFabricator extends GuiMachine {
 
         // Rebuild output selection if Pristine Matter type changed
         MetadataDataModel lootFabMetadata = lootFabricator.getPristineMatterMetadata();
-        if (currentDataModelMetadata != lootFabMetadata)
-            resetOutputData(lootFabMetadata, false);
+        if (pristineMatterMetadata != lootFabMetadata) {
+            pristineMatterMetadata = lootFabMetadata;
+            resetOutputData();
+        }
 
         if (!lootFabricator.isRedstoneActive())
             craftingError = CraftingError.REDSTONE;
         else if (!lootFabricator.hasPristineMatter())
             craftingError = CraftingError.NO_PRISTINE;
-        else if (currentOutputItemIndex == -1)
+        else if (outputItem == ItemStack.EMPTY)
             craftingError = CraftingError.NO_OUTPUT_SELECTED;
         else if (!lootFabricator.hasRoomForOutput())
             craftingError = CraftingError.OUTPUT_FULL;
@@ -89,27 +87,25 @@ public class GuiLootFabricator extends GuiMachine {
             craftingError = CraftingError.NONE;
     }
 
-    private void resetOutputData(@Nullable MetadataDataModel newData, boolean preselectedOutput) {
-        currentDataModelMetadata = newData;
+    private void resetOutputData() {
+        outputItem = lootFabricator.getOutputItem();
+        deselectButton.setDisplayStack(outputItem);
 
-        if (currentDataModelMetadata == null) {
-            setInputEmpty();
-            return;
-        }
-
-        lootItemList = currentDataModelMetadata.getLootItems();
-
-        if (lootItemList.isEmpty()) {
-            setInputEmpty();
-            return;
-        }
-
-        totalOutputItemPages = MathHelper.divideAndRoundUp(lootItemList.size(), ITEMS_PER_PAGE);
-        setPageButtonsEnabled(totalOutputItemPages > 1);
-
-        if (!preselectedOutput) {
-            currentOutputItemIndex = -1;
-            currentOutputItemPage = 0;
+        if (pristineMatterMetadata == null) {
+            lootItemList = ImmutableList.of();
+            currentOutputItemPage = -1;
+            totalOutputItemPages = 0;
+            setPageButtonsEnabled(false);
+        } else {
+            lootItemList = pristineMatterMetadata.getLootItems();
+            if (!outputItem.isEmpty()) {
+                int currentOutputItemIndex = pristineMatterMetadata.getLootItemIndex(outputItem);
+                currentOutputItemPage = currentOutputItemIndex / ITEMS_PER_PAGE;
+            } else {
+                currentOutputItemPage = 0;
+            }
+            totalOutputItemPages = MathHelper.divideAndRoundUp(lootItemList.size(), ITEMS_PER_PAGE);
+            setPageButtonsEnabled(totalOutputItemPages > 1);
         }
 
         rebuildOutputSelectButtons();
@@ -117,52 +113,45 @@ public class GuiLootFabricator extends GuiMachine {
 
     private void rebuildOutputSelectButtons() {
         outputSelectButtons.clear();
-        constructOutputSelectButtonRows(currentOutputItemPage * ITEMS_PER_PAGE);
+        constructOutputSelectButtonRows();
         buttonListNeedsRebuild = true;
     }
 
-    private void constructOutputSelectButtonRows(int firstItemIndex) {
+    private void constructOutputSelectButtonRows() {
+        if (currentOutputItemPage < 0)
+            return; // Invalid page -> abort
+
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 int indexRelative = row * 3 + col;
-                int indexAbsolute = firstItemIndex + indexRelative;
+                int indexAbsolute = (currentOutputItemPage * ITEMS_PER_PAGE) + indexRelative;
                 if (indexAbsolute >= lootItemList.size())
                     return; // End of list reached -> abort
+                ItemStack stack = lootItemList.get(indexAbsolute);
                 outputSelectButtons.add(new ButtonItemSelect(
                         ITEM_SELECT_BUTTON_ID_OFFSET + indexRelative,
                         guiLeft + OUTPUT_SELECT_LIST.X + OUTPUT_SELECT_LIST_PADDING + col * (OUTPUT_SELECT_BUTTON_SIZE + OUTPUT_SELECT_LIST_GUTTER),
                         guiTop + OUTPUT_SELECT_LIST.Y + OUTPUT_SELECT_LIST_PADDING + row * (OUTPUT_SELECT_BUTTON_SIZE + OUTPUT_SELECT_LIST_GUTTER),
-                        lootItemList.get(indexAbsolute),
+                        stack,
                         indexAbsolute,
-                        indexAbsolute == currentOutputItemIndex
+                        ItemStack.areItemsEqual(stack, outputItem)
                 ));
             }
         }
     }
 
-    /**
-     * Pristine Matter input or loot list empty -> set all output-related values to "invalid"
-     */
-    private void setInputEmpty() {
-        setOutputItemIndex(-1);
-        currentOutputItemPage = -1;
-        totalOutputItemPages = 0;
-        outputSelectButtons.clear();
-        setPageButtonsEnabled(false);
-        buttonListNeedsRebuild = true;
-    }
-
     private void setOutputItem(int index) {
-        setOutputItemIndex(index);
         for (int i = 0; i < outputSelectButtons.size(); i++) {
             outputSelectButtons.get(i).setSelected(index != -1 && (i == (index % ITEMS_PER_PAGE)));
         }
-        DMLPacketHandler.sendToServer(new MessageLootFabOutputItemToServer(lootFabricator, index));
-    }
 
-    private void setOutputItemIndex(int index) {
-        currentOutputItemIndex = index;
-        deselectButton.setDisplayStack(index == -1 ? ItemStack.EMPTY : lootItemList.get(index));
+        if (index < 0 || index >= lootItemList.size())
+            outputItem = ItemStack.EMPTY;
+        else
+            outputItem = lootItemList.get(index);
+
+        deselectButton.setDisplayStack(outputItem);
+        lootFabricator.setOutputItem(outputItem);
     }
 
     //
@@ -229,12 +218,9 @@ public class GuiLootFabricator extends GuiMachine {
         RenderHelper.enableGUIStandardItemLighting();
 
         outputSelectButtons.forEach(button -> drawItemStackWithOverlay(button.getStack(), button.x - guiLeft, button.y - guiTop));
-        if (currentOutputItemIndex != -1)
-            drawItemStackWithOverlay(
-                    deselectButton.getDisplayStack(),
-                    DESELECT_BUTTON.X,
-                    DESELECT_BUTTON.Y
-            );
+        ItemStack deselectStack = deselectButton.getDisplayStack();
+        if (!deselectStack.isEmpty())
+            drawItemStackWithOverlay(deselectStack, DESELECT_BUTTON.X, DESELECT_BUTTON.Y);
 
         RenderHelper.enableStandardItemLighting();
 

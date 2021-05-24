@@ -7,7 +7,7 @@ import mustapelto.deepmoblearning.common.DMLConfig;
 import mustapelto.deepmoblearning.common.inventory.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataDataModel;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
-import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItemToServer;
+import mustapelto.deepmoblearning.common.network.MessageLootFabOutputItem;
 import mustapelto.deepmoblearning.common.util.ItemStackHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -126,7 +126,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
             this.outputItem = ItemStack.EMPTY;
 
         if (world.isRemote)
-            DMLPacketHandler.sendToServer(new MessageLootFabOutputItemToServer(this, this.outputItem));
+            DMLPacketHandler.sendToServer(new MessageLootFabOutputItem(this, this.outputItem));
     }
 
     //
@@ -134,7 +134,7 @@ public class TileEntityLootFabricator extends TileEntityMachine {
     //
 
     @Override
-    public ContainerMachine getContainer(InventoryPlayer inventoryPlayer) {
+    public ContainerTileEntity getContainer(InventoryPlayer inventoryPlayer) {
         return new ContainerLootFabricator(this, inventoryPlayer);
     }
 

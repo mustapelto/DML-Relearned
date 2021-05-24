@@ -104,8 +104,6 @@ public class GuiLootFabricator extends GuiMachine {
     public void updateScreen() {
         super.updateScreen();
 
-        ticks++;
-
         // Rebuild output selection if Pristine Matter type changed
         MetadataDataModel lootFabMetadata = lootFabricator.getPristineMatterMetadata();
         if (pristineMatterMetadata != lootFabMetadata) {
@@ -262,7 +260,7 @@ public class GuiLootFabricator extends GuiMachine {
         if (!deselectStack.isEmpty())
             drawItemStackWithOverlay(deselectStack, DESELECT_BUTTON.X, DESELECT_BUTTON.Y);
 
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
 
         // Draw button tooltips (after items to ensure correct z order)
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

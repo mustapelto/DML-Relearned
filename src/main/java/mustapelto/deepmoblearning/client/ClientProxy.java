@@ -1,30 +1,20 @@
 package mustapelto.deepmoblearning.client;
 
 import mustapelto.deepmoblearning.client.gui.GuiDeepLearnerOverlay;
-import mustapelto.deepmoblearning.client.gui.GuiTrialOverlay;
 import mustapelto.deepmoblearning.client.particles.ParticleScalableSmoke;
-import mustapelto.deepmoblearning.client.renderers.TESRTrialKeystone;
 import mustapelto.deepmoblearning.common.ServerProxy;
-import mustapelto.deepmoblearning.common.capabilities.CapabilityPlayerTrialProvider;
-import mustapelto.deepmoblearning.common.capabilities.ICapabilityPlayerTrial;
-import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientProxy extends ServerProxy {
     @Override
     public void registerGuiRenderers() {
         MinecraftForge.EVENT_BUS.register(GuiDeepLearnerOverlay.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(GuiTrialOverlay.INSTANCE);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTrialKeystone.class, new TESRTrialKeystone());
     }
 
     public void spawnSmokeParticle(World world, double x, double y, double z, double mx, double my, double mz, SmokeType type) {
@@ -89,15 +79,5 @@ public class ClientProxy extends ServerProxy {
     @Override
     public String getLocalizedString(String key, Object... args) {
         return I18n.format(key, args);
-    }
-
-    @Nullable
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public ICapabilityPlayerTrial getClientPlayerTrialCapability() {
-        if (CapabilityPlayerTrialProvider.PLAYER_TRIAL_CAPABILITY == null)
-            return null;
-
-        return FMLClientHandler.instance().getClientPlayerEntity().getCapability(CapabilityPlayerTrialProvider.PLAYER_TRIAL_CAPABILITY, null);
     }
 }

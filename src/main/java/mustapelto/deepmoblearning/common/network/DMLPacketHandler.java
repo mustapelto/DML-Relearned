@@ -23,9 +23,6 @@ public class DMLPacketHandler {
         network.registerMessage(MessageRedstoneMode.Handler.class, MessageRedstoneMode.class, id++, Side.SERVER);
         network.registerMessage(MessageLootFabOutputItem.Handler.class, MessageLootFabOutputItem.class, id++, Side.SERVER);
         network.registerMessage(MessageCraftingState.Handler.class, MessageCraftingState.class, id++, Side.CLIENT);
-        network.registerMessage(MessageStartTrial.Handler.class, MessageStartTrial.class, id++, Side.SERVER);
-        network.registerMessage(MessageTrialCapabilityData.Handler.class, MessageTrialCapabilityData.class, id++, Side.CLIENT);
-        network.registerMessage(MessageTrialOverlayMessage.Handler.class, MessageTrialOverlayMessage.class, id++, Side.CLIENT);
     }
 
     public static void sendToClient(IMessage message, World world, BlockPos pos) {

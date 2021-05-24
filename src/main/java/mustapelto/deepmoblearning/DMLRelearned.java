@@ -3,14 +3,10 @@ package mustapelto.deepmoblearning;
 import mustapelto.deepmoblearning.common.DMLGuiHandler;
 import mustapelto.deepmoblearning.common.DMLRegistry;
 import mustapelto.deepmoblearning.common.ServerProxy;
-import mustapelto.deepmoblearning.common.capabilities.CapabilityPlayerTrial;
-import mustapelto.deepmoblearning.common.capabilities.CapabilityPlayerTrialStorage;
-import mustapelto.deepmoblearning.common.capabilities.ICapabilityPlayerTrial;
 import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import mustapelto.deepmoblearning.common.network.DMLPacketHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -53,9 +49,6 @@ public class DMLRelearned
         // Network Stuff
         DMLPacketHandler.registerPackets();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new DMLGuiHandler());
-
-        // Initialize Capabilities
-        CapabilityManager.INSTANCE.register(ICapabilityPlayerTrial.class, new CapabilityPlayerTrialStorage(), CapabilityPlayerTrial::new);
     }
 
     @EventHandler

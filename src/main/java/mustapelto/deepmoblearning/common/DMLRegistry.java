@@ -9,7 +9,6 @@ import mustapelto.deepmoblearning.common.items.*;
 import mustapelto.deepmoblearning.common.metadata.MetadataManager;
 import mustapelto.deepmoblearning.common.tiles.TileEntityLootFabricator;
 import mustapelto.deepmoblearning.common.tiles.TileEntitySimulationChamber;
-import mustapelto.deepmoblearning.common.tiles.TileEntityTrialKeystone;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,7 +38,6 @@ public class DMLRegistry {
     public static final BlockMachineCasing BLOCK_MACHINE_CASING = new BlockMachineCasing();
     public static final BlockSimulationChamber BLOCK_SIMULATION_CHAMBER = new BlockSimulationChamber();
     public static final BlockLootFabricator BLOCK_LOOT_FABRICATOR = new BlockLootFabricator();
-    public static final BlockTrialKeystone BLOCK_TRIAL_KEYSTONE = new BlockTrialKeystone();
 
     // Items
     public static final ItemDeepLearner ITEM_DEEP_LEARNER = new ItemDeepLearner();
@@ -51,7 +49,6 @@ public class DMLRegistry {
     public static final ItemGlitchIngot ITEM_GLITCH_INGOT = new ItemGlitchIngot();
     public static final ItemGlitchFragment ITEM_GLITCH_FRAGMENT = new ItemGlitchFragment();
     public static final ItemGlitchHeart ITEM_GLITCH_HEART = new ItemGlitchHeart();
-    public static final ItemTrialKey ITEM_TRIAL_KEY = new ItemTrialKey();
 
     // Armor and Weapons
     public static final ItemGlitchArmor.ItemGlitchHelmet ITEM_GLITCH_HELMET = new ItemGlitchArmor.ItemGlitchHelmet();
@@ -71,7 +68,6 @@ public class DMLRegistry {
         registeredBlocks.add(BLOCK_MACHINE_CASING);
         registeredBlocks.add(BLOCK_SIMULATION_CHAMBER);
         registeredBlocks.add(BLOCK_LOOT_FABRICATOR);
-        registeredBlocks.add(BLOCK_TRIAL_KEYSTONE);
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registeredBlocks.forEach(registry::register);
@@ -79,7 +75,6 @@ public class DMLRegistry {
         // Register tile entities
         GameRegistry.registerTileEntity(TileEntitySimulationChamber.class, new ResourceLocation(DMLConstants.ModInfo.ID, "simulation_chamber"));
         GameRegistry.registerTileEntity(TileEntityLootFabricator.class, new ResourceLocation(DMLConstants.ModInfo.ID, "extraction_chamber"));
-        GameRegistry.registerTileEntity(TileEntityTrialKeystone.class, new ResourceLocation(DMLConstants.ModInfo.ID, "trial_keystone"));
     }
 
     @SubscribeEvent
@@ -97,7 +92,6 @@ public class DMLRegistry {
         registeredItems.add(ITEM_GLITCH_INGOT);
         registeredItems.add(ITEM_GLITCH_FRAGMENT);
         registeredItems.add(ITEM_GLITCH_HEART);
-        registeredItems.add(ITEM_TRIAL_KEY);
 
         // Glitch Armor and Sword
         registeredItems.add(ITEM_GLITCH_HELMET);

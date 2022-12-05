@@ -12,7 +12,7 @@ public abstract class ItemBase extends Item {
      */
     public ItemBase(String name, int stackSize, boolean addToCreative) {
         setRegistryName(name);
-        setUnlocalizedName(DMLConstants.ModInfo.ID + "." + name);
+        setTranslationKey(DMLConstants.ModInfo.ID + "." + name);
         setMaxStackSize(stackSize);
         if (addToCreative) // only add mod-dependent item to creative tab if its associated mod is loaded (checked by subclass)
             setCreativeTab(DMLRelearned.creativeTab);

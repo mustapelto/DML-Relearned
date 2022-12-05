@@ -37,7 +37,7 @@ public abstract class ItemGlitchArmor extends ItemArmor {
     public ItemGlitchArmor(String name, EntityEquipmentSlot slot) {
         super(material, 0, slot);
         setRegistryName(name);
-        setUnlocalizedName(DMLConstants.ModInfo.ID + "." + name);
+        setTranslationKey(DMLConstants.ModInfo.ID + "." + name);
         setCreativeTab(DMLRelearned.creativeTab);
     }
 

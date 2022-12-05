@@ -39,7 +39,7 @@ public class NBTHelper {
 
         nbt.removeTag(key);
 
-        if (nbt.hasNoTags())
+        if (nbt.isEmpty())
             stack.setTagCompound(null);
     }
 

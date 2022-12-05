@@ -140,7 +140,7 @@ public class DMLRegistry {
         EntityEntry itemGlitchFragment = EntityEntryBuilder.create()
                 .entity(EntityItemGlitchFragment.class)
                 .id(itemGlitchFragmentRegistryName, entityId++)
-                .name(itemGlitchFragmentRegistryName.getResourcePath())
+                .name(itemGlitchFragmentRegistryName.getPath())
                 .tracker(64, 1, true)
                 .build();
 

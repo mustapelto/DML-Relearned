@@ -41,7 +41,7 @@ public class ModelRegistry {
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null)
                 return;
-            String registryItem = registryName.getResourcePath();
+            String registryItem = registryName.getPath();
             modelLocation = new ResourceLocation(DMLConstants.ModInfo.ID, registryItem);
         } else {
             // Default model registration

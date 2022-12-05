@@ -81,7 +81,7 @@ public class ItemDeepLearner extends ItemBase {
         NonNullList<ItemStack> items = NonNullList.withSize(ContainerDeepLearner.INTERNAL_SLOTS, ItemStack.EMPTY);
         NBTTagList inventory = NBTHelper.getTagList(deepLearner, "inventory");
 
-        if (!inventory.hasNoTags()) {
+        if (!inventory.isEmpty()) {
             for (int i = 0; i < inventory.tagCount(); i++) {
                 NBTTagCompound tagCompound = inventory.getCompoundTagAt(i);
                 items.set(i, new ItemStack(tagCompound));

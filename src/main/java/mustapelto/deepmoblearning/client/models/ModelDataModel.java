@@ -55,13 +55,13 @@ public class ModelDataModel implements IModel {
 
         @Override
         public boolean accepts(ResourceLocation modelLocation) {
-            return modelLocation.getResourceDomain().equals(DMLConstants.ModInfo.ID)
-                    && modelLocation.getResourcePath().contains("data_model");
+            return modelLocation.getNamespace().equals(DMLConstants.ModInfo.ID)
+                    && modelLocation.getPath().contains("data_model");
         }
 
         @Override
         public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            String mobId = modelLocation.getResourcePath().substring("data_model_".length());
+            String mobId = modelLocation.getPath().substring("data_model_".length());
 
             ModelDataModel model;
             if (!modelCache.containsKey(mobId)) {

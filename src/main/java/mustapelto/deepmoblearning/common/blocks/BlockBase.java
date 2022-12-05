@@ -18,7 +18,7 @@ public abstract class BlockBase extends Block {
     protected BlockBase(String name, Material material) {
         super(material);
         setRegistryName(name);
-        setUnlocalizedName(DMLConstants.ModInfo.ID + "." + name);
+        setTranslationKey(DMLConstants.ModInfo.ID + "." + name);
         setCreativeTab(DMLRelearned.creativeTab);
         setLightLevel(1f);
     }

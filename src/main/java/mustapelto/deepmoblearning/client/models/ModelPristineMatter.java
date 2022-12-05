@@ -52,13 +52,13 @@ public class ModelPristineMatter implements IModel {
 
         @Override
         public boolean accepts(ResourceLocation modelLocation) {
-            return modelLocation.getResourceDomain().equals(DMLConstants.ModInfo.ID)
-                    && modelLocation.getResourcePath().contains("pristine_matter");
+            return modelLocation.getNamespace().equals(DMLConstants.ModInfo.ID)
+                    && modelLocation.getPath().contains("pristine_matter");
         }
 
         @Override
         public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            String mobId = modelLocation.getResourcePath().substring("pristine_matter_".length());
+            String mobId = modelLocation.getPath().substring("pristine_matter_".length());
 
             ModelPristineMatter model;
             if (!modelCache.containsKey(mobId)) {

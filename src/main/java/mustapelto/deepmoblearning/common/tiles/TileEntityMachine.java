@@ -239,7 +239,7 @@ public abstract class TileEntityMachine extends TileEntityContainer implements I
 
     public void onNeighborChange() {
         boolean oldRedstonePowerState = redstonePowered;
-        redstoneLevel = world.isBlockIndirectlyGettingPowered(pos);
+        redstoneLevel = world.getRedstonePowerFromNeighbors(pos);
         redstonePowered = redstoneLevel > 0;
 
         if (redstonePowered != oldRedstonePowerState) {

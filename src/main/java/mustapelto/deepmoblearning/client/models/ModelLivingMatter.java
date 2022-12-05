@@ -52,13 +52,13 @@ public class ModelLivingMatter implements IModel {
 
         @Override
         public boolean accepts(ResourceLocation modelLocation) {
-            return modelLocation.getResourceDomain().equals(DMLConstants.ModInfo.ID)
-                    && modelLocation.getResourcePath().contains("living_matter");
+            return modelLocation.getNamespace().equals(DMLConstants.ModInfo.ID)
+                    && modelLocation.getPath().contains("living_matter");
         }
 
         @Override
         public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-            String livingMatterId = modelLocation.getResourcePath().substring("living_matter_".length());
+            String livingMatterId = modelLocation.getPath().substring("living_matter_".length());
 
             ModelLivingMatter model;
             if (!modelCache.containsKey(livingMatterId)) {

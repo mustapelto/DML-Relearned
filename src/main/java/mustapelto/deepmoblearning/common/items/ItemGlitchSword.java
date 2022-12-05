@@ -38,7 +38,7 @@ public class ItemGlitchSword extends ItemSword {
         super(material);
         String name = "glitch_infused_sword";
         setRegistryName(name);
-        setUnlocalizedName(DMLConstants.ModInfo.ID + "." + name);
+        setTranslationKey(DMLConstants.ModInfo.ID + "." + name);
         setCreativeTab(DMLRelearned.creativeTab);
     }
 

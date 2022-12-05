@@ -96,7 +96,7 @@ public class StringAnimator {
         private final String string; // The string to animate
         private final float speed; // Speed of animation (in ticks/letter)
         private final float duration; // Duration of animation (in ticks)
-        private final float formattedLength; // Length of string when not counting MC formatting characters (e.g. "§d")
+        private final float formattedLength; // Length of string when not counting MC formatting characters (e.g. "ï¿½d")
         private final boolean loop; // Does the animation loop?
 
         private float position; // Current position (in ticks)
@@ -115,7 +115,7 @@ public class StringAnimator {
 
             // Filter out MC formatting symbols for length calculation
             for (int i = 0; i < string.length(); i++) {
-                if (string.charAt(i) != '§') {
+                if (string.charAt(i) != '\u00a7') {
                     tempActualLength++; // Count non-formatting chars
                 } else {
                     i++; // Skip second char of formatting symbol
@@ -155,7 +155,7 @@ public class StringAnimator {
             int endIndex = 0;
             int lettersAdded = 0; // counts "actual letters" added to output (excluding formatting characters)
             for (int i = 0; i < string.length() && lettersAdded <= floatIndex; i++) {
-                if (string.charAt(i) == '§') { // Start of MC formatting character
+                if (string.charAt(i) == '\u00a7') { // Start of MC formatting character
                     if (i < string.length() - 1) { // Not currently at last character in string
                         endIndex += 2; // Add this and following character to output
                     }
